@@ -15,14 +15,24 @@ jobs:
         node-version: [20.10.0]
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-    - name: Use Yarn to build the library
+    - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
+        registry-url: "https://registry.npmjs.org/"
 
-    - name: Build
+    - name: Install dependencies
+      run: yarn install --frozen-lockfile
+
+    - name: Build library
+      run: yarn build
+
+    - name: Publish to npm
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       run: |
-        yarn install
-        yarn build
+        yarn publish --access public
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
