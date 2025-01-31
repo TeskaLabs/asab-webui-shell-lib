@@ -1,6 +1,6 @@
 {
 	"name": "asab_webui_shell",
-	"version": "25.1.1",
+	"version": "25.1.2",
 	"description": "TeskaLabs ASAB WebUI Shell Application",
 	"main": "dist/index.js",
 	"files": [
@@ -25,7 +25,7 @@
 		"i18next-browser-languagedetector": "^6.1.2"
 	},
 	"peerDependencies": {
-		"asab_webui_components": "git+https://github.com/TeskaLabs/asab-webui-components-lib.git#main",
+		"asab_webui_components": "^25.1.1",
 		"@babel/runtime": "^7.22.11",
 		"react": "^17.0.0",
 		"react-dom": "^17.0.0",
