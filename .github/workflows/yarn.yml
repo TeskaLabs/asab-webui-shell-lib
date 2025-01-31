@@ -8,7 +8,6 @@ on:
 
 permissions:
   contents: read
-  packages: write  # Grants permission to publish packages
 
 jobs:
   build:
@@ -27,6 +26,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         registry-url: "https://registry.npmjs.org/"
+        always-auth: true
 
     - name: Install dependencies
       run: yarn install --frozen-lockfile
