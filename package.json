@@ -22,7 +22,7 @@
 		"i18next-browser-languagedetector": "^6.1.2"
 	},
 	"peerDependencies": {
-		"asab_webui_components": "git+http://gitlab.teskalabs.int/fpesek/asab-webui-components-lib.git#main",
+		"asab_webui_components": "git+https://github.com/TeskaLabs/asab-webui-components-lib.git#main",
 		"@babel/runtime": "^7.22.11",
 		"react": "^17.0.0",
 		"react-dom": "^17.0.0",
