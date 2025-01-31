@@ -1,0 +1,20 @@
+.app-sidepanel-card {
+	width: 300px;
+}
+
+.app-sidepanel-card-body {
+	overflow-y: auto;
+}
+
+.app-sidepanel-chevron-wrapper {
+	padding: 10px;
+}
+
+.app-sidepanel-chevron {
+	font-size: 21px;
+	color: var(--bs-primary);
+}
+
+.app-sidepanel-chevron:hover {
+	cursor: pointer;
+}

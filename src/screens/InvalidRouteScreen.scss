@@ -1,0 +1,19 @@
+.invalid-route-container {
+	overflow: hidden;
+}
+
+.invalid-route-card {
+	height: 80%;
+	width: 50%;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	border: 1px solid var(--bs-primary);
+}
+
+.invalid-route-cardbody {
+	display: flex;
+	align-items: center; /* Vertically center */
+	justify-content: center; /* Horizontally center */
+}

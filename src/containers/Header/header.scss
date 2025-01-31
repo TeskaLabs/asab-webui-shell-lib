@@ -1,0 +1,24 @@
+#app-header {
+
+	.nav-link, .btn {
+		// Font is larger in header items
+		font-size: 16px;
+	}
+}
+
+[data-bs-theme=light] {
+	#app-header .nav-link:hover {
+		filter: brightness(0.75);
+	}
+}
+
+[data-bs-theme=dark] {
+	#app-header {
+		.nav-link:active, .nav-link:focus {
+			color: var(--bs-link-color)
+		}
+		.nav-link:hover {
+			color: var(--bs-link-hover-color);
+		}
+	}
+}

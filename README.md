@@ -1,2 +1,3 @@
-# asab-webui-shell-lib
-React WebUI Shell Library of components for ASAB
+# Asab Webui Shell Lib
+
+Shell library of ASAB used in WebUI projects.

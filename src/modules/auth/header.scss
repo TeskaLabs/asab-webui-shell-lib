@@ -1,0 +1,9 @@
+.invite-nav-button {
+	border: 1px solid var(--bs-primary) !important;
+	padding: 1px !important;
+	padding-left: 4px !important;
+	padding-right: 4px !important;
+	&:hover {
+		border: 1px solid transparent !important;
+	}
+}
