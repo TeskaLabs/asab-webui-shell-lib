@@ -1,11 +1,14 @@
 {
-	"name": "asab_webui_shell",
+	"name": "@TeskaLabs/asab_webui_shell",
 	"version": "25.1.1",
 	"description": "TeskaLabs ASAB WebUI Shell Application",
 	"main": "dist/index.js",
 	"files": [
 		"dist"
 	],
+	"publishConfig": {
+	    "registry": "https://npm.pkg.github.com/"
+	 },
 	"scripts": {
 		"clean": "rimraf dist",
 		"build": "babel src --extensions '.js,.jsx' --out-dir dist && copyfiles -u 1 'src/**/*.{scss,jsx}' dist"
