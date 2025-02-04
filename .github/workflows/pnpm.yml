@@ -30,15 +30,18 @@ jobs:
         registry-url: "https://registry.npmjs.org/"
         always-auth: true
 
+    - name: Install pnpm
+      run: npm install -g pnpm
+
     - name: Install dependencies
-      run: yarn install --frozen-lockfile
+      run: pnpm install --frozen-lockfile
 
     - name: Build library
-      run: yarn build
+      run: pnpm build
 
     - name: Publish to npm
       if: startsWith(github.ref, 'refs/tags/')  # Runs only when a tag is pushed
       run: |
-        yarn publish --access public
+        pnpm publish --access public
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPMJS_PUBLISH_TOKEN }}
