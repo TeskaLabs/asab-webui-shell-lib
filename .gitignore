@@ -1,5 +1,8 @@
 node_modules
 yarn.lock
 yarn-error.log
+pnpm-lock.yaml
+pnpm-error.log
+pnpm-debug.log
 dist
 .DS_Store
