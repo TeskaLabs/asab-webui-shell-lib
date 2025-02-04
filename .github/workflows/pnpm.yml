@@ -34,7 +34,7 @@ jobs:
       run: npm install -g pnpm
 
     - name: Install dependencies
-      run: pnpm install --no-frozen-lockfile
+      run: pnpm install --no-frozen-lockfile # Do not need a lock file for this library
 
     - name: Build library
       run: pnpm build
