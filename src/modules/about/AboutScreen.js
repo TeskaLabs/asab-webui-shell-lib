@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+
+import { getBrandImage } from '../../components/branding/BrandImage';
 
 import {
 	Container, Row, Col,
@@ -9,10 +11,27 @@ import {
 
 
 function AboutScreen(props) {
+	const [ brandImage, setBrandImage ] = useState(undefined);
+	const theme = useSelector(state => state.theme);
+
+	useEffect(() => {
+		setBrandImage(getBrandImage(props, theme));
+	}, [theme]);
+
 	return (
 		<Container className='pt-5'>
 			<Row className="justify-content-center">
 				<Col md="6">
+					<div className="my-4">
+						{brandImage ?
+								<img
+									src={brandImage?.full}
+									alt="TeskaLabs logo"
+							/>
+						:
+							null
+						}
+					</div>
 					<AboutCard app={props.app} />
 				</Col>
 			</Row>
