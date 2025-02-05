@@ -1,7 +1,7 @@
 import { SET_HELP_PATH, SET_SUBTITLE, SET_FLAG, SET_HEADER_NAVIGATION_ITEMS } from '../../actions';
 
 const initialState = {
-	helpPath: "https://docs.teskalabs.com/logman.io/user/",
+	helpPath: undefined,
 	subtitle: undefined,
 	flag: undefined,
 	headerNavItems: []
