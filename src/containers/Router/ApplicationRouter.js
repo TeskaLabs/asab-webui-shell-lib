@@ -41,14 +41,16 @@ export default function ApplicationRouter(props) {
 function RouteRenderer(props) {
 	const resources = useSelector((state) => state.auth?.resources ? state.auth.resources : []);
 	const dispatch = useDispatch();
+	const defaultHelp = props.app.Config.get("help");
+
 	// Set up and dispatch help content
 	useEffect(() => {
-		const defaultHelp = "https://docs.teskalabs.com/logman.io/user/";
 		dispatch({
 			type: SET_HELP_PATH,
 			helpPath: props.route.help ? props.route.help : defaultHelp
 		});
 	}, [props.route.help]);
+
 	// Route component renders the approriate screen based on the route
 	if (props.route.resource) {
 		// If resource present, let UnauthorizedAccessScreen to decide if the Screen will be rendered
