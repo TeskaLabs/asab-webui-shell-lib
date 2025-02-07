@@ -3,6 +3,21 @@
 	"version": "25.1.6",
 	"license": "BSD-3-Clause",
 	"description": "TeskaLabs ASAB WebUI Shell Application",
+	"contributors": [
+		{
+			"name": "TeskaLabs",
+			"email": "info@teskalabs.com",
+			"url": "https://teskalabs.com"
+		}
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+ssh://git@github.com:TeskaLabs/asab-webui-shell-lib.git"
+	},
+	"bugs": {
+		"url": "https://github.com/TeskaLabs/asab-webui-shell-lib/issues"
+	},
+	"homepage": "https://github.com/TeskaLabs/asab-webui-shell-lib",
 	"main": "dist/index.js",
 	"files": [
 		"dist"
