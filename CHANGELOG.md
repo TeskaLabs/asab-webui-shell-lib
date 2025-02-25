@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 25.1.7
+
+- Upgrade the version
+
 ## 25.1.5
 
 - Replace yarn with pnpm in github workflow (!2)
