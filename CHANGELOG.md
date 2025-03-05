@@ -1,6 +1,6 @@
 # CHANGELOG for ASAB WebUI Shell
 
-## 25.1.9
+## 25.2.1
 
 - Saving BigInt number in `axios.interceptors` if the type is `application/json` (!6)
 
