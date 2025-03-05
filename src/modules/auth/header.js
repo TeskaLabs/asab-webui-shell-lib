@@ -80,7 +80,7 @@ export function AuthHeaderDropdown(props) {
 					: <i alt={userinfo?.username} className={`pe-2 bi ${isSuperuser ? 'bi-universal-access' : 'bi-person-gear'}`}
 					/>
 				}
-				<span>{userinfo?.username}</span>
+				<span>{userinfo?.username || userinfo?.sub}</span>
 			</DropdownToggle>
 			<DropdownMenu className='shadow'>
 				<DropdownItem header>{t('AuthHeader|My account')}</DropdownItem>
