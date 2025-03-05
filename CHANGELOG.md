@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 25.1.9
+
+- Saving BigInt number in `axios.interceptors` if the type is `application/json` (!6)
+
 ## 25.1.8
 
 - Make auth header username displayal more defensive (!7)
