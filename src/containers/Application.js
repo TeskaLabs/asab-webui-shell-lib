@@ -323,7 +323,7 @@ class Application extends Component {
 			that.popNetworkingIndicator();
 
 			// Check if the response content type is 'application/json' or starts with 'application/json'
-			if ((response.headers['content-type'] == 'application/json') || (response.headers['content-type']?.startsWith('application/json;'))) {
+			if (response?.headers['content-type']?.startsWith('application/json')) {
 				// If the response is JSON, then parse it with respect to BigInt
 				// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse
 				try {
@@ -346,7 +346,7 @@ class Application extends Component {
 					console.error("Error in axios.interceptors.response", e);
 				}
 			}
-			// Return the modified response object
+			// If the request was satisfied (application/json and presence of BigInt) return the modified object. If not, we return unchanged object
 			return response;
 		}, function (error) {
 			that.popNetworkingIndicator();
