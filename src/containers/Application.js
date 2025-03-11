@@ -332,6 +332,10 @@ class Application extends Component {
 						response.data,
 						// Custom reviver function to handle BigInt values
 						(key, value, context) => {
+							// If there is no data in the JSONParseBigInt, return the value immediately
+							if (that.JSONParseBigInt.size === 0) {
+								return value
+							}
 							// Check if the key is in the `JSONParseBigInt` set and the value is a number
 							if (that.JSONParseBigInt.has(key) && (typeof value === 'number')) {
 								// Convert the number to a BigInt
