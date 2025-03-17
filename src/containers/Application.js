@@ -322,6 +322,16 @@ class Application extends Component {
 			// Call the `popNetworkingIndicator` method to remove the networking indicator (e.g., loading spinner)
 			that.popNetworkingIndicator();
 
+			/*
+				Custom flag to control JSON parsing for specific requests.
+				If 'skipJsonParsing' is set to true in the request config,
+				we return the raw response and skip automatic JSON parsing in the interceptor.
+				This is useful when we need to get the response as plain text (e.g., for retrieving raw content).
+			*/
+			if (response.config.skipJsonParsing) {
+				return response;
+			}
+
 			// Check if the response content type is 'application/json' or starts with 'application/json'
 			if (response?.headers['content-type']?.startsWith('application/json')) {
 				// If the response is JSON, then parse it with respect to BigInt
