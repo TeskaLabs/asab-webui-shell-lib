@@ -23,10 +23,11 @@ export default function InvitationScreen(props) {
 	const navigate = useNavigate();
 	const SeaCatAuthAPI = props.app.axiosCreate('seacat-auth');
 
+	// Time out the visual effects of copying URL
 	useEffect(() => {
 		let timeoutId;
 		if (urlCopied) {
-			timeoutId = setTimeout(() => setUrlCopied(false), 5000);
+			timeoutId = setTimeout(() => setUrlCopied(false), 3000);
 		}
 
 		return () => {
@@ -34,13 +35,19 @@ export default function InvitationScreen(props) {
 		};
 	}, [urlCopied]);
 
+	// Copy registration URL if there is any
 	const copyRegistrationUrl = () => {
+		if (!registrationUrl) {
+			console.error('No registration URL to copy.');
+			return
+		}
+
 		navigator.clipboard.writeText(registrationUrl)
 			.then(() => {
 				setUrlCopied(true);
 			})
 			.catch((error) => {
-				console.error('Failed to copy text: ', error);
+				console.error('Failed to copy registration URL: ', error);
 			});
 	};
 
@@ -78,29 +85,41 @@ export default function InvitationScreen(props) {
 		}
 	}
 
-	const CopyableRegistrationUrl = ({ registrationUrl, ...childProps }) => (
-		<div {...childProps}>
-			<div>{t('InvitationScreen|If you want to invite the user manually, message them the registration URL below:')}</div>
-			<InputGroup onClick={copyRegistrationUrl}>
+	// Component that displays the registration URL with a copy button
+	const CopyableRegistrationUrl = ({ registrationUrl }) => (
+		<>
+			<FormText>
+				{t('InvitationScreen|If you want to invite the user manually, message them the registration URL below:')}
+			</FormText>
+			<InputGroup
+				onClick={copyRegistrationUrl}
+			>
 				<Input 
 					disabled
 					value={registrationUrl}
 				/>
-				<Button outline color={urlCopied ? 'success' : 'primary'}>
+				<Button
+					outline
+					color={urlCopied ? 'success' : 'primary'}
+					className='w-25'
+				>
 					<i
 						className={urlCopied ? 'bi bi-clipboard-check pe-2' : 'bi bi-clipboard pe-2'}
-						title={t('InvitationScreen|Copy URL to clipboard')}
+						title={t('InvitationScreen|Copy to clipboard')}
 					/>
-					{urlCopied ? t('InvitationScreen|URL copied!') : t('Copy URL')}
+					{urlCopied
+						? t('InvitationScreen|Copied!')
+						: t('InvitationScreen|Copy URL')
+					}
 				</Button>
 			</InputGroup>
-		</div>
+		</>
 	);
 
 	// Display for successful invitation
 	const SuccessfulInvitationCardBody = () => (
 		<>
-			<h6>{t('InvitationScreen|Invitation has been sent successfully')}</h6>
+			<h6>{t('InvitationScreen|Invitation was sent successfully')}</h6>
 			{registrationUrl && <CopyableRegistrationUrl
 				registrationUrl={registrationUrl}
 			/>}
@@ -119,11 +138,10 @@ export default function InvitationScreen(props) {
 	// Display for unsuccessful invitation
 	const UnsuccessfulInvitationCardBody = () => (
 		<>
-			<h6>{t('InvitationScreen|Invitation has not been sent')}</h6>
+			<h6>{t('InvitationScreen|Invitation was not sent')}</h6>
 			{registrationUrl
 				? <CopyableRegistrationUrl
 					registrationUrl={registrationUrl}
-					className='py-3'
 				/>
 				: <FormText>{t('InvitationScreen|The user could not be invited')}</FormText>
 			}
@@ -160,7 +178,7 @@ export default function InvitationScreen(props) {
 									</div>
 								</CardHeader>
 								<CardBody>
-									<Label>{t('InvitationScreen|Enter the email to invite a user')}</Label>
+									<Label>{t('InvitationScreen|Enter the user\'s email address')}</Label>
 									<InputGroup>
 										<InputGroupText>
 											<i className='bi bi-envelope-at' />
