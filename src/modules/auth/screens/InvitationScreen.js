@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { ResultCard } from 'asab_webui_components';
@@ -23,18 +23,6 @@ export default function InvitationScreen(props) {
 	const navigate = useNavigate();
 	const SeaCatAuthAPI = props.app.axiosCreate('seacat-auth');
 
-	// Time out the visual effects of copying URL
-	useEffect(() => {
-		let timeoutId;
-		if (urlCopied) {
-			timeoutId = setTimeout(() => setUrlCopied(false), 3000);
-		}
-
-		return () => {
-			clearTimeout(timeoutId);
-		};
-	}, [urlCopied]);
-
 	// Copy registration URL if there is any
 	const copyRegistrationUrl = () => {
 		if (!registrationUrl) {
@@ -45,6 +33,10 @@ export default function InvitationScreen(props) {
 		navigator.clipboard.writeText(registrationUrl)
 			.then(() => {
 				setUrlCopied(true);
+				let timeoutId = setTimeout(() => setUrlCopied(false), 3000);
+				return () => {
+					clearTimeout(timeoutId);
+				};
 			})
 			.catch((error) => {
 				console.error('Failed to copy registration URL: ', error);
@@ -91,17 +83,16 @@ export default function InvitationScreen(props) {
 			<FormText>
 				{t('InvitationScreen|If you want to invite the user manually, message them the registration URL below:')}
 			</FormText>
-			<InputGroup
-				onClick={copyRegistrationUrl}
-			>
+			<InputGroup>
 				<Input 
-					disabled
+					readOnly
 					value={registrationUrl}
 				/>
 				<Button
 					outline
-					color={urlCopied ? 'success' : 'primary'}
+					color='primary'
 					className='w-25'
+					onClick={copyRegistrationUrl}
 				>
 					<i
 						className={urlCopied ? 'bi bi-clipboard-check pe-2' : 'bi bi-clipboard pe-2'}
