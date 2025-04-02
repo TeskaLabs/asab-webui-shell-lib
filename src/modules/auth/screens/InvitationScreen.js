@@ -91,7 +91,7 @@ export default function InvitationScreen(props) {
 				<Button
 					outline
 					color='primary'
-					className='w-25'
+					className='text-nowrap'
 					onClick={copyRegistrationUrl}
 				>
 					<i
@@ -198,7 +198,7 @@ export default function InvitationScreen(props) {
 										color='primary'
 										disabled={emailValue === ''} // Disable button if input is empty
 									>
-										{t('InvitationScreen|Send')}
+										{t('InvitationScreen|Invite')}
 									</Button>
 								</CardFooter>
 							</Card>
