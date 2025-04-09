@@ -11,14 +11,37 @@ import {
 	InputGroup, InputGroupText, Input, Label
 } from 'reactstrap';
 
+
 // Component that handles user invitation
 export default function InvitationScreen(props) {
 	const [emailValue, setEmailValue] = useState('');
 	const [isInvitationSuccessful, setIsInvitationSuccessful] = useState(undefined);
+	const [registrationUrl, setRegistrationUrl] = useState(undefined);
+	const [urlCopied, setUrlCopied] = useState(undefined);
 	const tenant = useSelector(state => state.tenant?.current);
 	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const SeaCatAuthAPI = props.app.axiosCreate('seacat-auth');
+
+	// Copy registration URL if there is any
+	const copyRegistrationUrl = () => {
+		if (!registrationUrl) {
+			console.error('No registration URL to copy.');
+			return
+		}
+
+		navigator.clipboard.writeText(registrationUrl)
+			.then(() => {
+				setUrlCopied(true);
+				let timeoutId = setTimeout(() => setUrlCopied(false), 3000);
+				return () => {
+					clearTimeout(timeoutId);
+				};
+			})
+			.catch((error) => {
+				console.error('Failed to copy registration URL: ', error);
+			});
+	};
 
 	// Validate email input
 	const emailValidation = (e) => {
@@ -39,18 +62,60 @@ export default function InvitationScreen(props) {
 			}
 			setIsInvitationSuccessful(true);
 			setEmailValue('');
+			if (response?.data?.registration_url) {
+				setRegistrationUrl(response?.data?.registration_url);
+			} else {
+				setRegistrationUrl(undefined);
+			}
 		} catch(e) {
 			setIsInvitationSuccessful(false);
+			if (e?.response?.data?.registration_url) {
+				setRegistrationUrl(e?.response?.data?.registration_url);
+			} else {
+				setRegistrationUrl(undefined);
+			}
 		}
 	}
+
+	// Component that displays the registration URL with a copy button
+	const CopyableRegistrationUrl = ({ registrationUrl }) => (
+		<>
+			<FormText>
+				{t('InvitationScreen|If you want to invite the user manually, message them the registration URL below:')}
+			</FormText>
+			<InputGroup>
+				<Input 
+					readOnly
+					value={registrationUrl}
+				/>
+				<Button
+					outline
+					color='primary'
+					className='text-nowrap'
+					onClick={copyRegistrationUrl}
+				>
+					<i
+						className={urlCopied ? 'bi bi-clipboard-check pe-2' : 'bi bi-clipboard pe-2'}
+						title={t('InvitationScreen|Copy to clipboard')}
+					/>
+					{urlCopied
+						? t('InvitationScreen|Copied!')
+						: t('InvitationScreen|Copy URL')
+					}
+				</Button>
+			</InputGroup>
+		</>
+	);
 
 	// Display for successful invitation
 	const SuccessfulInvitationCardBody = () => (
 		<>
-			<h6>{t('InvitationScreen|Invitation has been sent successfully')}</h6>
+			<h6>{t('InvitationScreen|Invitation was sent successfully')}</h6>
+			{registrationUrl && <CopyableRegistrationUrl
+				registrationUrl={registrationUrl}
+			/>}
 			<div className='mt-2'>
 				<Button
-					block
 					onClick={() => navigate('/auth/credentials')}
 					color='primary'
 					size='lg'
@@ -64,11 +129,15 @@ export default function InvitationScreen(props) {
 	// Display for unsuccessful invitation
 	const UnsuccessfulInvitationCardBody = () => (
 		<>
-			<h6>{t('InvitationScreen|Invitation has not been sent')}</h6>
-			<FormText>{t('InvitationScreen|The user could not be invited')}</FormText>
+			<h6>{t('InvitationScreen|Invitation was not sent')}</h6>
+			{registrationUrl
+				? <CopyableRegistrationUrl
+					registrationUrl={registrationUrl}
+				/>
+				: <FormText>{t('InvitationScreen|The user could not be invited')}</FormText>
+			}
 			<div className='mt-2'>
 				<Button
-					block
 					onClick={() => setIsInvitationSuccessful(undefined)}
 					color='primary'
 					size='lg'
@@ -100,7 +169,7 @@ export default function InvitationScreen(props) {
 									</div>
 								</CardHeader>
 								<CardBody>
-									<Label>{t('InvitationScreen|Enter the email to invite a user')}</Label>
+									<Label>{t('InvitationScreen|Enter the user\'s email address')}</Label>
 									<InputGroup>
 										<InputGroupText>
 											<i className='bi bi-envelope-at' />
@@ -129,7 +198,7 @@ export default function InvitationScreen(props) {
 										color='primary'
 										disabled={emailValue === ''} // Disable button if input is empty
 									>
-										{t('InvitationScreen|Send')}
+										{t('InvitationScreen|Invite')}
 									</Button>
 								</CardFooter>
 							</Card>

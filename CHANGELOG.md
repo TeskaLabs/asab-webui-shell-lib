@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 25.1.9
+
+- Display invitation URL if available (!10)
+
 ## 25.1.8
 
 - Make auth header username displayal more defensive (!7)
