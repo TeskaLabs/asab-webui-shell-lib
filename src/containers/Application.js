@@ -114,6 +114,10 @@ class Application extends Component {
 		this.ReduxService.addReducer("navigation", navigationReducer);
 		this.ReduxService.addReducer("router", routerReducer);
 
+		// The application can provide a list of keys that should be automatically parsed as BigInt, when received from the server in Axios call
+		// This is important to preserve 64bit numbers from the server such as IP addresses, timestamps etc.
+		this.JSONParseBigInt = new Set(props?.bigint);
+
 		this._handleKeyUp = this._handleKeyUp.bind(this);
 
 		this.state = {
@@ -286,6 +290,7 @@ class Application extends Component {
 
 		var axios = Axios.create({
 			...props,
+			transformResponse: res => res,  // Disable implicit JSON parsing, we explicitly parse JSON in the interceptor ( https://stackoverflow.com/questions/41013082/disable-json-parsing-in-axios )
 			baseURL: service_url,
 		});
 
@@ -312,9 +317,50 @@ class Application extends Component {
 			return Promise.reject(error);
 		});
 
-		// We want to remove networking indicator when we recieve the response
+		// We want to remove the networking indicator when we receive the response
 		axios.interceptors.response.use(function (response) {
+			// Call the `popNetworkingIndicator` method to remove the networking indicator (e.g., loading spinner)
 			that.popNetworkingIndicator();
+
+			/*
+				Custom flag to control JSON parsing for specific requests.
+				If 'skipJsonParsing' is set to true in the request config,
+				we return the raw response and skip automatic JSON parsing in the interceptor.
+				This is useful when we need to get the response as plain text (e.g., for retrieving raw content).
+			*/
+			if (response.config.skipJsonParsing) {
+				return response;
+			}
+
+			// Check if the response content type is 'application/json' or starts with 'application/json'
+			if (response?.headers['content-type']?.startsWith('application/json')) {
+				// If the response is JSON, then parse it with respect to BigInt
+				// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse
+				try {
+					// Parse the response data using a custom reviver function
+					response.data = JSON.parse(
+						response.data,
+						// Custom reviver function to handle BigInt values
+						(key, value, context) => {
+							// If there is no data in the JSONParseBigInt, return the value immediately
+							if (that.JSONParseBigInt.size === 0) {
+								return value
+							}
+							// Check if the key is in the `JSONParseBigInt` set and the value is a number
+							if (that.JSONParseBigInt.has(key) && (typeof value === 'number')) {
+								// Convert the number to a BigInt
+								return BigInt(context.source);
+							}
+							// Return the original value if no conversion is needed
+							return value;
+						}
+					);
+				} catch (e) {
+					// Log any errors that occur during JSON parsing
+					console.error("Error in axios.interceptors.response", e);
+				}
+			}
+			// If the request was satisfied (application/json and presence of BigInt) return the modified object. If not, we return unchanged object
 			return response;
 		}, function (error) {
 			that.popNetworkingIndicator();
