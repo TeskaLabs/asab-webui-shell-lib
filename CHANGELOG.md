@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 25.1.11
+
+- Upgrade axios peer dependency to `^1.8.4` (!9)
+
 ## 25.1.10
 
 - Saving BigInt number in `axios.interceptors` if the type is `application/json` (!6)
