@@ -364,6 +364,16 @@ class Application extends Component {
 			return response;
 		}, function (error) {
 			that.popNetworkingIndicator();
+
+			const contentType = error?.response?.headers?.['content-type'];
+			if (contentType?.startsWith('application/json') && (typeof error.response.data === 'string')) {
+				try {
+					error.response.data = JSON.parse(error.response.data);
+				} catch (e) {
+					console.error("Error parsing error of the error body:", e);
+				}
+			}
+
 			return Promise.reject(error);
 		});
 
