@@ -364,8 +364,8 @@ class Application extends Component {
 			return response;
 		}, function (error) {
 			that.popNetworkingIndicator();
-
 			const contentType = error?.response?.headers?.['content-type'];
+			// Check if the response content type is 'application/json' and data is a string
 			if (contentType?.startsWith('application/json') && (typeof error.response.data === 'string')) {
 				try {
 					error.response.data = JSON.parse(error.response.data);
