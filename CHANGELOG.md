@@ -2,7 +2,7 @@
 
 ## 25.1.12
 
-- Upgrade parsing for error.response.data (!11)
+- Added parsing for `error.response.data` in `axios.interceptors` if `content-type: application/json` (!11)
 
 ## 25.1.11
 
