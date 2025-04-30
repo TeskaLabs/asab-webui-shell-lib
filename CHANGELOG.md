@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 25.1.12
+
+- Extension of the condition for bigint handling, do not turn numbers not exceeding the limits into bigint numbers (!12)
+
 ## 25.1.11
 
 - Upgrade axios peer dependency to `^1.8.4` (!9)
