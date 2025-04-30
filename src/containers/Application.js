@@ -347,7 +347,7 @@ class Application extends Component {
 								return value
 							}
 							// Check if the key is in the `JSONParseBigInt` set and the value is a number
-							if (that.JSONParseBigInt.has(key) && (typeof value === 'number')) {
+							if (that.JSONParseBigInt.has(key) && (typeof value === 'number') && (value > Number.MAX_SAFE_INTEGER || value < Number.MIN_SAFE_INTEGER)) {
 								// Convert the number to a BigInt
 								return BigInt(context.source);
 							}
