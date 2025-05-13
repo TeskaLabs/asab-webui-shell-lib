@@ -1,5 +1,16 @@
 module.exports = {
-	presets: ["@babel/preset-env", "@babel/preset-react"],
+	presets: [
+		[
+			"@babel/preset-env",
+			{
+				targets: {
+					esmodules: true, // Targeting modern environments that support ESModules
+				},
+				shippedProposals: true, // Allows modern (proposed/not widely implemented) features like BigInt regardless the environment
+			}
+		],
+		"@babel/preset-react"
+	],
 	plugins: [
 		"@babel/plugin-transform-runtime",
 		[
