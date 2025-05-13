@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 25.1.13
+
+- Updated import for isAuthorized from `asab_webui_components` to `asab_webui_components/seacat-auth` (!13)
+
 ## 25.1.12
 
 - Added parsing for `error.response.data` in `axios.interceptors` if `content-type: application/json` (!11)
