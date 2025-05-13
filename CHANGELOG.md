@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 25.1.13
+
+- Update babel.config to allow handling recent features like BigInt on compilation (#14)
+
 ## 25.1.12
 
 - Added parsing for `error.response.data` in `axios.interceptors` if `content-type: application/json` (!11)
