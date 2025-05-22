@@ -2,7 +2,7 @@ import React from 'react'
 import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { isAuthorized } from 'asab_webui_components';
+import { isAuthorized } from 'asab_webui_components/seacat-auth';
 
 import {
 	UncontrolledDropdown,
