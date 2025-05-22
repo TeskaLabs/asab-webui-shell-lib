@@ -1,8 +1,12 @@
 # CHANGELOG for ASAB WebUI Shell
 
-## 25.1.13
+## 25.2.1
 
 - Updated import for isAuthorized from `asab_webui_components` to `asab_webui_components/seacat-auth` (!13)
+
+## 25.1.13
+
+- Update babel.config to allow handling recent features like BigInt on compilation (#14)
 
 ## 25.1.12
 
