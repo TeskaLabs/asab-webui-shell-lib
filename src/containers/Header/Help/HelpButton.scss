@@ -2,10 +2,6 @@
 
 	max-width: 960px;
 
-	.iframe-container {
-		position: relative;
-	}
-
 	.help-iframe {
 		width: 100%;
 		height: 80vh;
@@ -13,15 +9,9 @@
 		border: 0;
 	}
 
-	.iframe-loading-overlay {
+	.iframe-loading-spinner {
 		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		display: flex;
-		justify-content: center;
-		align-items: center;
+		inset: 0;
 	}
 }
 
