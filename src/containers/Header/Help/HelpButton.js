@@ -65,18 +65,20 @@ export default function HelpButton() {
 						</Button>
 					</CardHeader>
 					<CardBody>
-						{isIframeLoading && (
-							<div className='iframe-loading-overlay'>
-								<Spinner />
-							</div>
-							)}
-						<iframe
-							className="help-iframe"
-							src={path}
-							onLoad={handleIframeLoad}
-							onError={handleIframeError}
-							style={{ opacity: isIframeLoading ? 0 : 1 }}
-							/>
+						<div className='iframe-container'>
+							{isIframeLoading && (
+								<div className='iframe-loading-overlay'>
+									<Spinner />
+								</div>
+								)}
+							<iframe
+								className="help-iframe"
+								src={path}
+								onLoad={handleIframeLoad}
+								onError={handleIframeError}
+								style={{ opacity: isIframeLoading ? 0 : 1 }}
+								/>
+						</div>
 					</CardBody>
 				</Card>
 			</Modal>
