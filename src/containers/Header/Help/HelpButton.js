@@ -70,7 +70,13 @@ export default function HelpButton() {
 								<Spinner />
 							</div>
 							)}
-						<iframe className="help-iframe" src={path} onLoad={handleIframeLoad} onError={handleIframeError}/>
+						<iframe
+							className="help-iframe"
+							src={path}
+							onLoad={handleIframeLoad}
+							onError={handleIframeError}
+							style={{ opacity: isIframeLoading ? 0 : 1 }}
+							/>
 					</CardBody>
 				</Card>
 			</Modal>
