@@ -7,6 +7,8 @@ import {
 	NavLink,
 	Button, Card, CardHeader, CardBody
 } from 'reactstrap';
+import { Spinner } from 'asab_webui_components';
+
 
 import './HelpButton.scss';
 
@@ -14,11 +16,21 @@ export default function HelpButton() {
 	const {t} = useTranslation();
 
 	const [modal, setModal] = useState(false);
+	const [isIframeLoading, setIsIframeLoading] = useState(true);
 
 	const path = useSelector(state => state?.header.helpPath);
 	if (path == undefined) return null;
 
-	const toggle = () => setModal(!modal);
+	const toggle = () => {
+		setModal(!modal);
+		if(!modal) {
+			setIsIframeLoading(true);
+		}
+	}
+
+	const handleIframeLoad = () => {
+	  setIsIframeLoading(false);
+	}
 
 	return (
 		<>
@@ -49,7 +61,18 @@ export default function HelpButton() {
 						</Button>
 					</CardHeader>
 					<CardBody>
-						<iframe className="help-iframe" src={path} />
+						{isIframeLoading && (
+							<div className='d-flex justify-content-center align-items-center help-iframe'>
+								<Spinner />
+							</div>
+						)}
+						<iframe
+							className="help-iframe"
+							src={path}
+							onLoad={handleIframeLoad}
+							onError={handleIframeLoad}
+							style={{ display: isIframeLoading ? 'none' : '' }}
+						/>
 					</CardBody>
 				</Card>
 			</Modal>
