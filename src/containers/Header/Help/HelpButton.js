@@ -32,10 +32,6 @@ export default function HelpButton() {
 	  setIsIframeLoading(false);
 	}
 
-	const handleIframeError = () => {
-	  setIsIframeLoading(false);
-	}
-
 	return (
 		<>
 			<NavLink
@@ -64,9 +60,9 @@ export default function HelpButton() {
 							<i className="bi bi-x-lg"></i>
 						</Button>
 					</CardHeader>
-					<CardBody style={{ position: 'relative'}}>
+					<CardBody>
 						{isIframeLoading && (
-							<div className='d-flex justify-content-center align-items-center iframe-loading-spinner'>
+							<div className='d-flex justify-content-center align-items-center help-iframe'>
 								<Spinner />
 							</div>
 						)}
@@ -74,9 +70,9 @@ export default function HelpButton() {
 							className="help-iframe"
 							src={path}
 							onLoad={handleIframeLoad}
-							onError={handleIframeError}
-							style={{ opacity: isIframeLoading ? 0 : 1 }}
-							/>
+							onError={handleIframeLoad}
+							style={{ display: isIframeLoading ? 'none' : '' }}
+						/>
 					</CardBody>
 				</Card>
 			</Modal>
