@@ -22,15 +22,18 @@ export default function HelpButton() {
 	if (path == undefined) return null;
 
 	const toggle = () => {
-		setModal(!modal);
-		if(!modal) {
-			setIsIframeLoading(true);
-		}
-	}
+		setModal(prev => {
+			const newModal = !prev;
+			if (newModal) {
+				setIsIframeLoading(true)
+			}
+			return newModal;
+		})
+	};
 
 	const handleIframeLoad = () => {
 	  setIsIframeLoading(false);
-	}
+	};
 
 	return (
 		<>
