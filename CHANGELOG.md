@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 25.1.14
+
+- Add styles folder from asab_webui_components_lib (#16)
+
 ## 25.1.13
 
 - Update babel.config to allow handling recent features like BigInt on compilation (#14)
