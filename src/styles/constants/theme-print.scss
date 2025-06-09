@@ -1,0 +1,201 @@
+@page print-portrait {
+	size: portrait;
+}
+@media print {
+	@page {
+		size: A4 landscape;
+		margin: 2cm 1cm 1.5cm;
+	}
+
+	.print-portrait {
+		page: print-portrait;
+	}
+
+	// Dont display page scrollbar in chrome
+	::-webkit-scrollbar {
+		display: none;
+	}
+
+	/* Needed for background color of status indicator widget */
+	html {
+		-webkit-print-color-adjust: exact;
+	}
+
+	body {
+		position: relative !important;
+		height: auto;
+		background: none !important;
+
+		--bs-primary: var(--royal-blue);
+		--bs-primary-rgb: var(--royal-blue-rgb);
+
+		--bs-secondary: var(--lavender-mist);
+		--bs-secondary-rgb: var(--lavender-mist-rgb);
+
+		--bs-light: var(--polar-mist);
+		--bs-light-rgb: var(--polar-mist-rgb);
+
+		--bs-dark: var(--deep-space-blue);
+		--bs-dark-rgb: var(--deep-space-blue-rgb);
+
+		--bs-link-color: var(--royal-blue);
+		--bs-link-color-rgb: var(--royal-blue-rgb);
+
+		--bs-link-hover-color: var(--royal-blue);
+		--bs-link-hover-color-rgb: var(--royal-blue-rgb);
+
+		--bs-code-color: var(--teal);
+		--bs-code-color-rgb: var(--teal-rgb);
+
+		--bs-body-bg: var(--polar-mist);
+		--bs-body-bg-rgb: var(--polar-mist-rgb);
+
+		--bs-body-color: var(--black);
+		--bs-body-color-rgb: var(--black-rgb);
+
+		--bs-border-color: var(--lavender-mist);
+		--bs-border-color-rgb: var(--lavender-mist-rgb);
+
+		--bs-input-bg-color: var(--white);
+		--bs-input-bg-color-rgb: var(--white-rgb);
+
+		--bs-element-bg-color: var(--white);
+		--bs-element-bg-color-rgb: var(--white-rgb);
+
+		--bs-table-color: var(--bs-dark);
+
+		--table-row-hover-bg-color: var(--soft-gray);
+		--table-row-hover-bg-color-rgb: var(--soft-gray-rgb);
+
+		&.print-portrait {
+			width: 900px;
+		}
+	}
+
+	#app {
+		height: 100%;
+		overflow: visible;
+		display: block;
+	}
+
+	button, .btn-sm, .btn .btn-primary, .btn-primary {
+		display: none !important;
+	}
+
+	.card {
+		box-shadow: none !important;
+		border: 0 !important;
+		.card-header {
+			background-color: var(--white);
+			&.print-card-header {
+				min-height: auto;
+				.flex-fill {
+					height: auto;
+				}
+			}
+
+			i:not(.text-warning) {
+				display: none !important;
+			}
+			h3 {
+				font-size: 32px !important;
+			}
+		}
+		.card-body {
+			color: inherit !important;
+		}
+		.card-footer, .card-footer-flex, .input-group {
+			display: none !important;
+		}
+	}
+
+	.datatable2 {
+		margin-bottom: 0;
+		table-layout: auto;
+		td, th {
+			font-size: 12px;
+			padding: .25rem;
+		}
+		td {
+			white-space: normal;
+			& > * {
+				white-space: normal;
+			}
+		}
+		tr {
+			page-break-inside: avoid;
+		}
+		tfoot {
+			display: none;
+		}
+	}
+
+	.text-muted {
+		color: var(--bs-gray-700) !important;
+	}
+
+	.container {
+		max-width: 100% !important;
+	}
+
+	.progress-bar {
+		display: none !important;
+	}
+
+	table, .table {
+		--bs-table-color: var(--bs-dark);
+	}
+
+	.react-grid-item {
+		.recharts-tooltip-wrapper {
+			display: none !important;
+		}
+		.table-widget, .value-widget {
+			display: contents !important;
+		}
+	}
+
+
+	.reports-container {
+		padding-top: 0 !important;
+		.react-grid-layout {
+			height: unset !important;
+			display: table;
+			text-align: center;
+			.react-grid-item {
+				display: inline-block;
+				position: unset !important;
+				transform: unset !important;
+				text-align: initial;
+			}
+		}
+	}
+
+	.dashboard-container {
+		&.display-print {
+			.react-grid-layout {
+				position: static !important;
+				height: initial !important;
+				.react-grid-item {
+					display: block !important; /*avoid widgets breaking on transition between pages*/
+					margin: 0 auto 20px;
+					position: static !important;
+
+					height: initial !important; /* Alternatively, set "height: initial !important;" */
+					width: initial !important; /* Alternatively, set "width: initial !important;" */
+
+					break-inside: avoid;
+					page-break-inside: avoid; /*avoid widgets breaking on transition between pages*/
+				}
+			}
+			.recharts-responsive-container {
+				.recharts-wrapper {
+					width: 100% !important;
+					.recharts-surface, .recharts-legend-wrapper {
+						width: 100% !important;
+					}
+				}
+			}
+		}
+	}
+}

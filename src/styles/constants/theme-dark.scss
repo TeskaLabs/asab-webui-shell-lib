@@ -1,0 +1,62 @@
+// Set only `--bs-*-color` and `--bs-*-color-rgb` variables from Bootstrap 5
+// https://getbootstrap.com/docs/5.3/customize/css-variables/
+
+[data-bs-theme=dark] {
+
+	/* Bootstrap color variables */
+
+	--bs-primary: var(--soft-sky-blue);
+	--bs-primary-rgb: var(--soft-sky-blue-rgb);
+
+	--bs-secondary: var(--lavender-mist);
+	--bs-secondary-rgb: var(--lavender-mist-rgb);
+
+	--bs-light: var(--polar-mist);
+	--bs-light-rgb: var(--polar-mist-rgb);
+
+	--bs-dark: var(--deep-space-blue);
+	--bs-dark-rgb: var(--deep-space-blue-rgb);
+
+	--bs-link-color: var(--soft-sky-blue);
+	--bs-link-color-rgb: var(--soft-sky-blue-rgb);
+
+	--bs-link-hover-color: var(--pastel-sky-blue);
+	--bs-link-hover-color-rgb: var(--pastel-sky-rgb);
+
+	--bs-code-color: var(--tropical-rainforest);
+	--bs-code-color-rgb: var(--tropical-rainforest-rgb);
+
+	--bs-body-bg: var(--deep-space-blue);
+	--bs-body-bg-rgb: var(--deep-space-blue-rgb);
+
+	--bs-body-color: var(--pastel-sky-blue);
+	--bs-body-color-rgb: var(--pastel-sky-blue-rgb);
+
+	--bs-border-color: var(--deep-ocean-blue);
+	--bs-border-color-rgb: var(--deep-ocean-blue-rgb);
+
+	--bs-input-bg-color: var(--midnight-blue);
+	--bs-input-bg-color-rgb: var(--midnight-blue);
+
+	--bs-element-bg-color: var(--nightfall-blue);
+	--bs-element-bg-color-rgb: var(--nightfall-blue);
+
+	--bs-alert-info-color: var(--deep-space-blue);
+	--bs-alert-info-color-rgb: var(--deep-space-blue-rgb);
+
+	/* Non bootstrap color variables */
+
+	--table-row-hover-bg-color: var(--charcoal-blue);
+	--table-row-hover-bg-color-rgb: var(--charcoal-blue-rgb);
+}
+
+[data-bs-theme=dark] {
+	.progress-bar {
+		--bs-progress-bar-color: var(--white);
+		--bs-progress-bar-bg: var(--soft-sky-blue);
+	}
+
+	.badge.bg-info {
+		--bs-badge-color: var(--deep-space-blue);
+	}
+}

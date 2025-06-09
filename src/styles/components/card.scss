@@ -1,0 +1,174 @@
+[data-bs-theme=dark] .card {
+	--bs-card-cap-bg: unset;
+}
+
+.card {
+	--bs-card-border-color: var(--bs-border-color);
+	--bs-card-cap-bg: var(--white);
+	--bs-card-cap-padding-y: 0.9rem;
+
+	> .card-header h3,  > .card-header-flex h3 {
+		font-size: 1.2rem;
+		color: var(--bs-body-color);
+	}
+
+	button[class*="btn-outline"],
+	button[class*="btn-outline"]:disabled {
+		--bs-btn-border-color: inherit;
+	}
+}
+
+$card-flex-height: 3.2rem;
+
+// Extending `.card-header` class to accept flex sub-items
+.card-header-flex {	
+	// @extend .d-flex from bootstrap
+	display: flex !important;
+
+	// @extend .align-items-center from bootstrap
+	align-items: center !important;
+
+	min-height: $card-flex-height; // The height must be set for flex class
+
+	// @extend .card-header from bootstrap
+	color: var(--bs-card-cap-color);
+	background-color: var(--bs-card-cap-bg);
+	border-bottom: var(--bs-card-border-width) solid var(--bs-card-border-color);
+
+	padding: 0;
+	margin: 0;
+
+	> * {
+		padding: 0 var(--bs-card-cap-padding-x);
+
+		display: flex;
+		height: $card-flex-height;
+		flex-direction: column;
+		justify-content: center;
+	}
+
+	> .btn {
+		--bs-btn-border-color: transparent;
+		border-radius: 0;
+
+		&:first-child {
+			border-radius: var(--bs-border-radius) 0 0 0;
+		}
+
+		&:last-child {
+			border-radius: 0 var(--bs-border-radius) 0 0;
+		}
+	}
+
+	> .dropdown {
+		padding: 0;
+
+		&:first-child > .btn {
+			border-radius: var(--bs-border-radius) 0 0 0;
+		}
+
+		&:last-child > .btn {
+			border-radius: 0 var(--bs-border-radius) 0 0;
+		}
+
+		.dropdown-toggle {
+			--bs-btn-border-color: transparent;
+			border-radius: 0;
+			height: 100%;
+		}
+	}
+
+	> .nav {
+		padding: 0;
+		display: contents;
+
+		.nav-item a {
+			border: none;
+			background: inherit;
+			border-bottom: 2px solid transparent;
+		}
+
+		.nav-item a:hover {
+			cursor: pointer;
+			border-bottom: 2px solid var(--bs-secondary);
+		}
+
+		.nav-item a.active {
+			border-bottom: 2px solid var(--bs-primary);
+		}
+	}
+
+	h2, h3, h4, h5, h6 {
+		margin-bottom: 0;
+	}
+}
+
+
+.card-footer-flex {	
+	// @extend .d-flex from bootstrap
+	display: flex!important;
+
+	// @extend .align-items-center from bootstrap
+	align-items: center!important;
+
+	min-height: $card-flex-height; // The height must be set for flex class
+
+	// @extend .card-header from bootstrap
+	color: var(--bs-card-cap-color);
+	background-color: var(--bs-card-cap-bg);
+	border-top: var(--bs-card-border-width) solid var(--bs-card-border-color);
+
+	padding: 0;
+	margin: 0;
+
+	> * {
+		padding: 0 var(--bs-card-cap-padding-x);
+
+		display: flex;
+		height: $card-flex-height;
+		flex-direction: column;
+		justify-content: center;
+	}
+
+	> .btn {
+		--bs-btn-border-color: transparent;
+		border-radius: 0;
+
+		&:first-child {
+			border-radius: 0 0 0 var(--bs-border-radius);
+		}
+
+		&:last-child {
+			border-radius: 0 0 var(--bs-border-radius) 0;
+		}
+	}
+
+
+	> .dropdown {
+		padding: 0;
+
+		&:first-child > .btn {
+			border-radius: 0 0 0 var(--bs-border-radius);
+		}
+
+		&:last-child > .btn {
+			border-radius: 0 0 var(--bs-border-radius) 0;
+		}
+
+		.dropdown-toggle {
+			--bs-btn-border-color: transparent;
+			border-radius: 0;
+			height: 100%;
+		}
+	}
+}
+
+// Styles for enabling fullscreen mode covering header and sidebar
+.card-fullscreen {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	z-index: 9999;
+}

@@ -5,6 +5,8 @@ export { default as TenantModule } from './modules/tenant';
 export { default as AuthModule } from './modules/auth';
 export { default as AboutModule } from './modules/about';
 
+import './styles/index.scss';
+
 // TODO: resolve styling by maybe creating a shared styles library?
 
 // require('asab_webui_components/styles/index.scss'); // Not working in the lib env

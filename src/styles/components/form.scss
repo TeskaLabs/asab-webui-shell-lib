@@ -1,0 +1,20 @@
+.form-control, .form-select, .form-check-input {
+	font-size: var(--bs-body-font-size);
+	border-radius: 0px;
+	background-color: var(--bs-input-bg-color);
+	&:focus {
+		box-shadow: none;
+	}
+}
+
+.form-select, .form-check-input {
+	cursor: pointer;
+	&:disabled {
+		cursor: default;
+	}
+}
+
+.form-select option:checked {
+	color: white;
+	background-color: var(--bs-primary);
+}
