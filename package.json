@@ -45,8 +45,8 @@
 	"peerDependencies": {
 		"asab_webui_components": "^25.1.1",
 		"@babel/runtime": "^7.22.11",
-		"react": "^17.0.0",
-		"react-dom": "^17.0.0",
+		"react": "^19.0.0",
+		"react-dom": "^19.0.0",
 		"axios": "^1.8.4",
 		"i18next": "^20.3.5",
 		"react-i18next": "^11.8.12",
