@@ -21,6 +21,11 @@
 		-webkit-print-color-adjust: exact;
 	}
 
+	// Needed for Chrome, so that background is always white
+	[data-bs-theme=dark] {
+		color-scheme: light;
+	}
+
 	body {
 		position: relative !important;
 		height: auto;
