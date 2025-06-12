@@ -1,6 +1,6 @@
 # CHANGELOG for ASAB WebUI Shell
 
-## 25.1.14
+## 25.2.1
 
 - Add styles folder from asab_webui_components_lib (#16)
 
