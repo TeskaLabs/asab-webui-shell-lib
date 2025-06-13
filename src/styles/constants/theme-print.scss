@@ -75,132 +75,133 @@
 		&.print-portrait {
 			width: 900px;
 		}
-	}
 
-	#app {
-		height: 100%;
-		overflow: visible;
-		display: block;
-	}
+		#app {
+			height: 100%;
+			overflow: visible;
+			display: block;
+		}
 
-	button, .btn-sm, .btn .btn-primary, .btn-primary {
-		display: none !important;
-	}
+		button, .btn-sm, .btn .btn-primary, .btn-primary {
+			display: none !important;
+		}
 
-	.card {
-		box-shadow: none !important;
-		border: 0 !important;
-		.card-header {
-			background-color: var(--white);
-			&.print-card-header {
-				min-height: auto;
-				.flex-fill {
-					height: auto;
+		.card {
+			box-shadow: none !important;
+			border: 0 !important;
+			.card-header {
+				background-color: var(--white);
+				&.print-card-header {
+					min-height: auto;
+					.flex-fill {
+						height: auto;
+					}
+				}
+
+				i:not(.text-warning) {
+					display: none !important;
+				}
+				h3 {
+					font-size: 32px !important;
 				}
 			}
-
-			i:not(.text-warning) {
+			.card-body {
+				color: inherit !important;
+			}
+			.card-footer, .card-footer-flex, .input-group {
 				display: none !important;
 			}
-			h3 {
-				font-size: 32px !important;
-			}
 		}
-		.card-body {
-			color: inherit !important;
-		}
-		.card-footer, .card-footer-flex, .input-group {
-			display: none !important;
-		}
-	}
 
-	.datatable2 {
-		margin-bottom: 0;
-		table-layout: auto;
-		td, th {
-			font-size: 12px;
-			padding: .25rem;
-		}
-		td {
-			white-space: normal;
-			& > * {
+		.datatable2 {
+			margin-bottom: 0;
+			table-layout: auto;
+			td, th {
+				font-size: 12px;
+				padding: .25rem;
+			}
+			td {
 				white-space: normal;
-			}
-		}
-		tr {
-			page-break-inside: avoid;
-		}
-		tfoot {
-			display: none;
-		}
-	}
-
-	.text-muted {
-		color: var(--bs-gray-700) !important;
-	}
-
-	.container {
-		max-width: 100% !important;
-	}
-
-	.progress-bar {
-		display: none !important;
-	}
-
-	table, .table {
-		--bs-table-color: var(--bs-dark);
-	}
-
-	.react-grid-item {
-		.recharts-tooltip-wrapper {
-			display: none !important;
-		}
-		.table-widget, .value-widget {
-			display: contents !important;
-		}
-	}
-
-
-	.reports-container {
-		padding-top: 0 !important;
-		.react-grid-layout {
-			height: unset !important;
-			display: table;
-			text-align: center;
-			.react-grid-item {
-				display: inline-block;
-				position: unset !important;
-				transform: unset !important;
-				text-align: initial;
-			}
-		}
-	}
-
-	.dashboard-container {
-		&.display-print {
-			.react-grid-layout {
-				position: static !important;
-				height: initial !important;
-				.react-grid-item {
-					display: block !important; /*avoid widgets breaking on transition between pages*/
-					margin: 0 auto 20px;
-					position: static !important;
-
-					height: initial !important; /* Alternatively, set "height: initial !important;" */
-					width: initial !important; /* Alternatively, set "width: initial !important;" */
-
-					break-inside: avoid;
-					page-break-inside: avoid; /*avoid widgets breaking on transition between pages*/
+				& > * {
+					white-space: normal;
 				}
 			}
-			.recharts-responsive-container {
-				.recharts-wrapper {
-					width: 100% !important;
-					.recharts-surface, .recharts-legend-wrapper {
+			tr {
+				page-break-inside: avoid;
+			}
+			tfoot {
+				display: none;
+			}
+		}
+
+		.text-muted {
+			color: var(--bs-gray-700) !important;
+		}
+
+		.container {
+			max-width: 100% !important;
+		}
+
+		.progress-bar {
+			display: none !important;
+		}
+
+		table, .table {
+			--bs-table-color: var(--bs-dark);
+		}
+
+		.react-grid-item {
+			.recharts-tooltip-wrapper {
+				display: none !important;
+			}
+			.table-widget, .value-widget {
+				display: contents !important;
+			}
+		}
+
+
+		.reports-container {
+			padding-top: 0 !important;
+			.react-grid-layout {
+				height: unset !important;
+				display: table;
+				text-align: center;
+				.react-grid-item {
+					display: inline-block;
+					position: unset !important;
+					transform: unset !important;
+					text-align: initial;
+				}
+			}
+		}
+
+		.dashboard-container {
+			&.display-print {
+				.react-grid-layout {
+					position: static !important;
+					height: initial !important;
+					.react-grid-item {
+						display: block !important; /*avoid widgets breaking on transition between pages*/
+						margin: 0 auto 20px;
+						position: static !important;
+
+						height: initial !important; /* Alternatively, set "height: initial !important;" */
+						width: initial !important; /* Alternatively, set "width: initial !important;" */
+
+						break-inside: avoid;
+						page-break-inside: avoid; /*avoid widgets breaking on transition between pages*/
+					}
+				}
+				.recharts-responsive-container {
+					.recharts-wrapper {
 						width: 100% !important;
+						.recharts-surface, .recharts-legend-wrapper {
+							width: 100% !important;
+						}
 					}
 				}
 			}
 		}
 	}
+
 }
