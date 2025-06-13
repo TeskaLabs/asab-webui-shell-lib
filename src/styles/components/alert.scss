@@ -1,0 +1,53 @@
+.alert {
+	border: none;
+	--bs-alert-padding-y: 0.75rem;
+	>.btn-close {
+		padding: 1rem;
+	}
+}
+
+[data-bs-theme=dark] {
+	.alert {
+		color: inherit;
+	}
+
+	.alert- {
+
+		&primary {
+			background-color: rgba(var(--bs-primary-rgb));
+		}
+
+		&secondary {
+			background-color: rgba(var(--bs-secondary-rgb));
+		}
+
+		&success {
+			background-color: rgba(var(--bs-success-rgb));
+		}
+
+		&danger {
+			background-color: rgba(var(--bs-danger-rgb));
+		}
+
+		&warning {
+			background-color: rgba(var(--bs-warning-rgb));
+		}
+
+		&info {
+			background-color: rgba(var(--bs-info-rgb));
+			color: rgba(var(--bs-alert-info-color-rgb));
+			> .btn-close {
+				// This will align color of close btn with text color
+				filter: unset;
+			}
+		}
+
+		&light {
+			background-color: rgba(var(--bs-light-rgb));
+		}
+
+		&dark {
+			background-color: rgba(var(--bs-dark-rgb));
+		}
+	}
+}
