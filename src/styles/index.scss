@@ -1,0 +1,15 @@
+// This is the styling entry point
+
+@use './constants';
+
+@use './components/html';
+@use './components/card';
+@use './components/alert';
+@use './components/button.scss';
+@use './components/form';
+
+// Import default bootstrap styles
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+// Bootstrap icons import
+@import 'bootstrap-icons/font/bootstrap-icons.min.css';
