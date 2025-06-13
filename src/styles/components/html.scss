@@ -1,0 +1,18 @@
+a {
+	text-decoration: none;
+}
+
+hr {
+	border-top: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color);
+	opacity: 1;
+}
+
+pre code {
+	color: var(--bs-code-color);  // The colour of the pre-formatted code has to match <code>
+	tab-size: 4;
+}
+
+code {
+	font-size: var(--asab-monospace-font-size);
+	tab-size: 4;
+}
