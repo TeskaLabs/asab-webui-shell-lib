@@ -1,0 +1,69 @@
+// Colors for themes
+// IMPORTANT: Always enter two variants (hex and RGB)
+
+:root {
+	--soft-sky-blue: #7A9CFF; // The link color for a dark theme
+	--soft-sky-blue-rgb: 122, 156, 255;
+
+	--pastel-sky-blue: #DBEEFF; // The link-hover color and body-bg color for a dark theme
+	--pastel-sky-blue-rgb: 219, 238, 255;
+
+	--deep-space-blue: #0E1426; // The dark for a light, dark theme and dark for body bg, tertiary color for a light theme
+	--deep-space-blue-rgb: 14, 20, 38;
+
+	--nightfall-blue: #19223f; // The card-bg and table-bg color for a dark theme
+
+	--deep-ocean-blue: #24366D; // The border and card-border color for dark theme
+	--deep-ocean-blue-rgb: 36, 54, 109;
+
+	--polar-mist: #F3F4FA; // The light for a light and dark theme
+	--polar-mist-rgb: 243, 244, 250;
+
+	--white: #FFFFFF; // The card-bg, table-bg, input-bg color for light theme
+	--white-rgb: 255, 255, 255;
+
+	--royal-blue: #315EE3; // The link and primary color for a light theme
+	--royal-blue-rgb: 49, 94, 227;
+
+	--tropical-rainforest: #3DC9B0;  // Corresponds with vs-dark color (from the Monaco editor)
+	--tropical-rainforest-rgb: 61, 201, 176;
+
+	--teal: #008080; // Corresponds with vs color (from the Monaco editor)
+	--teal-rgb: 0 128 128;
+
+	--lavender-mist: #DDE1F8; // The secondary for a light and dark theme, the border-color for light theme
+	--lavender-mist-rgb: 221, 225, 248;
+
+	--vibrant-magenta: #d63384; // The code color for light theme
+	--vibrant-magenta-rgb: 214, 51, 132;
+
+	--black: #000000; // The body-color for light theme
+	--black-rgb: 0, 0, 0;
+
+	--midnight-blue: #131C37; // The input-bg color for a dark theme
+	--midnight-blue-rgb: 19, 28, 55;
+
+	--slate-smoke: #6a6a6a8f; // The color of the disabled item text in the TreeMenu
+	--slate-smoke-rgb: 106, 106, 106;
+
+	--light-honey: #ffe082; // The color of the lowest Alert severity
+	--light-honey-rgb: 255, 224, 130;
+
+	--bright-orange: #ff9800; // The color of the medium Alert severity
+	--bright-orange-rgb: 255, 125, 0;
+
+	--fiery-sunset: #ff5722; // The color of the high Alert severity
+	--fiery-sunset-rgb: 255, 87, 34;
+
+	--charcoal: #494949; // Console background dark theme
+	--charcoal-rgb: 0, 43, 54;
+
+	--old-lace: #FDF6E3; // Console background light theme
+	--old-lace-rgb: 253, 246, 227;
+
+	--gainsboro: #E0E0E0; // Console font color for dark theme
+	--gainsboro-rgb: rgb(224, 224, 224);
+
+	--moody-blues: #586E75; // Console font color for light theme
+	--moody-blues-rgb: rgb(88, 110, 117);
+}
