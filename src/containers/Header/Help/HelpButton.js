@@ -32,7 +32,7 @@ export default function HelpButton() {
 	};
 
 	const handleIframeLoad = () => {
-	  setIsIframeLoading(false);
+		setIsIframeLoading(false);
 	};
 
 	return (
