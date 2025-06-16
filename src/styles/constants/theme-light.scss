@@ -1,0 +1,53 @@
+// Set only `--bs-*-color` and `--bs-*-color-rgb` variables from Bootstrap 5
+// https://getbootstrap.com/docs/5.3/customize/css-variables/
+
+:root, [data-bs-theme=light] {
+
+	/* Bootstrap color variables */
+
+	--bs-primary: var(--royal-blue);
+	--bs-primary-rgb: var(--royal-blue-rgb);
+
+	--bs-secondary: var(--lavender-mist);
+	--bs-secondary-rgb: var(--lavender-mist-rgb);
+
+	--bs-light: var(--polar-mist);
+	--bs-light-rgb: var(--polar-mist-rgb);
+
+	--bs-dark: var(--deep-space-blue);
+	--bs-dark-rgb: var(--deep-space-blue-rgb);
+
+	--bs-link-color: var(--royal-blue);
+	--bs-link-color-rgb: var(--royal-blue-rgb);
+
+	--bs-link-hover-color: var(--royal-blue);
+	--bs-link-hover-color-rgb: var(--royal-blue-rgb);
+
+	--bs-code-color: var(--teal);
+	--bs-code-color-rgb: var(--teal-rgb);
+
+	--bs-body-bg: var(--polar-mist);
+	--bs-body-bg-rgb: var(--polar-mist-rgb); 
+
+	--bs-body-color: var(--black);
+	--bs-body-color-rgb: var(--black-rgb);
+
+	--bs-border-color: var(--lavender-mist);
+	--bs-border-color-rgb: var(--lavender-mist-rgb);
+
+	--bs-input-bg-color: var(--white);
+	--bs-input-bg-color-rgb: var(--white-rgb);
+
+	--bs-element-bg-color: var(--white);
+	--bs-element-bg-color-rgb: var(--white-rgb);
+
+	/* Non bootstrap color variables */
+
+	--table-row-hover-bg-color: var(--soft-gray);
+	--table-row-hover-bg-color-rgb: var(--soft-gray-rgb);
+}
+
+:root, [data-bs-theme=light] .progress-bar {
+	--bs-progress-bar-color: var(--white);
+	--bs-progress-bar-bg: var(--royal-blue);
+}

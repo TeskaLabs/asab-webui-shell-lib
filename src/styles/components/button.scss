@@ -1,0 +1,105 @@
+[class^="btn btn-"] {
+	border: none;
+}
+
+.btn {
+	--bs-btn-font-size: var(--bs-body-font-size);
+	--bs-btn-border-radius: 0px;  // No radius for buttons
+	--bs-btn-border-color: transparent; // No border color for buttons
+}
+
+.btn-link {
+	text-decoration: none;
+}
+
+[class^="btn btn-outline"].disabled {
+	//this will enable pointer events, so the 'title' attribute is shown on hover
+	pointer-events: auto;
+	cursor: default;
+	
+	&:hover {
+		background-color: unset;
+		filter: unset;
+	}
+
+	&:active {
+		--bs-btn-active-color: var(--bs-btn-disabled-color);
+		filter: unset;
+	}
+}
+
+[class^="btn"].btn.disabled {
+		//this will enable pointer events, so the 'title' attribute is shown on hover
+		pointer-events: auto;
+		cursor: default;
+		
+		&:hover {
+			filter: unset;
+		}
+
+		&:active {
+			//background should not change on :active to appear still disabled
+			--bs-btn-active-bg: var(--bs-btn-disabled-bg);
+			filter: unset;
+		}
+}
+
+.btn-primary {
+	--bs-btn-bg: var(--royal-blue);
+}
+
+.btn-outline-primary{
+	--bs-btn-color: var(--royal-blue);
+	&:active {
+		--bs-btn-active-bg: var(--royal-blue);
+	}
+}
+
+[data-bs-theme=dark] {
+	.btn-primary {
+		--bs-btn-bg: var(--soft-sky-blue);
+	}
+
+	.btn-outline-primary {
+		--bs-btn-color: var(--soft-sky-blue);
+		&:active {
+		--bs-btn-active-bg: var(--soft-sky-blue);
+		}
+	}
+
+	.btn-info {
+		--bs-btn-color: var(--deep-space-blue);
+	}
+}
+
+.btn-primary {
+	&:hover {
+		filter: brightness(80%);    
+	}
+}
+
+.btn-outline- {
+	&primary:hover {
+		background-color: rgba(var(--bs-primary-rgb), 0.75);
+	} 
+
+	&secondary:hover {
+		background-color: rgba(var(--bs-secondary-rgb), 0.75);
+	}
+
+	&success:hover {
+		background-color: rgba(var(--bs-success-rgb), 0.75);
+	}
+
+	&danger:hover {
+		background-color: rgba(var(--bs-danger-rgb), 0.75);
+	}
+
+	&warning:hover {
+		background-color: rgba(var(--bs-warning-rgb), 0.75);
+	}
+
+	&info:hover {
+		background-color: rgba(var(--bs-info-rgb), 0.75);
+	}
+}

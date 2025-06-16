@@ -1,0 +1,70 @@
+@use './colors.scss';
+@use './theme-light.scss';
+@use './theme-dark.scss';
+@use './theme-print.scss';
+
+// Universal styling goes here
+// It means fonts, borders but no colors
+// Set only `--bs-*` variables here.
+
+:root {
+	// Font and typography
+	--bs-font-sans-serif: 'Verdana', sans-serif;
+	--bs-body-font-size: 14px;
+
+	--bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+	--asab-monospace-font-size: 14px;
+
+	--bs-body-line-height: 1.5;
+
+	// Borders
+	--bs-border-radius: 8px;
+	
+}
+
+// Specific components
+
+.list-group {
+	--bs-list-group-bg: transparent;
+}
+
+.dropdown-menu {
+	--bs-dropdown-border-radius: 0px;  // No radius for dropdowns
+	--bs-dropdown-font-size: var(--bs-body-font-size);
+
+	--bs-dropdown-header-color: var(--bs-heading-color);
+	--bs-dropdown-link-color: var(--bs-link-color);
+}
+
+.progress-bar {
+	--bs-progress-height: 16px;
+}
+
+.card {
+	--bs-card-bg: var(--bs-element-bg-color);
+}
+
+.table {
+	--bs-table-bg: var(--bs-body-bg);
+	thead th {
+		/*Setting table header background color*/
+		background-color: transparent;
+	}
+}
+
+.dropdown-menu {
+	--bs-dropdown-bg: var(--bs-element-bg-color);
+}
+
+.input-group-text {
+	border-radius: 0;
+}
+
+.react-json-view {
+	background-color: transparent !important;
+}
+
+/*Fix the position of the monaco hover marker tooltip*/
+.monaco-hover {
+	position: fixed;
+}
