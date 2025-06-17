@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 25.2.3
+
+- Added onLoad event on iframe with help content. Spinner shown while the frame is loading (#15)
+
 ## 25.2.2
 
 - Reimplement styles from asab_webui_components_lib (#16)
