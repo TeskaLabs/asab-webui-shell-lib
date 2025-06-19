@@ -1,8 +1,12 @@
 # CHANGELOG for ASAB WebUI Shell
 
-## 25.2.3
+## 25.2.4
 
 - Updated import for isAuthorized from `asab_webui_components` to `asab_webui_components/seacat-auth` (!13)
+
+## 25.2.3
+
+- Added onLoad event on iframe with help content. Spinner shown while the frame is loading (#15)
 
 ## 25.2.2
 
