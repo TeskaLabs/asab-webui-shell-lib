@@ -1,8 +1,12 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 25.2.5
+
+- Fix on global monaco hover styling, which was compromised by change in order of styles loading due to moving the styles from ASAB Components to ASAB Shell here #16 (#19)
+
 ## 25.2.4
 
-- Updated import for isAuthorized from `asab_webui_components` to `asab_webui_components/seacat-auth` (!13)
+- Updated import for isAuthorized from `asab_webui_components` to `asab_webui_components/seacat-auth` (#13)
 
 ## 25.2.3
 
@@ -18,7 +22,7 @@
 
 ## 25.1.12
 
-- Added parsing for `error.response.data` in `axios.interceptors` if `content-type: application/json` (!11)
+- Added parsing for `error.response.data` in `axios.interceptors` if `content-type: application/json` (#11)
 
 ## 25.1.11
 
