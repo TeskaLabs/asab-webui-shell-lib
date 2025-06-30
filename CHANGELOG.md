@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 25.2.5
+
+- Updated InvitationScreen. Update text and add margin for input (!18)
+
 ## 25.2.4
 
 - Updated import for isAuthorized from `asab_webui_components` to `asab_webui_components/seacat-auth` (!13)
