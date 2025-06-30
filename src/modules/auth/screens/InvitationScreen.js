@@ -83,7 +83,7 @@ export default function InvitationScreen(props) {
 			<FormText>
 				{t('InvitationScreen|If you want to invite the user manually, message them the registration URL below:')}
 			</FormText>
-			<InputGroup>
+			<InputGroup className='m-3'>
 				<Input 
 					readOnly
 					value={registrationUrl}
@@ -164,7 +164,7 @@ export default function InvitationScreen(props) {
 									<div className='flex-fill'>
 										<h3>
 											<i className='bi bi-person-plus pe-2' />
-											{t('InvitationScreen|Invite other users')}
+											{t('InvitationScreen|Invite other user')}
 										</h3>
 									</div>
 								</CardHeader>
