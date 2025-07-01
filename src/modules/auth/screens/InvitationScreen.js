@@ -83,7 +83,7 @@ export default function InvitationScreen(props) {
 			<FormText>
 				{t('InvitationScreen|If you want to invite the user manually, message them the registration URL below:')}
 			</FormText>
-			<InputGroup className='m-3'>
+			<InputGroup className='mt-2 mb-3'>
 				<Input 
 					readOnly
 					value={registrationUrl}
