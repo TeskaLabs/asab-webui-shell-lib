@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 25.2.6
+
+- Updated InvitationScreen. Update text and add margin for input (!18)
+
 ## 25.2.5
 
 - Fix on global monaco hover styling, which was compromised by change in order of styles loading due to moving the styles from ASAB Components to ASAB Shell here #16 (#19)
