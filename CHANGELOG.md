@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 25.2.7
+
+- Update page orientation in the theme-print styles (!21)
+
 ## 25.2.6
 
 - Updated InvitationScreen. Update text and add margin for input (!18)
