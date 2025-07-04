@@ -1,14 +1,19 @@
 @page print-portrait {
-	size: portrait;
+	size: A4 portrait;
 }
+
+@page print-landscape {
+	size: A4 landscape;
+	margin: 2cm 1cm 1.5cm;
+}
+
 @media print {
-	@page {
-		size: A4 landscape;
-		margin: 2cm 1cm 1.5cm;
-	}
 
 	.print-portrait {
 		page: print-portrait;
+	}
+	.print-landscape {
+		page: print-landscape;
 	}
 
 	// Dont display page scrollbar in chrome
