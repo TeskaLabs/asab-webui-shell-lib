@@ -1,4 +1,8 @@
-# CHANGELOG for ASAB WebUI Shell
+# CHANGELOG for ASAB WebUI Shell 
+
+## 25.2.6
+
+- Fix sidebar spacing when scrollbar present (#20)
 
 ## 25.2.5
 
