@@ -21,7 +21,7 @@
 $card-flex-height: 3.2rem;
 
 // Extending `.card-header` class to accept flex sub-items
-.card-header-flex {	
+.card-header-flex {
 	// @extend .d-flex from bootstrap
 	display: flex !important;
 
@@ -104,7 +104,7 @@ $card-flex-height: 3.2rem;
 }
 
 
-.card-footer-flex {	
+.card-footer-flex {
 	// @extend .d-flex from bootstrap
 	display: flex!important;
 

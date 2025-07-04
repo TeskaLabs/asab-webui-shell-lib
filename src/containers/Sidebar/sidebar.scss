@@ -11,6 +11,11 @@ $sidebar-transition-timing-function: cubic-bezier(0.6, 0.6, 0, 1);
 	overflow-x: hidden;
 	min-height: 100%;
 	flex-wrap: nowrap;
+	width: fit-content;
+
+	& .nav {
+		width: fit-content;
+	}
 
 	& .nav-item {
 		width: 150px;
@@ -124,8 +129,9 @@ $sidebar-transition-timing-function: cubic-bezier(0.6, 0.6, 0, 1);
 
 	transition: all 0.2s linear; // This is speed of sidebar collapsing
 
+
 	& #app-sidebar {
-		width: 3rem;
+		width: 3.5rem;
 
 		> nav {
 			& .nav-item {
@@ -146,6 +152,7 @@ $sidebar-transition-timing-function: cubic-bezier(0.6, 0.6, 0, 1);
 						
 			& .nav-link {
 				text-overflow: unset;
+				padding: 0.75rem 0 0.75rem 0.65rem;
 			}
 		}
 	}
