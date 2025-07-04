@@ -38,7 +38,7 @@ export const SidebarItem = ({
 			<Link disabled={disabled} to={item.url} title={t(`Sidebar|${item.name}`)} className={"nav-link" + (isActive ? " active" : "")}>
 				{(!isSidebarCollapsed || isSmallResolution) ? //hide item.name if sidebar is collapsed
 				<div className="d-flex align-items-center">
-					<div className="sidebar-item-name d-flex align-items-center flex-grow-1">
+					<div className="sidebar-item-name d-flex align-items-center  flex-grow-1">
 						<Icon icon={item.icon} className="pe-2" />
 						<span className="sidebar-item-name">
 							{t(`Sidebar|${item.name}`)}
@@ -112,7 +112,7 @@ export const SidebarCollapsibleItem = ({
 								{t(`Sidebar|${item.name}`)}
 							</span>
 
-							<div className="ms-auto"> {/* Added ms-auto to push SidebarBeacon to the end */}
+							<div className=""> {/* Added ms-auto to push SidebarBeacon to the end */}
 								{(beaconCount > 0) &&
 									<AttentionBadge className='sidebar-badge-collapsed' content={{count: beaconCount}} />
 								}
