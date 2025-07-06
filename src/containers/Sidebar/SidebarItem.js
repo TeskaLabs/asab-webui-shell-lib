@@ -112,7 +112,7 @@ export const SidebarCollapsibleItem = ({
 								{t(`Sidebar|${item.name}`)}
 							</span>
 
-							<div className=""> {/* Added ms-auto to push SidebarBeacon to the end */}
+							<div className="ms-auto"> {/* Added ms-auto to push SidebarBeacon to the end */}
 								{(beaconCount > 0) &&
 									<AttentionBadge className='sidebar-badge-collapsed' content={{count: beaconCount}} />
 								}

@@ -11,14 +11,9 @@ $sidebar-transition-timing-function: cubic-bezier(0.6, 0.6, 0, 1);
 	overflow-x: hidden;
 	min-height: 100%;
 	flex-wrap: nowrap;
-	width: fit-content;
-
-	& .nav {
-		width: fit-content;
-	}
 
 	& .nav-item {
-		width: 150px;
+		width: 160px;
 
 		transition: width 0.2s $sidebar-transition-timing-function;
 
@@ -28,7 +23,7 @@ $sidebar-transition-timing-function: cubic-bezier(0.6, 0.6, 0, 1);
 	}
 
 	& .nav-link {
-		padding: 0.75rem 0 0.75rem 8px;
+		padding: 0.75rem 0 0.75rem 0.5rem;
 
 		transition: color 0.2s $sidebar-transition-timing-function, background-color 0.2s $sidebar-transition-timing-function;
 
@@ -125,13 +120,13 @@ $sidebar-transition-timing-function: cubic-bezier(0.6, 0.6, 0, 1);
 }
 
 #app.sidebar-collapsed {
-	grid-template-columns: 40px 1fr;
+	grid-template-columns: 50px 1fr;
 
 	transition: all 0.2s linear; // This is speed of sidebar collapsing
 
 
 	& #app-sidebar {
-		width: 3.5rem;
+		width: 3.25rem;
 
 		> nav {
 			& .nav-item {
