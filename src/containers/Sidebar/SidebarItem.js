@@ -38,7 +38,7 @@ export const SidebarItem = ({
 			<Link disabled={disabled} to={item.url} title={t(`Sidebar|${item.name}`)} className={"nav-link" + (isActive ? " active" : "")}>
 				{(!isSidebarCollapsed || isSmallResolution) ? //hide item.name if sidebar is collapsed
 				<div className="d-flex align-items-center">
-					<div className="sidebar-item-name d-flex align-items-center  flex-grow-1">
+					<div className="sidebar-item-name d-flex align-items-center flex-grow-1">
 						<Icon icon={item.icon} className="pe-2" />
 						<span className="sidebar-item-name">
 							{t(`Sidebar|${item.name}`)}
