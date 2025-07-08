@@ -18,7 +18,7 @@ export default class AuthModule extends Module {
 	constructor(app, name) {
 		super(app, "AuthModule");
 
-		this.OAuthToken = JSON.parse(sessionStorage.getItem('SeaCatOAuth2Token'));
+		this.OAuthTokens = JSON.parse(sessionStorage.getItem('SeaCatOAuth2Tokens'));
 		this.UserInfo = null;
 		this.Api = new SeaCatAuthApi(app);
 		this.RedirectURL = window.location.href;
@@ -83,7 +83,7 @@ export default class AuthModule extends Module {
 			}
 
 			if (authorization_code !== null) {
-				await this._updateToken(authorization_code);
+				await this._updateTokens(authorization_code);
 				// Remove 'code' from a query string
 				qs.delete('code');
 
@@ -116,12 +116,12 @@ export default class AuthModule extends Module {
 			}
 
 			// Do we have an oauth token (we are authorized to use the app)
-			if (this.OAuthToken != null) {
+			if (this.OAuthTokens != null) {
 				// Update the user info
 				let result = await this.updateUserInfo();
 				if (!result) {
 					// User info not found - go to login
-					sessionStorage.removeItem('SeaCatOAuth2Token');
+					sessionStorage.removeItem('SeaCatOAuth2Tokens');
 					let force_login_prompt = true;
 					await this.Api.login(this.RedirectURL, force_login_prompt);
 					return;
@@ -185,14 +185,14 @@ export default class AuthModule extends Module {
 
 	authInterceptor() {
 		const interceptor = config => {
-			config.headers['Authorization'] = 'Bearer ' + this.OAuthToken['access_token'];
+			config.headers['Authorization'] = 'Bearer ' + this.OAuthTokens['access_token'];
 			return config;
 		}
 		return interceptor;
 	}
 
 	webSocketAuthInterceptor() {
-		return `access_token_${this.OAuthToken['access_token']}`;
+		return `access_token_${this.OAuthTokens['access_token']}`;
 	}
 
 	async simulateUserinfo(mock_userinfo) {
@@ -245,8 +245,8 @@ export default class AuthModule extends Module {
 
 		this._stopSessionExpirationValidation(); // Stop session validation and clear the timeout
 
-		sessionStorage.removeItem('SeaCatOAuth2Token');
-		const promise = this.Api.logout(this.OAuthToken['access_token'])
+		sessionStorage.removeItem('SeaCatOAuth2Tokens');
+		const promise = this.Api.logout(this.OAuthTokens['access_token'])
 		if (promise == null) {
 			window.location.reload();
 		}
@@ -336,7 +336,7 @@ export default class AuthModule extends Module {
 	async updateUserInfo() {
 		let response;
 		try {
-			response = await this.Api.userinfo(this.OAuthToken.access_token);
+			response = await this.Api.userinfo(this.OAuthTokens.access_token);
 		}
 		catch (err) {
 			console.error("Failed to update user info", err);
@@ -363,19 +363,17 @@ export default class AuthModule extends Module {
 	}
 
 
-	async _updateToken(authorization_code) {
-		let response;
+	async _updateTokens(authorization_code) {
 		try {
-			response = await this.Api.token_authorization_code(authorization_code, this.RedirectURL);
+			const response = await this.Api.token_authorization_code(authorization_code, this.RedirectURL);
+			this.OAuthTokens = response.data;
+			sessionStorage.setItem('SeaCatOAuth2Tokens', JSON.stringify(response.data));
+			return true;
 		}
 		catch (err) {
 			console.error("Failed to update token", err);
 			return false;
 		}
-		this.OAuthToken = response.data;
-		sessionStorage.setItem('SeaCatOAuth2Token', JSON.stringify(response.data));
-
-		return true;
 	}
 
 	_getAuthorizedTenant(userInfo) {
