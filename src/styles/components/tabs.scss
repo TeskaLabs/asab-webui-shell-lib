@@ -8,11 +8,15 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    color: var(--bs-link-color);
 
-  &:hover {
-    cursor: pointer;
-  }
+    &:hover {
+      cursor: pointer;
+    }
 
+    &.active {
+      color: var(--bs-link-color) !important;
+    }
 }
 
 .panel-tabs-flex-wrapper {
@@ -22,7 +26,13 @@
   white-space: nowrap;
 }
 
-.nav-link-spacing {
+.nav-spacing {
+  display: inline;
+  margin-right: 0;
+  margin-left: 0;
+}
+
+.nav-item-spacing {
   display: inline-flex;
   align-items: center;
 }
