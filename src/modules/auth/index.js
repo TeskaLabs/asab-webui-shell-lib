@@ -83,7 +83,7 @@ export default class AuthModule extends Module {
 			}
 
 			if (authorization_code !== null) {
-				await this._updateTokens(authorization_code);
+				await this._exchangeCodeForTokens(authorization_code);
 				// Remove 'code' from a query string
 				qs.delete('code');
 
@@ -362,8 +362,8 @@ export default class AuthModule extends Module {
 		return true;
 	}
 
-
-	async _updateTokens(authorization_code) {
+	// Method for obtaining and storing the OAuth tokens based on authorization code
+	async _exchangeCodeForTokens(authorization_code) {
 		try {
 			const response = await this.Api.token_authorization_code(authorization_code, this.RedirectURL);
 			this.OAuthTokens = response.data;
@@ -372,6 +372,25 @@ export default class AuthModule extends Module {
 		}
 		catch (err) {
 			console.error("Failed to update token", err);
+			return false;
+		}
+	}
+
+	// Method for refreshing OAuth tokens
+	async _refreshTokens() {
+		// If no refresh_token found, return false
+		if (!this.OAuthTokens?.refresh_token) {
+			return false;
+		}
+
+		try {
+			const response = await this.Api.token_refresh(this.OAuthTokens.refresh_token);
+			this.OAuthTokens = response.data;
+			sessionStorage.setItem('SeaCatOAuth2Tokens', JSON.stringify(response.data));
+			return true;
+		}
+		catch (err) {
+			console.error("Failed to refresh token", err);
 			return false;
 		}
 	}
@@ -412,11 +431,12 @@ export default class AuthModule extends Module {
 
 			// If remaining time is between 1 and 60s, repetitivelly ask for userInfo and trigger "about to expire" warning
 			if ((timeRemaining <= 60) && (timeRemaining > 0)) {
-				if (!warningDisplayed) {
+				const tokensRefreshed = await this._refreshTokens(); // Returns true/false if token is refreshed/not refreshed
+				await this.updateUserInfo(); // Continue updating user info
+				if (!tokensRefreshed && !warningDisplayed) {
 					this.App.addAlert("info", "General|Your session will expire soon", 30, true);
 					warningDisplayed = true; // Mark the warning as displayed
 				}
-				await this.updateUserInfo(); // Continue updating user info
 			}
 
 			// Validation on expired session
