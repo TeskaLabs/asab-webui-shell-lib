@@ -1,15 +1,28 @@
+.panel-tab-container {
+  display: flex;
+  align-items: center; /* Align items vertically */
+}
+
 .panel-tab {
     max-width: 20ch;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 
-   &.active {
-
-   }
-
   &:hover {
     cursor: pointer;
   }
+
 }
 
+.panel-tabs-flex-wrapper {
+  /* Ensures horizontally scrollable tabs */
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+}
+
+.nav-link-spacing {
+  display: inline-flex;
+  align-items: center;
+}
