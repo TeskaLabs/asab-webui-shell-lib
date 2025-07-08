@@ -441,6 +441,8 @@ export default class AuthModule extends Module {
 
 			// Validation on expired session
 			if (this.SessionExpiration <= currentTime) {
+				// Handle refresh token prior updating user info
+				await this._refreshTokens();
 				// Handle session expiration
 				const isUserInfoUpdated = await this.updateUserInfo();
 				if (!isUserInfoUpdated) {
