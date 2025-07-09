@@ -1,8 +1,12 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 25.2.7
+
+- Implement refresh token session validation to the Auth module (#22)
+
 ## 25.2.6
 
-- Updated InvitationScreen. Update text and add margin for input (!18)
+- Updated InvitationScreen. Update text and add margin for input (#18)
 
 ## 25.2.5
 

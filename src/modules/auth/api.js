@@ -80,7 +80,6 @@ export class SeaCatAuthApi {
 		);
 	}
 
-
 	userinfo(access_token) {
 		let userinfoPath = '/userinfo';
 		let headers = {};
@@ -91,7 +90,6 @@ export class SeaCatAuthApi {
 
 		return this.OidcAPI.get(userinfoPath, {headers: headers});
 	}
-
 
 	token_authorization_code(authorization_code, redirect_uri) {
 		const redirectUri = new URL(redirect_uri);
@@ -104,6 +102,18 @@ export class SeaCatAuthApi {
 				at the authorization endpoint, hence the application base URL.
 			*/
 			redirect_uri: redirectUri.origin + redirectUri.pathname,
+		});
+		return this.OidcAPI.post('/token',
+			qs.toString()
+		);
+	}
+
+	// Method for token refresh
+	token_refresh(refresh_token) {
+		const qs = new URLSearchParams({
+			grant_type: "refresh_token",
+			refresh_token: refresh_token,
+			client_id: this.ClientId,
 		});
 		return this.OidcAPI.post('/token',
 			qs.toString()
