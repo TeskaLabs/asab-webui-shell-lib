@@ -441,7 +441,6 @@ export default class AuthModule extends Module {
 
 			// Validation on expired session
 			if (this.SessionExpiration <= currentTime) {
-				// TODO: validate if refershTokens needed here, eventually refactor/remove
 				// Handle refresh token prior updating user info
 				await this._refreshTokens();
 				// Handle session expiration
