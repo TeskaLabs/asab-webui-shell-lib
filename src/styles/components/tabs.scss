@@ -1,38 +1,43 @@
-.panel-tab-container {
+@mixin navLinkStyles {
   display: flex;
   align-items: center; /* Align items vertically */
+  max-width: 20ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--bs-link-color);
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  &.active {
+    color: var(--bs-link-color) !important;
+    background-color: var(--white) !important;
+  }
 }
 
-.panel-tab {
-    max-width: 20ch;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    color: var(--bs-link-color);
-
-    &:hover {
-      cursor: pointer;
-    }
-
-    &.active {
-      color: var(--bs-link-color) !important;
-    }
-}
-
-.panel-tabs-flex-wrapper {
+.card-header-tabs, .nav-tabs {
+  margin-right: 0;
+  margin-left: 0;
   /* Ensures horizontally scrollable tabs */
   overflow-x: auto;
   overflow-y: hidden;
   white-space: nowrap;
+
+  > .nav-item {
+    display: inline-flex;
+    align-items: center;
+
+    > .nav-link {
+      @include navLinkStyles;
+    }
+  }
+
+  > .nav-link > a > div > span {
+     @include navLinkStyles;
+  }
 }
 
-.nav-spacing {
-  display: inline;
-  margin-right: 0;
-  margin-left: 0;
-}
 
-.nav-item-spacing {
-  display: inline-flex;
-  align-items: center;
-}
+
