@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useAppSelector } from '../../components/store/AppStore.jsx';
 
 import { Modal } from 'reactstrap';
 import SidebarBottomItem from './SidebarBottomItem';
@@ -15,7 +16,8 @@ export default function Sidebar (props) {
 	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 	const sidebarItems = useSelector(state => state.navigation?.navItems);
 	const sessionExpired = useSelector(state => state.auth?.sessionExpired);
-	const theme = useSelector(state => state.theme);
+	const theme = useAppSelector(state => state.theme);
+
 	const dispatch = useDispatch();
 
 	useEffect(() => {

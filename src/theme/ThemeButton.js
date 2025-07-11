@@ -1,14 +1,13 @@
 import React from 'react';
-import { connect, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-
 import { NavLink } from 'reactstrap';
-
 import { CHANGE_THEME } from "./actions";
+import { useAppStore, useAppSelector } from '../components/store/AppStore.jsx';
 
-const ThemeButton = ({theme}) => {
-	const { t, i18n } = useTranslation();
-	const dispatch = useDispatch();
+const ThemeButton = () => {
+	const { t } = useTranslation();
+	const { dispatch } = useAppStore();
+	const theme = useAppSelector(state => state.theme);
 
 	const changeTheme = () => {
 		const newTheme = (theme == "light") ? "dark" : "light";
@@ -29,11 +28,4 @@ const ThemeButton = ({theme}) => {
 	);
 }
 
-
-function mapStateToProps(state) {
-	return {
-		theme: state.theme,
-	}
-}
-
-export default connect(mapStateToProps)(ThemeButton);
+export default ThemeButton;

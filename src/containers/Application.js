@@ -5,6 +5,8 @@ import Axios from 'axios';
 
 import { Module, PubSubProvider, ErrorHandler } from "asab_webui_components";
 
+import { AppStoreProvider } from '../components/store/AppStoreProvider.jsx';
+
 import Header from './Header';
 import Sidebar from './Sidebar';
 import Toast from './Toast/ToastContainer.jsx';
@@ -689,8 +691,9 @@ class Application extends Component {
 	if (this.state.splashscreenRequestors > 0) return (
 		// When splashscreenRequestors is requested, the application is not rendered.
 		// This prevents race conditions during application init time.
+		<AppStoreProvider>
 		<PubSubProvider app={this}>
-		<Provider store={this.Store}>
+		<Provider store={this.Store}> /* TODO: remove */
 			<Suspense fallback={<div></div>}>
 				<Alerts app={this} />
 				<main id="app-main">
@@ -699,11 +702,13 @@ class Application extends Component {
 			</Suspense>
 		</Provider>
 		</PubSubProvider>
+		</AppStoreProvider>
 	);
 
 	return (
+		<AppStoreProvider>
 		<PubSubProvider app={this}>
-		<Provider store={this.Store}>
+		<Provider store={this.Store}> /* TODO: remove */
 			<Suspense fallback={<div></div>}>
 				<div id="app-networking-indicator" className={"progress-bar progress-bar-animated progress-bar-striped" + ((this.state.networking == 0) ? " transparent" : "")} ></div>
 				<Alerts app={this} />
@@ -720,6 +725,7 @@ class Application extends Component {
 			</Suspense>
 		</Provider>
 		</PubSubProvider>
+		</AppStoreProvider>
 	); }
 
 }
