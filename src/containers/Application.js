@@ -131,7 +131,6 @@ class Application extends Component {
 		this.Store = createStore(combineReducers(this.ReduxService.Reducers), composeEnhancers(applyMiddleware()));
 
 		this.ConfigService.addDefaults(props.configdefaults);
-		this.Config.dispatch(this.Store);
 
 		this.addSplashScreenRequestor(this);
 		this.state.splashscreenRequestors = this.SplashscreenRequestors.size;
@@ -179,7 +178,6 @@ class Application extends Component {
 				}
 
 				that.Store.replaceReducer(combineReducers(that.ReduxService.Reducers));
-				that.Config.dispatch(that.Store);
 			}
 
 			// Initialize statically imported modules
@@ -194,7 +192,6 @@ class Application extends Component {
 
 		modules_init().then(async function () {
 			that.Store.replaceReducer(combineReducers(that.ReduxService.Reducers));
-			that.Config.dispatch(that.Store);
 
 			// Initialize all services
 			for (var i in that.Services) {
@@ -204,7 +201,6 @@ class Application extends Component {
 				// It unifies synchronous and asynchronous `initialize()` calls
 				await Promise.resolve(ret);
 
-				that.Config.dispatch(that.Store);
 			}
 
 			that.removeSplashScreenRequestor(that);
