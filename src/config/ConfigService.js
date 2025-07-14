@@ -1,19 +1,32 @@
 import { Service } from 'asab_webui_components';
 import ConfigReducer from './ConfigReducer';
-import { CHANGE_CONFIG } from '../actions';
 
+import { registerReducer } from '../components/store/reducer/reducerRegistry.jsx';
+
+// Import config syncer to use AppStore in the Service class
+import ConfigSyncer from './ConfigSyncer.jsx';
+import { registerAppStoreSyncer } from '../components/store/AppStoreSyncerRegistry.jsx';
+registerAppStoreSyncer(ConfigSyncer);
 
 export default class ConfigService extends Service {
 
+	// Create static instance for to create a singleton used in Config syncer
+	static instance = null;
+
 	constructor(app, serviceName = "ConfigService") {
 		super(app, serviceName);
-		app.ReduxService.addReducer("config", ConfigReducer);
+		// Create ConnfigService singleton instance (used in Config syncer)
+		if (!ConfigService.instance) {
+			ConfigService.instance = this;
+		}
+		registerReducer('config', ConfigReducer, {});
 
 		this.Config = new Config();
 	}
 
+	// TODO: test dynamic imports from meta tags
 	initialize() {
-		// Initialization of dynamic configuration
+		// Read meta tags and build dynamic config
 		const headerLogoFull = document.getElementsByName('header-logo-full')[0]?.content;
 		const headerLogoMini = document.getElementsByName('header-logo-minimized')[0]?.content;
 		const headerLogoFullDark = document.getElementsByName('header-logo-full-dark')[0]?.content;
@@ -42,7 +55,6 @@ export default class ConfigService extends Service {
 		if ((headerLogoMiniDark != undefined) && (headerLogoMiniDark != "")) {
 			Object.assign(dynamicConfig.brandImage, {...dynamicConfig.brandImage, "dark" : {...dynamicConfig.brandImage?.dark, "minimized": headerLogoMiniDark}})
 		}
-
 		// Add custom title
 		if ((title != undefined) && (title != "")) {
 			dynamicConfig["title"] = title;
@@ -56,17 +68,14 @@ export default class ConfigService extends Service {
 			document.head.appendChild(link);
 		}
 
-		// Dispatch customs to config store
+		// Dispatch to AppStore context
 		if (Object.keys(dynamicConfig).length > 0) {
+			// Store dynamic config in the Config instance
 			this.Config._dynamic_config = dynamicConfig;
-			if (this.App.Store !== undefined) {
-				this.Config.dispatch(this.App.Store);
-			} else {
-				console.warn('Dynamic configuration has not been dispatched to application store');
-			}
+			this.Config._notifyChange(); // Notify listeners (ConfigSyncer) of the new config
+
 		}
 	}
-
 
 	addDefaults(defaults, override) {
 		if (defaults === undefined) return;
@@ -84,7 +93,7 @@ export default class ConfigService extends Service {
 			}
 		}
 
-		this.Config.dispatch(this.App.Store);
+		this.Config._notifyChange(); // Notify listeners of the change
 	}
 
 }
@@ -95,41 +104,45 @@ class Config {
 	constructor(app) {
 		this._dynamic_config = {};
 		this._defaults = {};
+		this._listeners = [];
 
 		if (typeof LOCAL_CONFIG !== 'undefined') {
 			this._local_config = LOCAL_CONFIG;
 		} else {
 			this._local_config = {};
 		}
-
 	}
-
 
 	get(key) {
 		// First check the remote config
-		if (this._dynamic_config[key] != undefined) {
+		if (this._dynamic_config[key] !== undefined) {
 			return this._dynamic_config[key];
-		};
-
+		}
 		// Then check the local config
-		if (this._local_config[key] != undefined) {
-			this._local_config[key];
-		};
-
+		if (this._local_config[key] !== undefined) {
+			return this._local_config[key];
+		}
 		// And finally, check defaults
-		if (this._defaults[key] != undefined) {
+		if (this._defaults[key] !== undefined) {
 			return this._defaults[key];
-		};
-
+		}
 		return undefined;
 	}
 
+	getMergedConfig() {
+		return Object.assign({}, this._defaults, this._local_config, this._dynamic_config);
+	}
 
-	dispatch(store) {
-		var config = Object.assign({}, this._defaults, this._local_config, this._dynamic_config);
-		store.dispatch({
-			type: CHANGE_CONFIG,
-			config: config
-		});
+	onChange(listener) {
+		this._listeners.push(listener);
+	}
+
+	offChange(listener) {
+		this._listeners = this._listeners.filter(fn => fn !== listener);
+	}
+
+	_notifyChange() {
+		const merged = this.getMergedConfig();
+		this._listeners.forEach(fn => fn(merged));
 	}
 }
