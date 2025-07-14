@@ -8,7 +8,7 @@ import {
 } from 'reactstrap';
 
 import './UnauthorizedAccessScreen.scss';
-import InformationalCard from "../components/InformationalCard/InformationalCard";
+import { InformationalCard } from "asab_webui_components";
 
 /*
 	Unauthorized Access screen can be displayed only when:
@@ -55,6 +55,10 @@ export default function UnauthorizedAccessScreen(props) {
 	const textType = props.resource ? "UnauthorizedAccessScreen|You are not authorized to access this part of the application. Please ask your application administrator for following resource" : "UnauthorizedAccessScreen|You are not authorized to access this part of the application."
 
 	// Else return the Not authorized screen
-	return <InformationalCard resource={ props.resource } type="unauthorized"
-							  title="UnauthorizedAccessScreen|Unauthorized access" text={ textType }/>
+	return(
+		<Container className="h-100 container" fluid>
+			<InformationalCard resource={ props.resource } type="unauthorized"
+							   title="UnauthorizedAccessScreen|Unauthorized access" text={ textType }/>
+		</Container>
+	)
 }
