@@ -1,7 +1,7 @@
 import { Service } from 'asab_webui_components';
 import ThemeReducer from './ThemeReducer';
-import { CHANGE_THEME } from "./actions";
 import ThemeButton from "./ThemeButton";
+import { registerReducer } from '../components/store/reducer/reducerRegistry.jsx';
 
 // Import theme syncer to use AppStore in the Service class
 import ThemeSyncer from './ThemeSyncer.jsx';
@@ -12,7 +12,7 @@ export default class ThemeService extends Service {
 
 	constructor(app, serviceName = "ThemeService") {
 		super(app, serviceName);
-		app.ReduxService.addReducer("theme", ThemeReducer);
+		registerReducer('theme', ThemeReducer, null);
 	}
 
 	initialize() {
