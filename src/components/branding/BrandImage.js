@@ -22,12 +22,11 @@ Then, if selected configuration's brand image is not complete (e.g. minimized va
 
 	```javascript
 		import { useState, useEffect } from 'react';
-		import { getBrandImage } from 'asab_webui_shell';
-		import { useSelector } from 'react-redux';
+		import { getBrandImage, useAppSelector } from 'asab_webui_shell';
 
 		const YourCode = (props) => {
 			const [ brandImage, setBrandImage ] = useState({});
-			const theme = useSelector(state => state.theme);
+			const theme = useAppSelector(state => state.theme);
 
 			useEffect(() => {
 				setBrandImage(getBrandImage(props, theme));

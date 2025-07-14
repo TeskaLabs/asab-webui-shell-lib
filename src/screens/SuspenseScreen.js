@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useAppSelector } from '../components/store/AppStore.jsx';
 import { Spinner } from 'asab_webui_components';
 
 import {
@@ -12,7 +12,7 @@ import './SuspenseScreen.scss';
 
 export default function SuspenseScreen(props) {
 	const [ brandImage, setBrandImage ] = useState(undefined);
-	const theme = useSelector(state => state.theme);
+	const theme = useAppSelector(state => state.theme);
 
 	useEffect(() => {
 		setBrandImage(getBrandImage(props, theme));

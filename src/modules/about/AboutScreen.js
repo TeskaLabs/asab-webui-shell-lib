@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useAppSelector } from '../../components/store/AppStore.jsx';
 import { useSelector } from 'react-redux';
 
 import { getBrandImage } from '../../components/branding/BrandImage';
@@ -12,7 +13,7 @@ import {
 
 function AboutScreen(props) {
 	const [ brandImage, setBrandImage ] = useState(undefined);
-	const theme = useSelector(state => state.theme);
+	const theme = useAppSelector(state => state.theme);
 
 	useEffect(() => {
 		setBrandImage(getBrandImage(props, theme));

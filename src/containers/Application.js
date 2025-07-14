@@ -693,7 +693,7 @@ class Application extends Component {
 		// This prevents race conditions during application init time.
 		<AppStoreProvider>
 		<PubSubProvider app={this}>
-		<Provider store={this.Store}> /* TODO: remove */
+		<Provider store={this.Store}> {/* TODO: Remove redux store provider */}
 			<Suspense fallback={<div></div>}>
 				<Alerts app={this} />
 				<main id="app-main">
@@ -708,7 +708,7 @@ class Application extends Component {
 	return (
 		<AppStoreProvider>
 		<PubSubProvider app={this}>
-		<Provider store={this.Store}> /* TODO: remove */
+		<Provider store={this.Store}>{/* TODO: Remove redux store provider */}
 			<Suspense fallback={<div></div>}>
 				<div id="app-networking-indicator" className={"progress-bar progress-bar-animated progress-bar-striped" + ((this.state.networking == 0) ? " transparent" : "")} ></div>
 				<Alerts app={this} />
