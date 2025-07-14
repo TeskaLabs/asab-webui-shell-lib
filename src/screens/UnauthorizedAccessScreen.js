@@ -8,6 +8,7 @@ import {
 } from 'reactstrap';
 
 import './UnauthorizedAccessScreen.scss';
+import InformationalCard from "../components/InformationalCard/InformationalCard";
 
 /*
 	Unauthorized Access screen can be displayed only when:
@@ -51,26 +52,9 @@ export default function UnauthorizedAccessScreen(props) {
 		return <>{props.routeComponent}</>;
 	}
 
+	const textType = props.resource ? "UnauthorizedAccessScreen|You are not authorized to access this part of the application. Please ask your application administrator for following resource" : "UnauthorizedAccessScreen|You are not authorized to access this part of the application."
+
 	// Else return the Not authorized screen
-	return(
-		<Container className="unauthorized-container h-100" fluid>
-			<Card className="unauthorized-card">
-				<CardBody className="text-center unauthorized-cardbody">
-					<Row className="justify-content-center">
-						<Col>
-							<p><i className="bi bi-exclamation-triangle text-danger fs-1" title={t("UnauthorizedAccessScreen|Unauthorized access")}/></p>
-							{props.resource ?
-								<>
-									<p className="card-text">{t("UnauthorizedAccessScreen|You are not authorized to access this part of the application. Please ask your application administrator for following resource")}:</p>
-									<h5 className="card-title">{props.resource}</h5>
-								</>
-								:
-								<p className="card-text">{t("UnauthorizedAccessScreen|You are not authorized to access this part of the application.")}</p>
-							}
-						</Col>
-					</Row>
-				</CardBody>
-			</Card>
-		</Container>
-	)
+	return <InformationalCard resource={ props.resource } type="unauthorized"
+							  title="UnauthorizedAccessScreen|Unauthorized access" text={ textType }/>
 }
