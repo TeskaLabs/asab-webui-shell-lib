@@ -64,10 +64,10 @@ export default AboutScreen;
 
 function AboutCard(props) {
 	const { t } = useTranslation();
-	const title = useSelector(state => state.config?.title);
-	const vendor = useSelector(state => state.config?.vendor);
-	const website = useSelector(state => state.config?.website);
-	const email = useSelector(state => state.config?.email);
+	const title = useAppSelector(state => state.config?.title);
+	const vendor = useAppSelector(state => state.config?.vendor);
+	const website = useAppSelector(state => state.config?.website);
+	const email = useAppSelector(state => state.config?.email);
 
 	return(
 		<Card>
