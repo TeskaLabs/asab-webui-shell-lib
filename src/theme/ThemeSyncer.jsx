@@ -1,4 +1,4 @@
-// ThemeSyncer.jsx
+// Theme syncer
 import React, { useEffect } from 'react';
 import { useAppStore, useAppSelector } from '../components/store/AppStore.jsx';
 import { CHANGE_THEME } from './actions';
