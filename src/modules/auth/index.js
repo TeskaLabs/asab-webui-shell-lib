@@ -418,15 +418,52 @@ export default class AuthModule extends Module {
 			return;
 		}
 
+		// Max session duration
+		const MAX_SESSION_DURATION = Math.pow(2, 31);
+
+		// Proactivelly validate session expiration
+		let lastKnownExpiration = this.SessionExpiration; // Last known session expiration
+		let sessionStartTime = Date.now() / 1000; // Session start time
+		let sessionDuration = lastKnownExpiration - sessionStartTime; // Session duration
+		// Prevent glitches on very large time remaining values
+		if (sessionDuration >= MAX_SESSION_DURATION) {
+			// Set timeout to maximum allowed value
+			sessionDuration = MAX_SESSION_DURATION - 1;
+		}
+		let sessionMidpoint = sessionStartTime + sessionDuration / 2; // Session midpoint value
+		let refreshSessionDone = false; // Tracks if the session has been proactivelly refreshed
 		let warningDisplayed = false; // Tracks if the "about to expire" warning has been shown
 
 		const validateSession = async () => {
 			const currentTime = Date.now() / 1000; // Convert milliseconds to seconds
 			let timeRemaining = this.SessionExpiration - currentTime; // Time difference for triggering "about to expire" warning
 			// Prevent glitches on very large time remaining values
-			if (timeRemaining >= Math.pow(2, 31)) {
+			if (timeRemaining >= MAX_SESSION_DURATION) {
 				// Set timeout to maximum allowed value
-				timeRemaining = Math.pow(2, 31) - 1;
+				timeRemaining = MAX_SESSION_DURATION - 1;
+			}
+
+			// Validate session on half of the session expiration or if the remaining time is <= 5min
+			if (!refreshSessionDone && (timeRemaining <= 300) || (currentTime >= sessionMidpoint)) {
+				refreshSessionDone = true;
+				const tokensRefreshed = await this._refreshTokens();
+				// Recalculate if session expiration was extended
+				if (tokensRefreshed) {
+					await this.updateUserInfo(); // Update userinfo
+					// If current session expiration differs from last known expiration, recalculate session variables
+					if (this.SessionExpiration !== lastKnownExpiration) {
+						lastKnownExpiration = this.SessionExpiration;
+						sessionStartTime = currentTime;
+						sessionDuration = lastKnownExpiration - sessionStartTime;
+						// Prevent glitches on very large time remaining values
+						if (sessionDuration >= MAX_SESSION_DURATION) {
+							// Set timeout to maximum allowed value
+							sessionDuration = MAX_SESSION_DURATION - 1;
+						}
+						sessionMidpoint = sessionStartTime + sessionDuration / 2;
+						refreshSessionDone = false;
+					}
+				}
 			}
 
 			// If remaining time is between 1 and 60s, repetitivelly ask for userInfo and trigger "about to expire" warning
