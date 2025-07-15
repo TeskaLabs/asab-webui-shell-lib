@@ -3,7 +3,6 @@ import { SET_HELP_PATH, SET_SUBTITLE, SET_HEADER_NAVIGATION_ITEMS } from '../../
 const initialState = {
 	helpPath: undefined,
 	subtitle: undefined,
-	flag: undefined,
 	headerNavItems: []
 }
 

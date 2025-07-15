@@ -34,7 +34,6 @@ import ThemeService from '../theme/ThemeService';
 import BrandingService from '../services/BrandingService';
 import TitleService from "../services/TitleService";
 import HelpService from "./Header/Help/HelpService";
-import PreviewService from "./Header/Preview/PreviewService";
 
 import AccessDeniedCard from '../modules/tenant/access/AccessDeniedCard';
 import ApplicationRouter from './Router/ApplicationRouter';
@@ -106,7 +105,6 @@ class Application extends Component {
 		this.BrandingService = new BrandingService(this, "BrandingService");
 		this.TitleService = new TitleService(this, "TitleService");
 		this.HelpService = new HelpService(this, "HelpService");
-		this.PreviewService = new PreviewService(this, "PreviewService");
 
 		// Register reducers which are not part of any app service
 		this.ReduxService.addReducer("attentionrequired", attentionRequiredReducer);
@@ -114,7 +112,7 @@ class Application extends Component {
 		this.ReduxService.addReducer("advmode", advancedModeReducer);
 		this.ReduxService.addReducer("fullscreenmode", fullscreenModeReducer);
 		registerReducer('header', headerReducer, {
-			helpPath: undefined, subtitle: undefined, flag: undefined, headerNavItems: []
+			helpPath: undefined, subtitle: undefined, headerNavItems: []
 		});
 		registerReducer('sidebar', sidebarReducer, {isSidebarCollapsed: false});
 		this.ReduxService.addReducer("navigation", navigationReducer);
