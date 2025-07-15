@@ -8,7 +8,7 @@ import { useAppSelector } from '../../components/store/AppStore.jsx';
 const NavbarBrand = ( props ) => {
 	const [ brandImage, setBrandImage ] = useState({});
 	const theme = useAppSelector(state => state.theme);
-	const title = useSelector(state => state.config?.title);
+	const title = useAppSelector(state => state.config?.title);
 	const isSidebarCollapsed = useSelector(state => state.sidebar?.isSidebarCollapsed);
 
 	useEffect(() => {

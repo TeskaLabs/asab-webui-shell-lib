@@ -1,12 +1,13 @@
 import React, { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { useAppSelector } from '../../../components/store/AppStore.jsx';
 
 import './ApplicationScreenTitle.scss';
 
 const ApplicationScreenTitle = (props) => {
 	const subtitle = useSelector(state => state.header?.subtitle);
-	const title = useSelector(state => state.config?.title);
+	const title = useAppSelector(state => state.config?.title);
 	const { t } = useTranslation();
 	const route = props.routes?.[0];
 
