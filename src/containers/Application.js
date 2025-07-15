@@ -6,6 +6,7 @@ import Axios from 'axios';
 import { Module, PubSubProvider, ErrorHandler } from "asab_webui_components";
 
 import { AppStoreProvider } from '../components/store/AppStoreProvider.jsx';
+import { registerReducer } from '../components/store/reducer/reducerRegistry.jsx';
 
 import Header from './Header';
 import Sidebar from './Sidebar';
@@ -107,12 +108,13 @@ class Application extends Component {
 		this.HelpService = new HelpService(this, "HelpService");
 		this.PreviewService = new PreviewService(this, "PreviewService");
 
+		// Register reducers which are not part of any app service
 		this.ReduxService.addReducer("attentionrequired", attentionRequiredReducer);
 		this.ReduxService.addReducer("alerts", alertsReducer);
 		this.ReduxService.addReducer("advmode", advancedModeReducer);
 		this.ReduxService.addReducer("fullscreenmode", fullscreenModeReducer);
 		this.ReduxService.addReducer("header", headerReducer);
-		this.ReduxService.addReducer("sidebar", sidebarReducer);
+		registerReducer('sidebar', sidebarReducer, {isSidebarCollapsed: false});
 		this.ReduxService.addReducer("navigation", navigationReducer);
 		this.ReduxService.addReducer("router", routerReducer);
 

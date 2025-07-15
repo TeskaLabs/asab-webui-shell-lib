@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import { getBrandImage } from '../../components/branding/BrandImage';
@@ -9,7 +8,7 @@ const NavbarBrand = ( props ) => {
 	const [ brandImage, setBrandImage ] = useState({});
 	const theme = useAppSelector(state => state.theme);
 	const title = useAppSelector(state => state.config?.title);
-	const isSidebarCollapsed = useSelector(state => state.sidebar?.isSidebarCollapsed);
+	const isSidebarCollapsed = useAppSelector(state => state.sidebar?.isSidebarCollapsed);
 
 	useEffect(() => {
 		setBrandImage(getBrandImage(props, theme));

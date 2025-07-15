@@ -9,6 +9,7 @@ import {
 } from 'reactstrap';
 
 import { AttentionBadge } from 'asab_webui_components';
+import { useAppSelector } from '../../components/store/AppStore.jsx';
 
 import Icon from './SidebarIcon';
 
@@ -17,7 +18,7 @@ export const SidebarItem = ({
 }) => {
 	const location = useLocation();
 	const { t } = useTranslation();
-	const isSidebarCollapsed = useSelector(state => state.sidebar?.isSidebarCollapsed);
+	const isSidebarCollapsed = useAppSelector(state => state.sidebar?.isSidebarCollapsed);
 	const attentionRequired = useSelector(state => state.attentionrequired?.beacon);
 	const [isActive, setActive] = useState(false);
 	const lowercasedItemName = item?.name?.toLowerCase();
@@ -67,7 +68,7 @@ export const SidebarCollapsibleItem = ({
 	const [isOpen, setOpen] = useState(false);
 	const location = useLocation();
 	const { t } = useTranslation();
-	const isSidebarCollapsed = useSelector(state => state.sidebar?.isSidebarCollapsed);
+	const isSidebarCollapsed = useAppSelector(state => state.sidebar?.isSidebarCollapsed);
 	const attentionRequired = useSelector(state => state.attentionrequired?.beacon);
 	const lowercasedItemName = item.name.toLowerCase();
 
