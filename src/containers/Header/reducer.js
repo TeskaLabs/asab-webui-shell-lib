@@ -1,4 +1,4 @@
-import { SET_HELP_PATH, SET_SUBTITLE, SET_FLAG, SET_HEADER_NAVIGATION_ITEMS } from '../../actions';
+import { SET_HELP_PATH, SET_SUBTITLE, SET_HEADER_NAVIGATION_ITEMS } from '../../actions';
 
 const initialState = {
 	helpPath: undefined,
@@ -20,12 +20,6 @@ export default (state = initialState, action) => {
 			return {
 				...state,
 				subtitle: action.subtitle
-			}
-
-		case SET_FLAG:
-			return {
-				...state,
-				flag: action.flag
 			}
 
 		case SET_HEADER_NAVIGATION_ITEMS:

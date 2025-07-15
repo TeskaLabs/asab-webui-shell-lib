@@ -43,7 +43,7 @@ import SuspenseScreen from '../screens/SuspenseScreen';
 
 import './Application.scss';
 
-import { ADD_ALERT, SET_ADVANCED_MODE, SET_FLAG, SET_FULLSCREEN_MODE } from '../actions';
+import { ADD_ALERT, SET_ADVANCED_MODE, SET_FULLSCREEN_MODE } from '../actions';
 
 class Application extends Component {
 
@@ -669,21 +669,6 @@ class Application extends Component {
 			document.body.classList.remove('fullscreen');
 			this.addAlert('info', 'ASABApplicationContainer|Fullscreen mode turned off', 30, true);
 		}
-	}
-
-	setFlag(name) {
-		useEffect(() => {
-			this.Store.dispatch({
-				type: SET_FLAG,
-				flag: name
-			});
-			return () => {
-				this.Store.dispatch({
-					type: SET_FLAG,
-					flag: undefined
-				});
-			}
-		}, [name])
 	}
 
 	render() {
