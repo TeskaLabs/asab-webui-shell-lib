@@ -1,12 +1,12 @@
 import React from 'react';
 import { Nav, NavItem } from 'reactstrap';
-import { useSelector } from 'react-redux';
+import { useAppSelector } from '../../components/store/AppStore.jsx';
 import ApplicationScreenTitle from "./ApplicationScreenTitle";
 
 import './header.scss';
 
 export default function Header(props) {
-	const headerNavItems = useSelector(state => state.header?.headerNavItems);
+	const headerNavItems = useAppSelector(state => state.header?.headerNavItems);
 
 	return (
 		<header id="app-header">

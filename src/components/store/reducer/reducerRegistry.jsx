@@ -1,4 +1,4 @@
-// Reducer registry
+// Reducer registry for dynamic reducer registration
 const reducers = {};
 const initialStates = {};
 

@@ -1,28 +1,47 @@
 import React from 'react';
 import { Service } from 'asab_webui_components';
-import { SET_SUBTITLE } from '../actions';
+// Import theme syncer to use AppStore in the Service class
+import TitleSyncer from './TitleSyncer.jsx';
+import { registerAppStoreSyncer } from '../components/store/AppStoreSyncerRegistry.jsx';
 
 export default class TitleService extends Service {
+	// Create static instance for to create a singleton used in Title syncer
+	static instance = null;
+
 	constructor(app, serviceName = "TitleService") {
 		super(app, serviceName);
-		this.App = app;
+		// Create TitleService singleton instance (used in Title syncer)
+		if (!TitleService.instance) {
+			TitleService.instance = this;
+		}
+
+		registerAppStoreSyncer(TitleSyncer);
+		this._subtitle = undefined;
+		this._listeners = [];
 	}
 
-	// Method for setting the subtitle
 	setSubtitle = (subtitle) => {
-		this._updateSubtitle(subtitle);
+		this._subtitle = subtitle;
+		this._notify();
 	};
 
-	// Method for clearing the subtitle
 	clearSubtitle = () => {
-		this._updateSubtitle(undefined);
+		this._subtitle = undefined;
+		this._notify();
 	};
 
-	// Method for dispatching subtitle update to Redux store
-	_updateSubtitle = (subtitle) => {
-		this.App.Store.dispatch({
-			type: SET_SUBTITLE,
-			subtitle: subtitle
-		});
+	getSubtitle = () => this._subtitle;
+
+	addChangeListener = (listener) => {
+		this._listeners.push(listener);
 	};
+
+	removeChangeListener = (listener) => {
+		this._listeners = this._listeners.filter(l => l !== listener);
+	};
+
+	_notify = () => {
+		this._listeners.forEach(listener => listener(this._subtitle));
+	};
+
 }

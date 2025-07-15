@@ -9,6 +9,7 @@ export default function ConfigSyncer() {
 	const { dispatch } = useAppStore();
 
 	useEffect(() => {
+		if (!ConfigService?.instance) return;
 		const config = ConfigService.instance?.Config;
 		dispatch({ type: CHANGE_CONFIG, config: config.getMergedConfig() });
 	}, [dispatch]);

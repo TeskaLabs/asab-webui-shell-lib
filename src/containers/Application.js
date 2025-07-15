@@ -113,7 +113,9 @@ class Application extends Component {
 		this.ReduxService.addReducer("alerts", alertsReducer);
 		this.ReduxService.addReducer("advmode", advancedModeReducer);
 		this.ReduxService.addReducer("fullscreenmode", fullscreenModeReducer);
-		this.ReduxService.addReducer("header", headerReducer);
+		registerReducer('header', headerReducer, {
+			helpPath: undefined, subtitle: undefined, flag: undefined, headerNavItems: []
+		});
 		registerReducer('sidebar', sidebarReducer, {isSidebarCollapsed: false});
 		this.ReduxService.addReducer("navigation", navigationReducer);
 		this.ReduxService.addReducer("router", routerReducer);

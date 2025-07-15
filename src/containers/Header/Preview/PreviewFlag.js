@@ -1,11 +1,11 @@
 import React from 'react';
 import { useTranslation } from "react-i18next";
-import { useSelector } from 'react-redux';
+import { useAppSelector } from '../../../components/store/AppStore.jsx';
 import { Badge } from 'reactstrap';
 
 export default function PreviewFlag() {
 	const { t } = useTranslation();
-	let name = useSelector(state => state?.header?.flag);
+	let name = useAppSelector(state => state?.header?.flag);
 	const lowercasedName = name?.toLowerCase();
 
 	if(lowercasedName === "preview") {
