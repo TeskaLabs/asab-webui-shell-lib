@@ -419,16 +419,16 @@ export default class AuthModule extends Module {
 		}
 
 		// Max session duration
-		const MAX_SESSION_DURATION = Math.pow(2, 31);
+		const MAX_SESSION_DURATION = Math.pow(2, 31) - 1;
 
 		// Proactivelly validate session expiration
 		let lastKnownExpiration = this.SessionExpiration; // Last known session expiration
 		let sessionStartTime = Date.now() / 1000; // Session start time
 		let sessionDuration = lastKnownExpiration - sessionStartTime; // Session duration
 		// Prevent glitches on very large time remaining values
-		if (sessionDuration >= MAX_SESSION_DURATION) {
+		if (sessionDuration > MAX_SESSION_DURATION) {
 			// Set timeout to maximum allowed value
-			sessionDuration = MAX_SESSION_DURATION - 1;
+			sessionDuration = MAX_SESSION_DURATION;
 		}
 		let sessionMidpoint = sessionStartTime + sessionDuration / 2; // Session midpoint value
 		let refreshSessionDone = false; // Tracks if the session has been proactivelly refreshed
@@ -438,9 +438,9 @@ export default class AuthModule extends Module {
 			const currentTime = Date.now() / 1000; // Convert milliseconds to seconds
 			let timeRemaining = this.SessionExpiration - currentTime; // Time difference for triggering "about to expire" warning
 			// Prevent glitches on very large time remaining values
-			if (timeRemaining >= MAX_SESSION_DURATION) {
+			if (timeRemaining > MAX_SESSION_DURATION) {
 				// Set timeout to maximum allowed value
-				timeRemaining = MAX_SESSION_DURATION - 1;
+				timeRemaining = MAX_SESSION_DURATION;
 			}
 
 			// Validate session on half of the session expiration or if the remaining time is <= 5min
@@ -456,9 +456,9 @@ export default class AuthModule extends Module {
 						sessionStartTime = currentTime;
 						sessionDuration = lastKnownExpiration - sessionStartTime;
 						// Prevent glitches on very large time remaining values
-						if (sessionDuration >= MAX_SESSION_DURATION) {
+						if (sessionDuration > MAX_SESSION_DURATION) {
 							// Set timeout to maximum allowed value
-							sessionDuration = MAX_SESSION_DURATION - 1;
+							sessionDuration = MAX_SESSION_DURATION;
 						}
 						sessionMidpoint = sessionStartTime + sessionDuration / 2;
 						refreshSessionDone = false;
