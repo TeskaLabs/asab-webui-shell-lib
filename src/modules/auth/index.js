@@ -444,7 +444,7 @@ export default class AuthModule extends Module {
 			}
 
 			// Validate session on half of the session expiration or if the remaining time is <= 5min
-			if (!refreshSessionDone && (timeRemaining <= 300) || (currentTime >= sessionMidpoint)) {
+			if (!refreshSessionDone && ((timeRemaining <= 300) || (currentTime >= sessionMidpoint))) {
 				refreshSessionDone = true;
 				const tokensRefreshed = await this._refreshTokens();
 				// Recalculate if session expiration was extended
