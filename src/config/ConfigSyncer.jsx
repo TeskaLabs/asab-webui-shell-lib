@@ -10,21 +10,7 @@ export default function ConfigSyncer() {
 
 	useEffect(() => {
 		const config = ConfigService.instance?.Config;
-		if (!config) return;
-
-		const handleChange = (newConfig) => {
-			dispatch({ type: CHANGE_CONFIG, config: newConfig });
-		};
-
-		// Initial dispatch with the current merged config
-		handleChange(config.getMergedConfig());
-
-		// Listen for future changes
-		config.onChange(handleChange);
-
-		return () => {
-			config.offChange(handleChange);
-		};
+		dispatch({ type: CHANGE_CONFIG, config: config.getMergedConfig() });
 	}, [dispatch]);
 
 	return null;

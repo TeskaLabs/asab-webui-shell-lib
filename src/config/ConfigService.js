@@ -6,7 +6,6 @@ import { registerReducer } from '../components/store/reducer/reducerRegistry.jsx
 // Import config syncer to use AppStore in the Service class
 import ConfigSyncer from './ConfigSyncer.jsx';
 import { registerAppStoreSyncer } from '../components/store/AppStoreSyncerRegistry.jsx';
-registerAppStoreSyncer(ConfigSyncer);
 
 export default class ConfigService extends Service {
 
@@ -19,6 +18,8 @@ export default class ConfigService extends Service {
 		if (!ConfigService.instance) {
 			ConfigService.instance = this;
 		}
+
+		registerAppStoreSyncer(ConfigSyncer);
 		registerReducer('config', ConfigReducer, {});
 
 		this.Config = new Config();
@@ -131,14 +132,6 @@ class Config {
 
 	getMergedConfig() {
 		return Object.assign({}, this._defaults, this._local_config, this._dynamic_config);
-	}
-
-	onChange(listener) {
-		this._listeners.push(listener);
-	}
-
-	offChange(listener) {
-		this._listeners = this._listeners.filter(fn => fn !== listener);
 	}
 
 	_notifyChange() {
