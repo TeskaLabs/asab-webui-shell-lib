@@ -2,7 +2,7 @@
 
 ## 25.2.8
 
-- Update page orientation in the theme-print styles (!21)
+- Update page orientation in the theme-print styles (#21)
 
 ## 25.2.7
 
