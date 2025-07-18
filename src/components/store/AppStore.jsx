@@ -23,7 +23,7 @@ export function getAppStoreDispatch() {
 }
 
 // App store
-export function AppStore({ children }) {
+export function AppStoreProvider({ children }) {
 	const reducers = getReducers();
 	const initialState = getInitialStates();
 	const [state, dispatch] = useReducer(combineReducers(reducers), initialState);

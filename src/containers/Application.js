@@ -5,7 +5,7 @@ import Axios from 'axios';
 
 import { Module, PubSubProvider, ErrorHandler } from "asab_webui_components";
 
-import { AppStoreProvider } from '../components/store/AppStoreProvider.jsx';
+import { AppStoreProvider } from '../components/store/AppStore.jsx';
 import { registerReducer } from '../components/store/reducer/reducerRegistry.jsx';
 
 import Header from './Header';
