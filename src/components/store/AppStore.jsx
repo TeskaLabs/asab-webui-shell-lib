@@ -16,11 +16,19 @@ function combineReducers(reducers) {
 
 const AppStoreContext = createContext();
 
+// SIngleton reference for getting the dispatch method within classes (object oriented code)
+let globalDispatch = null;
+export function getAppStoreDispatch() {
+	return globalDispatch;
+}
+
 // App store
 export function AppStore({ children }) {
 	const reducers = getReducers();
 	const initialState = getInitialStates();
 	const [state, dispatch] = useReducer(combineReducers(reducers), initialState);
+	// Set the global dispatch reference
+	globalDispatch = dispatch;
 
 	return (
 		<AppStoreContext.Provider value={{ state, dispatch }}>
