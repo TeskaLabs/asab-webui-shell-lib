@@ -22,7 +22,8 @@ Then, if selected configuration's brand image is not complete (e.g. minimized va
 
 	```javascript
 		import { useState, useEffect } from 'react';
-		import { getBrandImage, useAppSelector } from 'asab_webui_shell';
+		import { getBrandImage } from 'asab_webui_shell';
+		import { useAppSelector } from 'asab_webui_components';
 
 		const YourCode = (props) => {
 			const [ brandImage, setBrandImage ] = useState({});

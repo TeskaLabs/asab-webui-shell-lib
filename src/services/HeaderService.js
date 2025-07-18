@@ -1,5 +1,4 @@
-import { Service } from 'asab_webui_components';
-import { getAppStoreDispatch } from '../components/store/AppStore.jsx';
+import { Service, getAppStoreDispatch } from 'asab_webui_components';
 import { SET_HEADER_NAVIGATION_ITEMS } from '../actions';
 
 export default class HeaderService extends Service {

@@ -1,9 +1,7 @@
-import { Service } from 'asab_webui_components';
+import { Service, getAppStoreDispatch, registerReducer } from 'asab_webui_components';
 import ThemeReducer from './ThemeReducer';
 import ThemeButton from "./ThemeButton";
 import { CHANGE_THEME } from './actions';
-import { registerReducer } from '../components/store/reducer/reducerRegistry.jsx';
-import { getAppStoreDispatch } from '../components/store/AppStore.jsx';
 
 export default class ThemeService extends Service {
 

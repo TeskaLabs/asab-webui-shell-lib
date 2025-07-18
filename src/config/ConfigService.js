@@ -1,8 +1,6 @@
-import { Service } from 'asab_webui_components';
+import { Service, getAppStoreDispatch, registerReducer } from 'asab_webui_components';
 import ConfigReducer from './ConfigReducer';
 
-import { registerReducer } from '../components/store/reducer/reducerRegistry.jsx';
-import { getAppStoreDispatch } from '../components/store/AppStore.jsx';
 import { CHANGE_CONFIG } from '../actions';
 
 

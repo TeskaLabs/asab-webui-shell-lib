@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {useTranslation} from "react-i18next";
-import {useAppSelector} from '../../../components/store/AppStore.jsx';
+import {useAppSelector} from 'asab_webui_components';
 
 import {
 	Modal,

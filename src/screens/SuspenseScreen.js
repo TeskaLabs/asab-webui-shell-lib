@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useAppSelector } from '../components/store/AppStore.jsx';
-import { Spinner } from 'asab_webui_components';
+import { Spinner, useAppSelector } from 'asab_webui_components';
 
 import {
 	Container, Row, Col

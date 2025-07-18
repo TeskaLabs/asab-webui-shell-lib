@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
-import { useAppStore } from '../../components/store/AppStore.jsx';
+import { useAppStore } from 'asab_webui_components';
 
 import { SET_HELP_PATH } from '../../actions';
 import RouteErrorHandler from '../RouteErrorHandler';

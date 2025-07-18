@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'reactstrap';
 import { CHANGE_THEME } from "./actions";
-import { useAppStore, useAppSelector } from '../components/store/AppStore.jsx';
+import { useAppStore, useAppSelector } from 'asab_webui_components';
 
 const ThemeButton = () => {
 	const { t } = useTranslation();

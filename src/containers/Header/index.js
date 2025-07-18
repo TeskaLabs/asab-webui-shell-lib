@@ -1,6 +1,6 @@
 import React from 'react';
 import { Nav, NavItem } from 'reactstrap';
-import { useAppSelector } from '../../components/store/AppStore.jsx';
+import { useAppSelector } from 'asab_webui_components';
 import ApplicationScreenTitle from "./ApplicationScreenTitle";
 
 import './header.scss';

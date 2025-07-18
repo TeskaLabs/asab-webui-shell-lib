@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useAppSelector, useAppStore } from '../../components/store/AppStore.jsx';
+import { useAppSelector, useAppStore } from 'asab_webui_components';
 
 import { Modal } from 'reactstrap';
 import SidebarBottomItem from './SidebarBottomItem';

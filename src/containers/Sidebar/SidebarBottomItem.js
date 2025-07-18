@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAppSelector, useAppStore } from '../../components/store/AppStore.jsx';
+import { useAppSelector, useAppStore } from 'asab_webui_components';
 
 import { COLLAPSE_SIDEBAR } from '../../actions';
 

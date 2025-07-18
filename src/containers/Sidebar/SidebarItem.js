@@ -8,8 +8,7 @@ import {
 	Collapse, Tooltip
 } from 'reactstrap';
 
-import { AttentionBadge } from 'asab_webui_components';
-import { useAppSelector } from '../../components/store/AppStore.jsx';
+import { AttentionBadge, useAppSelector } from 'asab_webui_components';
 
 import Icon from './SidebarIcon';
 

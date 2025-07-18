@@ -3,10 +3,7 @@ import { Provider } from 'react-redux';
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import Axios from 'axios';
 
-import { Module, PubSubProvider, ErrorHandler } from "asab_webui_components";
-
-import { AppStoreProvider } from '../components/store/AppStore.jsx';
-import { registerReducer } from '../components/store/reducer/reducerRegistry.jsx';
+import { Module, PubSubProvider, ErrorHandler, AppStoreProvider, registerReducer } from "asab_webui_components";
 
 import Header from './Header';
 import Sidebar from './Sidebar';
