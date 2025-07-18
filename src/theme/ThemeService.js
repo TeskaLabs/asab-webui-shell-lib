@@ -1,13 +1,13 @@
-import { Service } from 'asab_webui_components';
+import { Service, getAppStoreDispatch, registerReducer } from 'asab_webui_components';
 import ThemeReducer from './ThemeReducer';
-import { CHANGE_THEME } from "./actions";
 import ThemeButton from "./ThemeButton";
+import { CHANGE_THEME } from './actions';
 
 export default class ThemeService extends Service {
 
 	constructor(app, serviceName = "ThemeService") {
 		super(app, serviceName);
-		app.ReduxService.addReducer("theme", ThemeReducer);
+		registerReducer('theme', ThemeReducer, null);
 	}
 
 	initialize() {
@@ -25,8 +25,9 @@ export default class ThemeService extends Service {
 		: "light"
 		;
 
-		// Dispatch tenants obtained from userinfo
-		this.App.Store.dispatch({
+		// Dispatch theme
+		const dispatch = getAppStoreDispatch();
+		dispatch({
 			type: CHANGE_THEME,
 			theme: prefersColorScheme
 		});

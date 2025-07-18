@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { useAppSelector, useAppStore } from 'asab_webui_components';
 
 import { Modal } from 'reactstrap';
 import SidebarBottomItem from './SidebarBottomItem';
@@ -15,8 +16,9 @@ export default function Sidebar (props) {
 	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 	const sidebarItems = useSelector(state => state.navigation?.navItems);
 	const sessionExpired = useSelector(state => state.auth?.sessionExpired);
-	const theme = useSelector(state => state.theme);
-	const dispatch = useDispatch();
+	const theme = useAppSelector(state => state.theme);
+
+	const { dispatch } = useAppStore();
 
 	useEffect(() => {
 		// Collapse sidebar if innerWidth is smaller or equal to 944px on page initialization
@@ -26,7 +28,7 @@ export default function Sidebar (props) {
 				isSidebarCollapsed: true
 			});
 		}
-	}, [])
+	}, []);
 
 	useEffect(() => {
 		setSidebarBottomBranding(getBrandImage(props, theme, 'sidebarLogo'));
