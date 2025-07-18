@@ -1,8 +1,6 @@
 import { Service } from 'asab_webui_components';
-
-// Import theme syncer to use AppStore in the Service class
-import HeaderSyncer from './HeaderSyncer.jsx';
-import { registerAppStoreSyncer } from '../components/store/AppStoreSyncerRegistry.jsx';
+import { getAppStoreDispatch } from '../components/store/AppStore.jsx';
+import { SET_HEADER_NAVIGATION_ITEMS } from '../actions';
 
 export default class HeaderService extends Service {
 
@@ -14,19 +12,9 @@ export default class HeaderService extends Service {
 	 * `header-logo-minimized.svg` dimensions: 50 x 50 pixels
 	*/
 
-	// Create static instance for to create a singleton used in Header syncer
-	static instance = null;
-
 	constructor(app, serviceName="HeaderService"){
-		super(app, serviceName);
-		// Create HeaderService singleton instance (used in Header syncer)
-		if (!HeaderService.instance) {
-			HeaderService.instance = this;
-		}
-
-		registerAppStoreSyncer(HeaderSyncer);
+		super(app, serviceName)
 		this.Items = [];
-		this._listeners = [];
 	}
 
 
@@ -52,32 +40,23 @@ export default class HeaderService extends Service {
 
 	*/
 
-	addChangeListener(listener) {
-		this._listeners.push(listener);
-	}
-
-	removeChangeListener(listener) {
-		this._listeners = this._listeners.filter(l => l !== listener);
-	}
-
-	_notify() {
-		this._listeners.forEach(listener => listener(this.Items));
-	}
-
 	addComponent(component) {
 		this.Items.push({
 			'component': component.component,
 			'componentProps': component.componentProps,
 			'order': component.order,
 			'fullscreenVisible': component.fullscreenVisible
-		});
-		this._notify();
+		})
+		const dispatch = getAppStoreDispatch();
+		dispatch({ type: SET_HEADER_NAVIGATION_ITEMS, headerNavItems: this.Items });
 	}
 
+	// This function removes a component from the Header
 	removeComponent(component) {
 		const filteredItems = this.Items.filter(item => item.component !== component);
 		this.Items = filteredItems;
-		this._notify();
+		const dispatch = getAppStoreDispatch();
+		dispatch({ type: SET_HEADER_NAVIGATION_ITEMS, headerNavItems: this.Items });
 	}
 
 }
