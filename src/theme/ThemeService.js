@@ -1,17 +1,14 @@
 import { Service } from 'asab_webui_components';
 import ThemeReducer from './ThemeReducer';
 import ThemeButton from "./ThemeButton";
+import { CHANGE_THEME } from './actions';
 import { registerReducer } from '../components/store/reducer/reducerRegistry.jsx';
-
-// Import theme syncer to use AppStore in the Service class
-import ThemeSyncer from './ThemeSyncer.jsx';
-import { registerAppStoreSyncer } from '../components/store/AppStoreSyncerRegistry.jsx';
+import { getAppStoreDispatch } from '../components/store/AppStore.jsx';
 
 export default class ThemeService extends Service {
 
 	constructor(app, serviceName = "ThemeService") {
 		super(app, serviceName);
-		registerAppStoreSyncer(ThemeSyncer);
 		registerReducer('theme', ThemeReducer, null);
 	}
 
@@ -22,6 +19,22 @@ export default class ThemeService extends Service {
 			order: 400,
 			fullscreenVisible: true
 		});
+		// Detect initial theme (based on color-scheme aka user prefered theme)
+		// Doesn't work in Chromiuim in Ubuntu
+		// more info https://bugs.chromium.org/p/chromium/issues/detail?id=998903
+		const prefersColorScheme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+		? "dark"
+		: "light"
+		;
+
+		// Dispatch theme
+		const dispatch = getAppStoreDispatch();
+		dispatch({
+			type: CHANGE_THEME,
+			theme: prefersColorScheme
+		});
+
+		// TODO: Add listener to the system theme and change light/dark based on that
 	}
 
 }
