@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Alert, Button, } from 'reactstrap';
 
 // Session expiration custom Alert component
-export function SessionExpirationAlert({ alert, store }) {
+export function SessionExpirationAlert({ alert }) {
 	const { t } = useTranslation(); // Use the hook inside the functional component
 
 	return (

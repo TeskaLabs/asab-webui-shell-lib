@@ -105,7 +105,7 @@ class Application extends Component {
 
 		// Register reducers which are not part of any app service
 		this.ReduxService.addReducer("attentionrequired", attentionRequiredReducer);
-		this.ReduxService.addReducer("alerts", alertsReducer);
+		registerReducer('alerts', alertsReducer);
 		registerReducer('advmode', advancedModeReducer);
 		registerReducer('fullscreenmode', fullscreenModeReducer);
 		registerReducer('header', headerReducer);
@@ -568,7 +568,8 @@ class Application extends Component {
 		* success
 	*/
 	addAlert(level, message, expire = 5, shouldBeTranslated = false, component = null) {
-		this.Store.dispatch({
+		const dispatch = getAppStoreDispatch();
+		dispatch({
 			type: ADD_ALERT,
 			level: level,
 			message: message,
@@ -615,7 +616,8 @@ class Application extends Component {
 				exceptionMessage = <><h5>{exceptionMessage}</h5>{exception?.message && <div className="mt-2">{exception.message}</div>}</>;
 			}
 		}
-		this.Store.dispatch({
+		const dispatch = getAppStoreDispatch();
+		dispatch({
 			type: ADD_ALERT,
 			level: "danger",
 			message: exceptionMessage,
