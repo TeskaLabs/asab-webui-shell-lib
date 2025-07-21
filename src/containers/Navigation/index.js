@@ -36,7 +36,9 @@ export default class Navigation extends Component {
 			this.Items.push(item);
 		}
 		const dispatch = getAppStoreDispatch();
-		dispatch({ type: SET_NAVIGATION_ITEMS, navItems: this.Items });
+		if (dispatch) {
+			dispatch({ type: SET_NAVIGATION_ITEMS, navItems: this.Items });
+		}
 	}
 
 }

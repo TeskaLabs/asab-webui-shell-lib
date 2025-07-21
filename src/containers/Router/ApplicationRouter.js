@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 import { useAppStore, useAppSelector } from 'asab_webui_components';
 
@@ -11,7 +10,7 @@ import InvalidRouteScreen from "../../screens/InvalidRouteScreen";
 
 
 export default function ApplicationRouter(props) {
-	const routes = useSelector(state => state.router?.routes);
+	const routes = useAppSelector(state => state.router?.routes);
 	return(
 		<Routes>
 			{routes && routes.map((route, idx) => {

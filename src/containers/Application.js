@@ -111,7 +111,7 @@ class Application extends Component {
 		registerReducer('header', headerReducer);
 		registerReducer('sidebar', sidebarReducer);
 		registerReducer("navigation", navigationReducer);
-		this.ReduxService.addReducer("router", routerReducer);
+		registerReducer("router", routerReducer);
 
 		// The application can provide a list of keys that should be automatically parsed as BigInt, when received from the server in Axios call
 		// This is important to preserve 64bit numbers from the server such as IP addresses, timestamps etc.
