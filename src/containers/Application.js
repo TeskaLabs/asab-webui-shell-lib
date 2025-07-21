@@ -107,7 +107,7 @@ class Application extends Component {
 		this.ReduxService.addReducer("attentionrequired", attentionRequiredReducer);
 		this.ReduxService.addReducer("alerts", alertsReducer);
 		registerReducer('advmode', advancedModeReducer);
-		this.ReduxService.addReducer("fullscreenmode", fullscreenModeReducer);
+		registerReducer('fullscreenmode', fullscreenModeReducer);
 		registerReducer('header', headerReducer);
 		registerReducer('sidebar', sidebarReducer);
 		this.ReduxService.addReducer("navigation", navigationReducer);
@@ -628,7 +628,7 @@ class Application extends Component {
 
 	setAdvancedMode(enabled) {
 		if (enabled === 0) {
-			let state = getAppStoreState();
+			const state = getAppStoreState();
 			enabled = !state.advmode.enabled;
 		}
 		const dispatch = getAppStoreDispatch();
@@ -648,11 +648,12 @@ class Application extends Component {
 		It takes a parameter called "status" to indicate whether to turn the full-screen mode on or off.
 	*/
 	setFullScreenMode(status) {
-		const state = this.Store.getState();
+		const state = getAppStoreState();
 		if (status === 'on' && (state.fullscreenmode.status === 'on')) {
 			status = 'off';
 		}
-		this.Store.dispatch({
+		const dispatch = getAppStoreDispatch();
+		dispatch({
 			type: SET_FULLSCREEN_MODE,
 			status: status
 		});
