@@ -110,7 +110,7 @@ class Application extends Component {
 		registerReducer('fullscreenmode', fullscreenModeReducer);
 		registerReducer('header', headerReducer);
 		registerReducer('sidebar', sidebarReducer);
-		this.ReduxService.addReducer("navigation", navigationReducer);
+		registerReducer("navigation", navigationReducer);
 		this.ReduxService.addReducer("router", routerReducer);
 
 		// The application can provide a list of keys that should be automatically parsed as BigInt, when received from the server in Axios call

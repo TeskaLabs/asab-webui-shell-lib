@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
-import { useAppStore } from 'asab_webui_components';
+import { useAppStore, useAppSelector } from 'asab_webui_components';
 
 import { SET_HELP_PATH } from '../../actions';
 import RouteErrorHandler from '../RouteErrorHandler';
@@ -40,7 +40,7 @@ export default function ApplicationRouter(props) {
 
 
 function RouteRenderer(props) {
-	const resources = useSelector((state) => state.auth?.resources ? state.auth.resources : []);
+	const resources = useAppSelector((state) => state.auth?.resources ? state.auth.resources : []);
 	const { dispatch } = useAppStore();
 	const defaultHelp = props.app.Config.get("help");
 

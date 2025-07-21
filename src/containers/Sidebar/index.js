@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useAppSelector, useAppStore } from 'asab_webui_components';
 
 import { Modal } from 'reactstrap';
@@ -14,8 +13,8 @@ export default function Sidebar (props) {
 	const [isSmallResolution, setIsSmallResolution] = useState(false)
 	const [sidebarBottomBranding, setSidebarBottomBranding] = useState({});
 	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-	const sidebarItems = useSelector(state => state.navigation?.navItems);
-	const sessionExpired = useSelector(state => state.auth?.sessionExpired);
+	const sidebarItems = useAppSelector(state => state.navigation?.navItems);
+	const sessionExpired = useAppSelector(state => state.auth?.sessionExpired);
 	const theme = useAppSelector(state => state.theme);
 
 	const { dispatch } = useAppStore();
