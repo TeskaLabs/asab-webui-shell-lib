@@ -8,7 +8,7 @@ export default class ConfigService extends Service {
 
 	constructor(app, serviceName = "ConfigService") {
 		super(app, serviceName);
-		registerReducer('config', ConfigReducer, {});
+		registerReducer('config', ConfigReducer);
 
 		this.Config = new Config();
 	}

@@ -7,7 +7,7 @@ export default class ThemeService extends Service {
 
 	constructor(app, serviceName = "ThemeService") {
 		super(app, serviceName);
-		registerReducer('theme', ThemeReducer, null);
+		registerReducer('theme', ThemeReducer);
 	}
 
 	initialize() {

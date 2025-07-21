@@ -3,7 +3,7 @@ import { Provider } from 'react-redux';
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import Axios from 'axios';
 
-import { Module, PubSubProvider, ErrorHandler, AppStoreProvider, registerReducer } from "asab_webui_components";
+import { Module, PubSubProvider, ErrorHandler, AppStoreProvider, registerReducer, getAppStoreState, getAppStoreDispatch } from "asab_webui_components";
 
 import Header from './Header';
 import Sidebar from './Sidebar';
@@ -106,12 +106,10 @@ class Application extends Component {
 		// Register reducers which are not part of any app service
 		this.ReduxService.addReducer("attentionrequired", attentionRequiredReducer);
 		this.ReduxService.addReducer("alerts", alertsReducer);
-		this.ReduxService.addReducer("advmode", advancedModeReducer);
+		registerReducer('advmode', advancedModeReducer);
 		this.ReduxService.addReducer("fullscreenmode", fullscreenModeReducer);
-		registerReducer('header', headerReducer, {
-			helpPath: undefined, subtitle: undefined, headerNavItems: []
-		});
-		registerReducer('sidebar', sidebarReducer, {isSidebarCollapsed: false});
+		registerReducer('header', headerReducer);
+		registerReducer('sidebar', sidebarReducer);
 		this.ReduxService.addReducer("navigation", navigationReducer);
 		this.ReduxService.addReducer("router", routerReducer);
 
@@ -630,10 +628,11 @@ class Application extends Component {
 
 	setAdvancedMode(enabled) {
 		if (enabled === 0) {
-			let state = this.Store.getState();
+			let state = getAppStoreState();
 			enabled = !state.advmode.enabled;
 		}
-		this.Store.dispatch({
+		const dispatch = getAppStoreDispatch();
+		dispatch({
 			type: SET_ADVANCED_MODE,
 			enabled: enabled
 		});
