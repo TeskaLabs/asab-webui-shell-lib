@@ -38,6 +38,8 @@ import ApplicationRouter from './Router/ApplicationRouter';
 
 import SuspenseScreen from '../screens/SuspenseScreen';
 
+import { OfflineBadge } from '../components/OfflineBadge.jsx';
+
 import './Application.scss';
 
 import { ADD_ALERT, SET_ADVANCED_MODE, SET_FLAG, SET_FULLSCREEN_MODE } from '../actions';
@@ -123,7 +125,19 @@ class Application extends Component {
 		this.state = {
 			networking: 0, // If more than zero, some networking activity is happening
 			splashscreenRequestors: 0,
+			isOnline: navigator.onLine, // Initially check if the application is online
 		}
+
+		/* Tracking online/offline events */
+		this._handleOnline = this._handleOnline.bind(this);
+		this._handleOffline = this._handleOffline.bind(this);
+		// Periodic check for internet access
+		this.onlineValidationInterval = null;
+		this._validateInternetConnection = this._validateInternetConnection.bind(this);
+		// Flags for tracking alert display
+		this.offlineAlertShown = false;
+		this.onlineAlertShown = false;
+		/* Tracking online/offline events */
 
 		const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 		this.Store = createStore(combineReducers(this.ReduxService.Reducers), composeEnhancers(applyMiddleware()));
@@ -528,12 +542,98 @@ class Application extends Component {
 
 	}
 
+	/* Methods for online/offline validation */
+	_handleOnline() {
+		const isOnline = navigator.onLine;
+		if (isOnline) {
+			// Directly update the state to indicate the app is online
+			this.setState({ isOnline: true });
+			const headerService = this.locateService("HeaderService");
+			headerService.removeComponent(OfflineBadge);
+		}
+	}
+
+	_handleOffline() {
+		const isOnline = navigator.onLine;
+		if (!isOnline) {
+			// Directly update the state to indicate the app is offline
+			this.setState({ isOnline: false })
+			const headerService = this.locateService("HeaderService");
+			headerService.addComponent({
+				component: OfflineBadge,
+				order: 100
+			});
+		}
+	}
+
+	_showOfflineAlert() {
+		// Display offline alert if not online
+		if (!this.state.isOnline && !this.offlineAlertShown) {
+			this.addAlert("warning", "You are offline or the internet connection is unavailable. Some parts of the application may not be working as expected.", 30, true);
+			this.offlineAlertShown = true; // Set the flag to prevent repeated alerts
+			this.onlineAlertShown = false; // Reset the online alert flag
+
+			const headerService = this.locateService("HeaderService");
+			headerService.addComponent({
+				component: OfflineBadge,
+				order: 100
+			});
+		}
+	}
+
+	_showOnlineAlert() {
+		// Display online alert if online
+		if (this.state.isOnline && !this.onlineAlertShown) {
+			this.addAlert("info", "Connection has been restored, you are back online.", 30, true);
+			this.onlineAlertShown = true; // Set the flag to prevent repeated alerts
+			this.offlineAlertShown = false; // Reset the offline alert flag
+			const headerService = this.locateService("HeaderService");
+			headerService.removeComponent(OfflineBadge);
+		}
+	}
+
+	_validateInternetConnection() {
+		const isOnline = navigator.onLine;
+		// TODO: do a ping to any of the services to validate that we are able to connect to the service, but the app can run on some internal network
+
+		// Validate if the network status has changed (online -> offline or vice versa)
+		if (isOnline && !this.state.isOnline) {
+			this.setState({ isOnline: true });
+			this._showOnlineAlert();
+		} else if (!isOnline && this.state.isOnline) {
+			this.setState({ isOnline: false });
+			this._showOfflineAlert();
+		}
+	}
+
+	isOnline() {
+		return this.state.isOnline;
+	}
+	/* Methods for online/offline validation */
+
+
 	componentDidMount() {
 		document.addEventListener("keyup", this._handleKeyUp, false);
+
+		// Add online validation event listeners to track the online/offline status
+		window.addEventListener('online', this._handleOnline);
+		window.addEventListener('offline', this._handleOffline);
+		// Periodic check for internet status
+		this.onlineValidationInterval = setInterval(this._validateInternetConnection, 10000); // Check every 10 seconds
+		// Check the online status right when the component is mounted
+		if (!this.state.isOnline) {
+			this._showOfflineAlert();
+		}
 	}
 
 	componentWillUnmount() {
 		document.removeEventListener("keyup", this._handleKeyUp, false);
+
+		// Cleanup online validation event listeners when the component is unmounted
+		window.removeEventListener('online', this._handleOnline);
+		window.removeEventListener('offline', this._handleOffline);
+		// Cleanup the online validation interval
+		clearInterval(this.onlineValidationInterval);
 	}
 
 
