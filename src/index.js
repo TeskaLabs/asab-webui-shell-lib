@@ -6,3 +6,4 @@ export { default as I18nModule } from './modules/i18n';
 export { default as TenantModule } from './modules/tenant';
 export { default as AuthModule } from './modules/auth';
 export { default as AboutModule } from './modules/about';
+export { default as PingModule } from './modules/ping';

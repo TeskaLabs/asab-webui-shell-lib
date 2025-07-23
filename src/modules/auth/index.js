@@ -434,6 +434,9 @@ export default class AuthModule extends Module {
 		let refreshSessionDone = false; // Tracks if the session has been proactivelly refreshed
 		let warningDisplayed = false; // Tracks if the "about to expire" warning has been shown
 
+		// Detect if PingModule is present
+		const PingModule = this.App.Modules?.find(mod => mod.Name === 'PingModule');
+
 		const validateSession = async () => {
 			const currentTime = Date.now() / 1000; // Convert milliseconds to seconds
 			let timeRemaining = this.SessionExpiration - currentTime; // Time difference for triggering "about to expire" warning
@@ -443,13 +446,8 @@ export default class AuthModule extends Module {
 				timeRemaining = MAX_SESSION_DURATION;
 			}
 
-			// Check if the user is online
-			const isOnline = this.App.isOnline();
-
-			// Handling offline status
-			if (!isOnline) {
-				const isUserInfoUpdated = await this.updateUserInfo(); // Update user info when offline (every 10s)
-			}
+			// Check if the user is online based on presence of Ping module in the application
+			const isOnline = PingModule ? PingModule.isOnline() : true; // Fallback on true when PingModule is not present
 
 			// Validate session on half of the session expiration or if the remaining time is <= 5min
 			if (isOnline && !refreshSessionDone && ((timeRemaining <= 300) || (currentTime >= sessionMidpoint))) {
