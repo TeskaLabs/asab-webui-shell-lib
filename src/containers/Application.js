@@ -543,8 +543,8 @@ class Application extends Component {
 	}
 
 	/* Methods for online/offline validation */
-	_handleOnline() {
-		const isOnline = navigator.onLine;
+	async _handleOnline() {
+		const isOnline = await this._detectOfflineState();
 		if (isOnline) {
 			// Directly update the state to indicate the app is online
 			this.setState({ isOnline: true });
@@ -553,8 +553,8 @@ class Application extends Component {
 		}
 	}
 
-	_handleOffline() {
-		const isOnline = navigator.onLine;
+	async _handleOffline() {
+		const isOnline = await this._detectOfflineState();
 		if (!isOnline) {
 			// Directly update the state to indicate the app is offline
 			this.setState({ isOnline: false })
@@ -568,11 +568,7 @@ class Application extends Component {
 
 	_showOfflineAlert() {
 		// Display offline alert if not online
-		if (!this.state.isOnline && !this.offlineAlertShown) {
-			this.addAlert("warning", "You are offline or the internet connection is unavailable. Some parts of the application may not be working as expected.", 30, true);
-			this.offlineAlertShown = true; // Set the flag to prevent repeated alerts
-			this.onlineAlertShown = false; // Reset the online alert flag
-
+		if (!this.state.isOnline) {
 			const headerService = this.locateService("HeaderService");
 			headerService.addComponent({
 				component: OfflineBadge,
@@ -583,19 +579,14 @@ class Application extends Component {
 
 	_showOnlineAlert() {
 		// Display online alert if online
-		if (this.state.isOnline && !this.onlineAlertShown) {
-			this.addAlert("info", "Connection has been restored, you are back online.", 30, true);
-			this.onlineAlertShown = true; // Set the flag to prevent repeated alerts
-			this.offlineAlertShown = false; // Reset the offline alert flag
+		if (this.state.isOnline) {
 			const headerService = this.locateService("HeaderService");
 			headerService.removeComponent(OfflineBadge);
 		}
 	}
 
-	_validateInternetConnection() {
-		const isOnline = navigator.onLine;
-		// TODO: do a ping to any of the services to validate that we are able to connect to the service, but the app can run on some internal network
-
+	async _validateInternetConnection() {
+		const isOnline = await this._detectOfflineState();
 		// Validate if the network status has changed (online -> offline or vice versa)
 		if (isOnline && !this.state.isOnline) {
 			this.setState({ isOnline: true });
@@ -603,6 +594,19 @@ class Application extends Component {
 		} else if (!isOnline && this.state.isOnline) {
 			this.setState({ isOnline: false });
 			this._showOfflineAlert();
+		}
+	}
+
+	// Internal method for detecting online/offline state
+	async _detectOfflineState() {
+		const ASABPingAPI = this.axiosCreate('asab-ping');
+		try {
+			// Make request for initial data
+			await ASABPingAPI.get('/asab-ping');
+			return true;
+		} catch (e) {
+			console.error(e);
+			return false;
 		}
 	}
 

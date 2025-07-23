@@ -6,6 +6,5 @@ import { useTranslation } from 'react-i18next';
 export function OfflineBadge() {
 	const { t } = useTranslation();
 
-	return <Badge className='mx-2' pill color='warning'><i className='bi bi-wifi-off'/> {t('You are offline')}</Badge>	
+	return <Badge title={t('Functionality of the Application may be limited.')} className='mx-2' pill color='warning'><i className='bi bi-wifi-off'/> {t('You are offline')}</Badge>
 }
-	
