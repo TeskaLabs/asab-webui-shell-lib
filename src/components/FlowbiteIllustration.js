@@ -3,7 +3,6 @@ import React from 'react';
 export const FlowbiteIllustration = ({ 
   name, 
   className = '', 
-  style = {},
   width = '300px',
   height = 'auto',
   alt = ''
@@ -14,7 +13,7 @@ export const FlowbiteIllustration = ({
   const illustrationSrc = `${basePath}/${name}.svg`;
 
   return (
-    <div className={`flowbite-illustration ${className}`} style={style}>
+    <div className={`flowbite-illustration ${className}`}>
       <img 
         src={illustrationSrc}
         alt={alt || `${name} illustration`}
