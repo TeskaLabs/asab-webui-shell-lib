@@ -7,6 +7,7 @@ import {
 	Card, CardBody
 } from 'reactstrap';
 
+import { FlowbiteIllustration } from '../components/FlowbiteIllustration'
 import './UnauthorizedAccessScreen.scss';
 
 /*
@@ -58,15 +59,17 @@ export default function UnauthorizedAccessScreen(props) {
 				<CardBody className="text-center unauthorized-cardbody">
 					<Row className="justify-content-center">
 						<Col>
-							<p><i className="bi bi-exclamation-triangle text-danger fs-1" title={t("UnauthorizedAccessScreen|Unauthorized access")}/></p>
-							{props.resource ?
-								<>
-									<p className="card-text">{t("UnauthorizedAccessScreen|You are not authorized to access this part of the application. Please ask your application administrator for following resource")}:</p>
-									<h5 className="card-title">{props.resource}</h5>
-								</>
-								:
-								<p className="card-text">{t("UnauthorizedAccessScreen|You are not authorized to access this part of the application.")}</p>
-							}
+							<p>
+								<FlowbiteIllustration name="unauthorized" className="mb-4" title={t("UnauthorizedAccessScreen|Unauthorized access")}/>
+							</p>	
+								{props.resource ?
+									<>
+										<p className="card-text">{t("UnauthorizedAccessScreen|You are not authorized to access this part of the application. Please ask your application administrator for following resource")}:</p>
+										<h5 className="card-title">{props.resource}</h5>
+									</>
+									:
+									<p className="card-text">{t("UnauthorizedAccessScreen|You are not authorized to access this part of the application.")}</p>
+								}
 						</Col>
 					</Row>
 				</CardBody>

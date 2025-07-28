@@ -5,7 +5,8 @@ export const FlowbiteIllustration = ({
   className = '', 
   width = '300px',
   height = 'auto',
-  alt = ''
+  alt = '',
+  title = ''
 }) => {
   // Base path to your illustrations
   const basePath = '/media/illustrations';
@@ -17,11 +18,11 @@ export const FlowbiteIllustration = ({
       <img 
         src={illustrationSrc}
         alt={alt || `${name} illustration`}
+		title={title}
         style={{ 
           width, 
           height,
           maxWidth: '100%',
-          display: 'block'
         }}
         onError={(e) => {
           console.warn(`Illustration '${name}' failed to load from ${illustrationSrc}`);

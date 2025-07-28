@@ -11,6 +11,7 @@ import {
 	InputGroup, InputGroupText, Input, Label
 } from 'reactstrap';
 
+import { FlowbiteIllustration } from '../../../components/FlowbiteIllustration';
 
 // Component that handles user invitation
 export default function InvitationScreen(props) {
@@ -169,6 +170,13 @@ export default function InvitationScreen(props) {
 									</div>
 								</CardHeader>
 								<CardBody>
+									<Col className='text-center'>
+										<FlowbiteIllustration
+											name='invite'
+											className='mb-4 mx-auto'
+											title={t('InvitationScreen|Invite other user')}
+										/>
+									</Col>
 									<Label>{t('InvitationScreen|Enter the user\'s email address')}</Label>
 									<InputGroup>
 										<InputGroupText>

@@ -7,6 +7,7 @@ import {
 	Card, CardHeader
 } from 'reactstrap';
 
+import { FlowbiteIllustration } from '../../../components/FlowbiteIllustration';
 
 /*
 
@@ -32,6 +33,7 @@ function AccessControlScreen(props) {
 		<Container>
 			<Row className="justify-content-center pt-5">
 				<Col md="6">
+
 					<AccessControlCard />
 				</Col>
 			</Row>
@@ -55,9 +57,11 @@ function AccessControlCard(props) {
 					<h3>
 						{t('AccessControlScreen|Access control')}
 					</h3>
+					
 				</div>
 			</CardHeader>
 			<ul className="list-group list-group-flush">
+									<FlowbiteIllustration name="access" className="mt-4 mx-auto" title={props.title || "Access Control"} />
 				{userinfo?.username &&
 				<li className="list-group-item">
 					<Row>

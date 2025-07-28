@@ -18,7 +18,7 @@ export default function InvalidRouteScreen(props) {
 				<CardBody className="text-center invalid-route-cardbody">
 					<Row className="justify-content-center">
 						<Col>
-							<FlowbiteIllustration name="error" className='mb-4'/>
+							<FlowbiteIllustration name="error" className="mb-4" title={t("InvalidRouteScreen|Nothing here")}/>
 							<p className="card-text">{t("InvalidRouteScreen|Sorry, we can't find the page you are looking for.")}</p>
 						</Col>
 					</Row>
