@@ -94,7 +94,7 @@ export default class PingModule extends Module {
 		const ASABPingAPI = this.App.axiosCreate('asab-ping');
 		try {
 			// Make request for initial data
-			await ASABPingAPI.get('/asab-ping', {
+			await ASABPingAPI.get('/ping', {
 				headers: {
 					'Cache-Control': 'no-store'
 				}
