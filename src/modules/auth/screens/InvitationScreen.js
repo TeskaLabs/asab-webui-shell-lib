@@ -170,14 +170,12 @@ export default function InvitationScreen(props) {
 									</div>
 								</CardHeader>
 								<CardBody>
-									<Col className='text-center'>
-										<FlowbiteIllustration
-											name='invite'
-											width='150px'
-											className='mb-3 mx-auto'
-											title={t('InvitationScreen|Invite other user')}
-										/>
-									</Col>
+									<FlowbiteIllustration
+										name='invite'
+										width='150px'
+										className='mb-3 text-center'
+										title={t('InvitationScreen|Invite other user')}
+									/>
 									<Label>{t('InvitationScreen|Enter the user\'s email address')}</Label>
 									<InputGroup>
 										<InputGroupText>
