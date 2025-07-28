@@ -33,7 +33,6 @@ function AccessControlScreen(props) {
 		<Container>
 			<Row className="justify-content-center pt-5">
 				<Col md="6">
-
 					<AccessControlCard />
 				</Col>
 			</Row>
