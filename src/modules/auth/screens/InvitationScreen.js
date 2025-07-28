@@ -173,7 +173,8 @@ export default function InvitationScreen(props) {
 									<Col className='text-center'>
 										<FlowbiteIllustration
 											name='invite'
-											className='mb-4 mx-auto'
+											width='150px'
+											className='mb-3 mx-auto'
 											title={t('InvitationScreen|Invite other user')}
 										/>
 									</Col>
