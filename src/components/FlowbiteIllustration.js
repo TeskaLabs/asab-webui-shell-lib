@@ -5,7 +5,6 @@ export const FlowbiteIllustration = ({
   className = '', 
   width = '300px',
   height = 'auto',
-  alt = '',
   title = ''
 }) => {
   // Base path to your illustrations
@@ -14,10 +13,10 @@ export const FlowbiteIllustration = ({
   const illustrationSrc = `${basePath}/${name}.svg`;
 
   return (
-    <div className={`flowbite-illustration ${className}`}>
+    <div className={className}>
       <img 
         src={illustrationSrc}
-        alt={alt || `${name} illustration`}
+        alt={title || `${name} illustration`}
 		title={title}
         style={{ 
           width, 
