@@ -1,4 +1,4 @@
-import { Service, getAppStoreDispatch, registerReducer } from 'asab_webui_components';
+import { Service, registerReducer } from 'asab_webui_components';
 import ThemeReducer from './ThemeReducer';
 import ThemeButton from "./ThemeButton";
 import { CHANGE_THEME } from './actions';
@@ -26,8 +26,7 @@ export default class ThemeService extends Service {
 		;
 
 		// Dispatch theme
-		const dispatch = getAppStoreDispatch();
-		dispatch({
+		this.App?.AppStore?.dispatch?.({
 			type: CHANGE_THEME,
 			theme: prefersColorScheme
 		});

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { SET_ROUTES } from '../../actions';
-import { getAppStoreDispatch } from 'asab_webui_components';
 
 export default class Router extends Component {
 
@@ -22,9 +21,8 @@ export default class Router extends Component {
 			}
 		*/
 		this.Routes.push(route);
-		const dispatch = getAppStoreDispatch();
-		if (dispatch) {
-			dispatch({ type: SET_ROUTES, routes: this.Routes });
+		if (this.App.AppStore) {
+			this.App.AppStore.dispatch?.({ type: SET_ROUTES, routes: this.Routes });
 		}
 	}
 }

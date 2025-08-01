@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { SET_NAVIGATION_ITEMS } from '../../actions';
-import { getAppStoreDispatch } from 'asab_webui_components';
 
 export default class Navigation extends Component {
 
@@ -35,9 +34,8 @@ export default class Navigation extends Component {
 			// If no existing item, push the new item
 			this.Items.push(item);
 		}
-		const dispatch = getAppStoreDispatch();
-		if (dispatch) {
-			dispatch({ type: SET_NAVIGATION_ITEMS, navItems: this.Items });
+		if (this.App.AppStore) {
+			this.App.AppStore.dispatch?.({ type: SET_NAVIGATION_ITEMS, navItems: this.Items });
 		}
 	}
 

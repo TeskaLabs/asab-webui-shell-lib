@@ -3,7 +3,7 @@ import { Provider } from 'react-redux';
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import Axios from 'axios';
 
-import { Module, PubSubProvider, ErrorHandler, AppStoreProvider, registerReducer, getAppStoreState, getAppStoreDispatch } from "asab_webui_components";
+import { Module, PubSubProvider, ErrorHandler, AppStoreProvider, registerReducer } from "asab_webui_components";
 
 import Header from './Header';
 import Sidebar from './Sidebar';
@@ -103,6 +103,11 @@ class Application extends Component {
 		this.TitleService = new TitleService(this, "TitleService");
 		this.HelpService = new HelpService(this, "HelpService");
 
+		// Global AppStore variables
+		this.AppStore = {
+			dispatch: null,
+			state: null
+		};
 		// Register reducers which are not part of any app service
 		this.ReduxService.addReducer("attentionrequired", attentionRequiredReducer);
 		registerReducer('alerts', alertsReducer);
@@ -110,8 +115,8 @@ class Application extends Component {
 		registerReducer('fullscreenmode', fullscreenModeReducer);
 		registerReducer('header', headerReducer);
 		registerReducer('sidebar', sidebarReducer);
-		registerReducer("navigation", navigationReducer);
-		registerReducer("router", routerReducer);
+		registerReducer('navigation', navigationReducer);
+		registerReducer('router', routerReducer);
 
 		// The application can provide a list of keys that should be automatically parsed as BigInt, when received from the server in Axios call
 		// This is important to preserve 64bit numbers from the server such as IP addresses, timestamps etc.
@@ -568,8 +573,7 @@ class Application extends Component {
 		* success
 	*/
 	addAlert(level, message, expire = 5, shouldBeTranslated = false, component = null) {
-		const dispatch = getAppStoreDispatch();
-		dispatch({
+		this.AppStore.dispatch?.({
 			type: ADD_ALERT,
 			level: level,
 			message: message,
@@ -616,8 +620,7 @@ class Application extends Component {
 				exceptionMessage = <><h5>{exceptionMessage}</h5>{exception?.message && <div className="mt-2">{exception.message}</div>}</>;
 			}
 		}
-		const dispatch = getAppStoreDispatch();
-		dispatch({
+		this.AppStore.dispatch?.({
 			type: ADD_ALERT,
 			level: "danger",
 			message: exceptionMessage,
@@ -630,11 +633,10 @@ class Application extends Component {
 
 	setAdvancedMode(enabled) {
 		if (enabled === 0) {
-			const state = getAppStoreState();
-			enabled = !state.advmode.enabled;
+			const state = this.AppStore.state;
+			enabled = !state?.advmode?.enabled;
 		}
-		const dispatch = getAppStoreDispatch();
-		dispatch({
+		this.AppStore.dispatch?.({
 			type: SET_ADVANCED_MODE,
 			enabled: enabled
 		});
@@ -650,12 +652,11 @@ class Application extends Component {
 		It takes a parameter called "status" to indicate whether to turn the full-screen mode on or off.
 	*/
 	setFullScreenMode(status) {
-		const state = getAppStoreState();
-		if (status === 'on' && (state.fullscreenmode.status === 'on')) {
+		const state = this.AppStore.state;
+		if (status === 'on' && (state?.fullscreenmode?.status === 'on')) {
 			status = 'off';
 		}
-		const dispatch = getAppStoreDispatch();
-		dispatch({
+		this.AppStore.dispatch?.({
 			type: SET_FULLSCREEN_MODE,
 			status: status
 		});
@@ -673,7 +674,7 @@ class Application extends Component {
 	if (this.state.splashscreenRequestors > 0) return (
 		// When splashscreenRequestors is requested, the application is not rendered.
 		// This prevents race conditions during application init time.
-		<AppStoreProvider>
+		<AppStoreProvider app={this}>
 		<PubSubProvider app={this}>
 		<Provider store={this.Store}> {/* TODO: Remove redux store provider */}
 			<Suspense fallback={<div></div>}>
@@ -688,7 +689,7 @@ class Application extends Component {
 	);
 
 	return (
-		<AppStoreProvider>
+		<AppStoreProvider app={this}>
 		<PubSubProvider app={this}>
 		<Provider store={this.Store}>{/* TODO: Remove redux store provider */}
 			<Suspense fallback={<div></div>}>

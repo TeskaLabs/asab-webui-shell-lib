@@ -1,5 +1,5 @@
 import React, { lazy } from 'react';
-import { Module, getAppStoreState, registerReducer, getAppStoreDispatch } from 'asab_webui_components';
+import { Module, registerReducer } from 'asab_webui_components';
 
 import { AuthHeaderDropdown, AuthHeaderInvitation } from './header';
 import reducer from './reducer';
@@ -146,8 +146,7 @@ export default class AuthModule extends Module {
 				}
 
 				// Validate resources of items and children in navigation (resource validation depends on tenant)
-				const dispatch = getAppStoreDispatch();
-				if (dispatch && this.App.Services.TenantService && (this.UserInfo !== null)) {
+				if (this.App.AppStore && this.App.Services.TenantService && (this.UserInfo !== null)) {
 					let currentTenant = this.App.Services.TenantService.getCurrentTenant();
 					let resources = this.UserInfo.resources ? this.UserInfo.resources[currentTenant] : [];
 					/*
@@ -162,9 +161,7 @@ export default class AuthModule extends Module {
 						return;
 					}
 
-					if (dispatch) {
-						dispatch({ type: types.AUTH_RESOURCES, resources: resources });
-					}
+					this.App.AppStore.dispatch?.({ type: types.AUTH_RESOURCES, resources: resources });
 					await this.validateNavigation({resources});
 				}
 
@@ -229,10 +226,9 @@ export default class AuthModule extends Module {
 			mockParams["tenants"] = Object.values(mockParams.tenants)
 		}
 
-		const dispatch = getAppStoreDispatch();
-		if (dispatch) {
-			dispatch({ type: types.AUTH_USERINFO, payload: mockParams });
-			dispatch({ type: types.AUTH_RESOURCES, resources: mockParams["resources"] });
+		if (this.App.AppStore) {
+			this.App.AppStore.dispatch?.({ type: types.AUTH_USERINFO, payload: mockParams });
+			this.App.AppStore.dispatch?.({ type: types.AUTH_RESOURCES, resources: mockParams["resources"] });
 		}
 
 		/** Check for TenantService and pass tenants list obtained from userinfo */
@@ -262,7 +258,7 @@ export default class AuthModule extends Module {
 
 	// TODO: reconsider removing async/await with promise
 	async validateNavigation({resources}) {
-		const state = getAppStoreState();
+		const state = this.App.AppStore.state;
 		let navItems = state.navigation?.navItems;
 		let authorizedNavItems = [];
 		navItems && await Promise.all(navItems.map(async (itm, idx) => {
@@ -289,8 +285,8 @@ export default class AuthModule extends Module {
 				}
 			}
 		}))
-		const dispatch = getAppStoreDispatch();
-		dispatch({ type: SET_NAVIGATION_ITEMS, navItems: authorizedNavItems });
+
+		this.App.AppStore.dispatch?.({ type: SET_NAVIGATION_ITEMS, navItems: authorizedNavItems });
 	}
 
 	// Validate sidebar's item children
@@ -336,7 +332,6 @@ export default class AuthModule extends Module {
 	}
 
 	async updateUserInfo() {
-		const dispatch = getAppStoreDispatch();
 		let response;
 		try {
 			response = await this.Api.userinfo(this.OAuthTokens.access_token);
@@ -344,16 +339,16 @@ export default class AuthModule extends Module {
 		catch (err) {
 			console.error("Failed to update user info", err);
 			this.UserInfo = null;
-			if (dispatch) {
-				dispatch({ type: types.AUTH_USERINFO, payload: this.UserInfo });
+			if (this.App.AppStore) {
+				this.App.AppStore.dispatch?.({ type: types.AUTH_USERINFO, payload: this.UserInfo });
 			}
 			return false;
 		}
 
 		this.UserInfo = response.data;
 		this.SessionExpiration = response.data?.exp;
-		if (dispatch) {
-			dispatch({ type: types.AUTH_USERINFO, payload: this.UserInfo });
+		if (this.App.AppStore) {
+			this.App.AppStore.dispatch?.({ type: types.AUTH_USERINFO, payload: this.UserInfo });
 		}
 
 		/** Check for TenantService and pass tenants list obtained from userinfo */
@@ -491,9 +486,8 @@ export default class AuthModule extends Module {
 					this.sessionValidationInterval = null;
 					this.App.addAlert("info", "ASABAuthModule|Your session has expired.", 3600 * 1000, true, (alert) => <SessionExpirationAlert alert={alert} />);
 					// Disable UI elements
-					const dispatch = getAppStoreDispatch();
-					if (dispatch) {
-						dispatch({ type: types.AUTH_SESSION_EXPIRATION, sessionExpired: true });
+					if (this.App.AppStore) {
+						this.App.AppStore.dispatch?.({ type: types.AUTH_SESSION_EXPIRATION, sessionExpired: true });
 
 						// Disable UI elements
 						[...document.querySelectorAll('#app-sidebar .nav-link, [class^="btn"]:not(.alert-button), [class*=" btn"]:not(.alert-button), .btn-group a, .page-item, input, select')].forEach(i => {

@@ -1,4 +1,4 @@
-import { Service, getAppStoreDispatch } from 'asab_webui_components';
+import { Service } from 'asab_webui_components';
 import { SET_HEADER_NAVIGATION_ITEMS } from '../actions';
 
 export default class HeaderService extends Service {
@@ -46,16 +46,14 @@ export default class HeaderService extends Service {
 			'order': component.order,
 			'fullscreenVisible': component.fullscreenVisible
 		})
-		const dispatch = getAppStoreDispatch();
-		dispatch({ type: SET_HEADER_NAVIGATION_ITEMS, headerNavItems: this.Items });
+		this.App?.AppStore?.dispatch?.({ type: SET_HEADER_NAVIGATION_ITEMS, headerNavItems: this.Items });
 	}
 
 	// This function removes a component from the Header
 	removeComponent(component) {
 		const filteredItems = this.Items.filter(item => item.component !== component);
 		this.Items = filteredItems;
-		const dispatch = getAppStoreDispatch();
-		dispatch({ type: SET_HEADER_NAVIGATION_ITEMS, headerNavItems: this.Items });
+		this.App.AppStore?.dispatch?.({ type: SET_HEADER_NAVIGATION_ITEMS, headerNavItems: this.Items });
 	}
 
 }
