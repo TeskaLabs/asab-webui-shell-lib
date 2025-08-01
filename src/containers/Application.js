@@ -528,12 +528,28 @@ class Application extends Component {
 
 	}
 
+	// Dynamically dispose modules if `dispose()` method available within the Module
+	async modules_dispose() {
+		var that = this;
+		// Iterate over all modules
+		for (var i in that.Modules) {
+			// Check if the dispose method exists before calling it
+			if (that.Modules[i] && (typeof that.Modules[i].dispose === 'function')) {
+				let ret = that.Modules[i].dispose();
+
+				// Wait for any asynchronous dispose operations
+				await Promise.resolve(ret);
+			}
+		}
+	}
+
 	componentDidMount() {
 		document.addEventListener("keyup", this._handleKeyUp, false);
 	}
 
 	componentWillUnmount() {
 		document.removeEventListener("keyup", this._handleKeyUp, false);
+		this.modules_dispose();
 	}
 
 

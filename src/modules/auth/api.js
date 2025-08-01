@@ -82,7 +82,9 @@ export class SeaCatAuthApi {
 
 	userinfo(access_token) {
 		let userinfoPath = '/userinfo';
-		let headers = {};
+		let headers = {
+			'Cache-Control': 'no-store'
+		};
 		// Add access bearer token to the Authorization headers
 		if (access_token != null) {
 			headers.Authorization = 'Bearer ' + access_token;
