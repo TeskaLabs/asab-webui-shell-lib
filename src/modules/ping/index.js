@@ -11,27 +11,28 @@ export default class PingModule extends Module {
 	constructor(app, name) {
 		super(app, "PingModule");
 
-		/* Tracking online/offline events */
+		// Tracking online/offline events
 		this._handleOnline = this._handleOnline.bind(this);
 		this._handleOffline = this._handleOffline.bind(this);
 		// Periodic check for internet access
 		this.onlineValidationInterval = null;
 		this._validateInternetConnection = this._validateInternetConnection.bind(this);
-		/* Tracking online/offline events */
-		this.isAppOnline = navigator.onLine; // Initially check if the application is online
+		// Initially check if the application is online
+		this.isAppOnline = navigator.onLine;
 
 		this.headerService = null;
 
 	}
 
 	initialize() {
+		// Locate and setup header service (to eventually inject the OfflineBadge)
 		this.headerService = this.App.locateService("HeaderService");
 		// Add online validation event listeners to track the online/offline status
 		window.addEventListener('online', this._handleOnline);
 		window.addEventListener('offline', this._handleOffline);
 
-		// Periodic check for internet status
-		this.onlineValidationInterval = setInterval(this._validateInternetConnection, 10000); // Check every 10 seconds
+		// Periodic check for internet status (check every 10s)
+		this.onlineValidationInterval = setInterval(this._validateInternetConnection, 10000);
 		// Check the online status right when the component is mounted
 		if (!this.isAppOnline) {
 			this._isOffline();
@@ -89,7 +90,7 @@ export default class PingModule extends Module {
 		}
 	}
 
-	// Internal method for detecting online/offline state
+	// Detecting online/offline state
 	async _detectOfflineState() {
 		const ASABPingAPI = this.App.axiosCreate('asab-ping');
 		try {
