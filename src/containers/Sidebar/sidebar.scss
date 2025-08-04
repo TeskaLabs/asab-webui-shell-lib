@@ -61,6 +61,8 @@ $sidebar-transition-timing-function: cubic-bezier(0.6, 0.6, 0, 1);
 	}
 
 	.sidebar-collapsible {
+		font-weight: bold;
+
 		transition: transform 0.1s $sidebar-transition-timing-function;
 		&:hover {
 			span .bi-chevron-down {
