@@ -7,7 +7,7 @@ import {
 	Card, CardBody
 } from 'reactstrap';
 
-import { FlowbiteIllustration } from '../components/FlowbiteIllustration'
+import { FlowbiteIllustration } from 'asab_webui_components';
 import './UnauthorizedAccessScreen.scss';
 
 /*

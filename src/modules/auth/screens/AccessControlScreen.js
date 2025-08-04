@@ -7,7 +7,7 @@ import {
 	Card, CardHeader
 } from 'reactstrap';
 
-import { FlowbiteIllustration } from '../../../components/FlowbiteIllustration';
+import { FlowbiteIllustration } from 'asab_webui_components';
 
 /*
 

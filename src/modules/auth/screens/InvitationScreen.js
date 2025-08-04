@@ -11,7 +11,7 @@ import {
 	InputGroup, InputGroupText, Input, Label
 } from 'reactstrap';
 
-import { FlowbiteIllustration } from '../../../components/FlowbiteIllustration';
+import { FlowbiteIllustration } from 'asab_webui_components';
 
 // Component that handles user invitation
 export default function InvitationScreen(props) {
