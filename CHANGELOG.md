@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 25.2.8
+
+- Import FlowbiteIllustration from `asab_webui_components` into informational screens (#27)
+
 ## 25.2.7
 
 - Implement refresh token session validation to the Auth module (#22)
