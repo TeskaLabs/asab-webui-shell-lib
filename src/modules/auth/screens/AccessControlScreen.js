@@ -1,6 +1,5 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { useAppSelector } from 'asab_webui_components';
 
 import {
@@ -45,7 +44,7 @@ export default AccessControlScreen;
 
 function AccessControlCard(props) {
 	const { t, i18n } = useTranslation();
-	const tenant = useSelector(state => state.tenant?.current);
+	const tenant = useAppSelector(state => state.tenant?.current);
 	const userinfo = useAppSelector(state => state.auth?.userinfo);
 	const resources = useAppSelector(state => state.auth?.resources)?.sort() || [];
 

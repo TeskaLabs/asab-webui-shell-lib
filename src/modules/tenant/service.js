@@ -71,7 +71,7 @@ export default class TenantService extends Service {
 		}
 
 		// Dispatch tenants obtained from userinfo
-		this.App.Store.dispatch({
+		this.App?.AppStore?.dispatch?.({
 			type: types.TENANTS_CHANGED,
 			tenants_list: availableTenants,
 			current: currentTenant
@@ -108,8 +108,8 @@ export default class TenantService extends Service {
 
 	// getCurrentTenant() method is used for obtaining current tenant
 	getCurrentTenant() {
-		const state = this.App.Store.getState();
-		let currentTenant = state.tenant.current;
+		const state = this.App?.AppStore?.state;
+		let currentTenant = state?.tenant?.current;
 		// If current tenant is not in redux store yet, get it from the URL params
 		if (!currentTenant) {
 			currentTenant = this._extractTenantFromUrl();
