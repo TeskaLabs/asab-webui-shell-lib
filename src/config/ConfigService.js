@@ -87,7 +87,7 @@ export default class ConfigService extends Service {
 		}
 
 		if (this.App.AppStore) {
-				this.Config.dispatch(this.App.AppStore);
+			this.Config.dispatch(this.App.AppStore);
 		} else {
 			console.warn('Default configuration has not been dispatched to application store');
 		}

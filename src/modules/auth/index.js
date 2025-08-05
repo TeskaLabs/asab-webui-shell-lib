@@ -161,7 +161,7 @@ export default class AuthModule extends Module {
 						return;
 					}
 
-					this.App.AppStore.dispatch?.({ type: types.AUTH_RESOURCES, resources: resources });
+					this.App?.AppStore?.dispatch?.({ type: types.AUTH_RESOURCES, resources: resources });
 					await this.validateNavigation({resources});
 				}
 
