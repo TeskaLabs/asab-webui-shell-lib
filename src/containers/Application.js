@@ -523,6 +523,11 @@ class Application extends Component {
 
 	componentDidMount() {
 		document.addEventListener("keyup", this._handleKeyUp, false);
+
+		// Add print-landscape class to body if not present
+		if (!document.body.classList.contains('print-landscape')) {
+			document.body.classList.add('print-landscape');
+		}
 	}
 
 	componentWillUnmount() {
