@@ -1,4 +1,4 @@
-import { Service, registerReducer } from 'asab_webui_components';
+import { Service } from 'asab_webui_components';
 import ConfigReducer from './ConfigReducer';
 
 import { CHANGE_CONFIG } from '../actions';
@@ -8,7 +8,7 @@ export default class ConfigService extends Service {
 
 	constructor(app, serviceName = "ConfigService") {
 		super(app, serviceName);
-		registerReducer('config', ConfigReducer);
+		app.ReduxService.addReducer("config", ConfigReducer);
 
 		this.Config = new Config();
 	}

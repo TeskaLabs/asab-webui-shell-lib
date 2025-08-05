@@ -1,5 +1,5 @@
 import React, { lazy } from 'react';
-import { Module, registerReducer } from 'asab_webui_components';
+import { Module } from 'asab_webui_components';
 
 import { AuthHeaderDropdown, AuthHeaderInvitation } from './header';
 import reducer from './reducer';
@@ -23,7 +23,7 @@ export default class AuthModule extends Module {
 		this.Api = new SeaCatAuthApi(app);
 		this.RedirectURL = window.location.href;
 		this.MustAuthenticate = true; // Setting this to false means, that we can operate without authenticated user
-		registerReducer("auth", reducer);
+		app.ReduxService.addReducer("auth", reducer);
 		this.App.addSplashScreenRequestor(this);
 		this.Authorization = this.App.Config.get("authorization"); // Get authorization settings from configuration
 

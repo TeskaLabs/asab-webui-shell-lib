@@ -1,5 +1,5 @@
 import React from 'react';
-import { Module, registerReducer } from 'asab_webui_components';
+import { Module } from 'asab_webui_components';
 import TenantService from './service';
 import TenantDropdown from './TenantDropdown';
 import reducer from './reducer';
@@ -12,7 +12,7 @@ export default class TenantModule extends Module {
 
 		this.TenantService = new TenantService(app, "TenantService");
 
-		registerReducer("tenant", reducer);
+		this.App.ReduxService.addReducer("tenant", reducer);
 	}
 
 

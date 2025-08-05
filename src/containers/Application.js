@@ -3,7 +3,7 @@ import { Provider } from 'react-redux';
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import Axios from 'axios';
 
-import { Module, PubSubProvider, ErrorHandler, AppStoreProvider, registerReducer } from "asab_webui_components";
+import { Module, PubSubProvider, ErrorHandler, AppStoreProvider } from "asab_webui_components";
 
 import Header from './Header';
 import Sidebar from './Sidebar';
@@ -110,13 +110,13 @@ class Application extends Component {
 		};
 		// Register reducers which are not part of any app service
 		this.ReduxService.addReducer("attentionrequired", attentionRequiredReducer);
-		registerReducer('alerts', alertsReducer);
-		registerReducer('advmode', advancedModeReducer);
-		registerReducer('fullscreenmode', fullscreenModeReducer);
-		registerReducer('header', headerReducer);
-		registerReducer('sidebar', sidebarReducer);
-		registerReducer('navigation', navigationReducer);
-		registerReducer('router', routerReducer);
+		this.ReduxService.addReducer("alerts", alertsReducer);
+		this.ReduxService.addReducer("advmode", advancedModeReducer);
+		this.ReduxService.addReducer("fullscreenmode", fullscreenModeReducer);
+		this.ReduxService.addReducer("header", headerReducer);
+		this.ReduxService.addReducer("sidebar", sidebarReducer);
+		this.ReduxService.addReducer("navigation", navigationReducer);
+		this.ReduxService.addReducer("router", routerReducer);
 
 		// The application can provide a list of keys that should be automatically parsed as BigInt, when received from the server in Axios call
 		// This is important to preserve 64bit numbers from the server such as IP addresses, timestamps etc.

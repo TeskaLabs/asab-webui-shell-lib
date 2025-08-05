@@ -1,4 +1,4 @@
-import { Service, registerReducer } from 'asab_webui_components';
+import { Service } from 'asab_webui_components';
 import ThemeReducer from './ThemeReducer';
 import ThemeButton from "./ThemeButton";
 import { CHANGE_THEME } from './actions';
@@ -7,7 +7,7 @@ export default class ThemeService extends Service {
 
 	constructor(app, serviceName = "ThemeService") {
 		super(app, serviceName);
-		registerReducer('theme', ThemeReducer);
+		app.ReduxService.addReducer("theme", ThemeReducer);
 	}
 
 	initialize() {
