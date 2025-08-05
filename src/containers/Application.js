@@ -1,6 +1,5 @@
 import React, { Component, Suspense, useEffect } from 'react';
 import { Provider } from 'react-redux';
-import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import Axios from 'axios';
 
 import { Module, PubSubProvider, ErrorHandler, AppStoreProvider } from "asab_webui_components";
@@ -129,9 +128,6 @@ class Application extends Component {
 			splashscreenRequestors: 0,
 		}
 
-		const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-		this.Store = createStore(combineReducers(this.ReduxService.Reducers), composeEnhancers(applyMiddleware()));
-
 		this.ConfigService.addDefaults(props.configdefaults);
 
 		this.addSplashScreenRequestor(this);
@@ -179,7 +175,6 @@ class Application extends Component {
 					that.Modules.push(mod);
 				}
 
-				that.Store.replaceReducer(combineReducers(that.ReduxService.Reducers));
 			}
 
 			// Initialize statically imported modules
@@ -193,7 +188,6 @@ class Application extends Component {
 		}
 
 		modules_init().then(async function () {
-			that.Store.replaceReducer(combineReducers(that.ReduxService.Reducers));
 
 			// Initialize all services
 			for (var i in that.Services) {
@@ -676,14 +670,12 @@ class Application extends Component {
 		// This prevents race conditions during application init time.
 		<AppStoreProvider app={this}>
 		<PubSubProvider app={this}>
-		<Provider store={this.Store}> {/* TODO: Remove redux store provider */}
 			<Suspense fallback={<div></div>}>
 				<Alerts app={this} />
 				<main id="app-main">
 					<AccessDeniedCard app={this} />
 				</main>
 			</Suspense>
-		</Provider>
 		</PubSubProvider>
 		</AppStoreProvider>
 	);
@@ -691,7 +683,6 @@ class Application extends Component {
 	return (
 		<AppStoreProvider app={this}>
 		<PubSubProvider app={this}>
-		<Provider store={this.Store}>{/* TODO: Remove redux store provider */}
 			<Suspense fallback={<div></div>}>
 				<div id="app-networking-indicator" className={"progress-bar progress-bar-animated progress-bar-striped" + ((this.state.networking == 0) ? " transparent" : "")} ></div>
 				<Alerts app={this} />
@@ -706,7 +697,6 @@ class Application extends Component {
 				</main>
 				<Sidepanel app={this} />
 			</Suspense>
-		</Provider>
 		</PubSubProvider>
 		</AppStoreProvider>
 	); }

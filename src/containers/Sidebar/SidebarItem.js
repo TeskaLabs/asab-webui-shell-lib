@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 
 import {
 	Collapse, Tooltip
@@ -18,7 +17,7 @@ export const SidebarItem = ({
 	const location = useLocation();
 	const { t } = useTranslation();
 	const isSidebarCollapsed = useAppSelector(state => state.sidebar?.isSidebarCollapsed);
-	const attentionRequired = useSelector(state => state.attentionrequired?.beacon);
+	const attentionRequired = useAppSelector(state => state.attentionrequired?.beacon);
 	const [isActive, setActive] = useState(false);
 	const lowercasedItemName = item?.name?.toLowerCase();
 	// Attention requred flag
@@ -68,7 +67,7 @@ export const SidebarCollapsibleItem = ({
 	const location = useLocation();
 	const { t } = useTranslation();
 	const isSidebarCollapsed = useAppSelector(state => state.sidebar?.isSidebarCollapsed);
-	const attentionRequired = useSelector(state => state.attentionrequired?.beacon);
+	const attentionRequired = useAppSelector(state => state.attentionrequired?.beacon);
 	const lowercasedItemName = item.name.toLowerCase();
 
 	// Attention required flag
