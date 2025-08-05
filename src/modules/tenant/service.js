@@ -110,7 +110,7 @@ export default class TenantService extends Service {
 	getCurrentTenant() {
 		const state = this.App?.AppStore?.state;
 		let currentTenant = state?.tenant?.current;
-		// If current tenant is not in redux store yet, get it from the URL params
+		// If current tenant is not in Application store yet, get it from the URL params
 		if (!currentTenant) {
 			currentTenant = this._extractTenantFromUrl();
 		}

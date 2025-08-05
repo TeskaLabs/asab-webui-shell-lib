@@ -1,5 +1,4 @@
 import React, { Component, Suspense, useEffect } from 'react';
-import { Provider } from 'react-redux';
 import Axios from 'axios';
 
 import { Module, PubSubProvider, ErrorHandler, AppStoreProvider } from "asab_webui_components";
