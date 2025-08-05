@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAppSelector, useAppStore } from 'asab_webui_components'
+import { useAppSelector } from 'asab_webui_components'
 import { Alert } from 'reactstrap';
 
 import { ACK_ALERT, DEL_ALERT } from '../../actions';
@@ -9,7 +9,7 @@ import './alerts.scss';
 
 export default function AlertsComponent(props) {
 	const [seconds, setSeconds] = useState(0);
-	const { dispatch } = useAppStore();
+	const store = props.app.AppStore;
 	const alerts = useAppSelector(state => state.alerts.alerts);
 	const { t } = useTranslation();
 
@@ -28,9 +28,9 @@ export default function AlertsComponent(props) {
 
 				if (alert.expire < now) {
 					if (alert.acked) {
-						dispatch({ type: DEL_ALERT, key: alert.key });
+						store?.dispatch?.({ type: DEL_ALERT, key: alert.key });
 					} else {
-						dispatch({ type: ACK_ALERT, key: alert.key });
+						store?.dispatch?.({ type: ACK_ALERT, key: alert.key });
 					}
 				}
 			}
@@ -50,7 +50,7 @@ export default function AlertsComponent(props) {
 							className={`shadow alerts-style d-print-none`}
 							fade={true}
 							isOpen={!alert.acked}
-							toggle={(() => dispatch({ type: ACK_ALERT, key: alert.key }))}
+							toggle={(() => store?.dispatch?.({ type: ACK_ALERT, key: alert.key }))}
 						>
 							{alert.shouldBeTranslated ? t(alert.message) : alert.message}
 						</Alert>
