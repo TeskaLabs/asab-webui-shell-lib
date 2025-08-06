@@ -59,7 +59,9 @@ export default function UnauthorizedAccessScreen(props) {
 				<CardBody className="text-center unauthorized-cardbody">
 					<Row className="justify-content-center">
 						<Col>
-							<FlowbiteIllustration name="unauthorized" className="pb-4" height="300px" title={t("UnauthorizedAccessScreen|Unauthorized access")}/>
+							<div style={{ height: '300px' }}>
+								<FlowbiteIllustration name="unauthorized" className="pb-4" title={t("UnauthorizedAccessScreen|Unauthorized access")}/>
+							</div>
 							{props.resource ?
 								<>
 									<p className="card-text">{t("UnauthorizedAccessScreen|You are not authorized to access this part of the application. Please ask your application administrator for following resource")}:</p>

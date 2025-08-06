@@ -56,11 +56,13 @@ function AccessControlCard(props) {
 					<h3>
 						{t('AccessControlScreen|Access control')}
 					</h3>
-					
+
 				</div>
 			</CardHeader>
 			<ul className="list-group list-group-flush">
-				<FlowbiteIllustration name="access" className="py-4" height="300px" title={t('AccessControlScreen|Access control')} />
+				<div style={{ height: '300px' }}>
+					<FlowbiteIllustration name="access" className="py-4" title={t('AccessControlScreen|Access control')} />
+				</div>
 				{userinfo?.username &&
 				<li className="list-group-item">
 					<Row>
