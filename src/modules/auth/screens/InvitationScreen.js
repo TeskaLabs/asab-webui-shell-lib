@@ -11,6 +11,7 @@ import {
 	InputGroup, InputGroupText, Input, Label
 } from 'reactstrap';
 
+import { FlowbiteIllustration } from 'asab_webui_components';
 
 // Component that handles user invitation
 export default function InvitationScreen(props) {
@@ -169,6 +170,13 @@ export default function InvitationScreen(props) {
 									</div>
 								</CardHeader>
 								<CardBody>
+									<div className="w-50 mx-auto">
+										<FlowbiteIllustration
+										name='invite'
+										className='pb-3'
+										title={t('InvitationScreen|Invite other user')}
+										/>
+									</div>
 									<Label>{t('InvitationScreen|Enter the user\'s email address')}</Label>
 									<InputGroup>
 										<InputGroupText>

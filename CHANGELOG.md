@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 25.2.9
+
+- Import FlowbiteIllustration from `asab_webui_components` into informational screens (#27)
+
 ## 25.2.8
 
 - Update page orientation in the theme-print styles (#21)
