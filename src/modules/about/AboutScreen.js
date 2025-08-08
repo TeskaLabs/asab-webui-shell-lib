@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useAppSelector } from 'asab_webui_components';
 
 import { getBrandImage } from '../../components/branding/BrandImage';
 
@@ -12,7 +12,7 @@ import {
 
 function AboutScreen(props) {
 	const [ brandImage, setBrandImage ] = useState(undefined);
-	const theme = useSelector(state => state.theme);
+	const theme = useAppSelector(state => state.theme);
 
 	useEffect(() => {
 		setBrandImage(getBrandImage(props, theme));
@@ -63,10 +63,10 @@ export default AboutScreen;
 
 function AboutCard(props) {
 	const { t } = useTranslation();
-	const title = useSelector(state => state.config?.title);
-	const vendor = useSelector(state => state.config?.vendor);
-	const website = useSelector(state => state.config?.website);
-	const email = useSelector(state => state.config?.email);
+	const title = useAppSelector(state => state.config?.title);
+	const vendor = useAppSelector(state => state.config?.vendor);
+	const website = useAppSelector(state => state.config?.website);
+	const email = useAppSelector(state => state.config?.email);
 
 	return(
 		<Card>

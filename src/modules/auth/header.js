@@ -1,7 +1,7 @@
 import React from 'react'
-import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useAppSelector } from 'asab_webui_components';
 import { isAuthorized } from 'asab_webui_components/seacat-auth';
 
 import {
@@ -35,12 +35,11 @@ import './header.scss';
 */
 
 export function AuthHeaderInvitation(props) {
-	const resources = useSelector(state => state.auth?.resources);
-	const tenant = useSelector(state => state.tenant?.current);
+	const tenant = useAppSelector(state => state.tenant?.current);
 	let navigate = useNavigate();
 	const { t } = useTranslation();
 
-	if (!tenant || !isAuthorized(['seacat:tenant:assign'])) {
+	if (!tenant || !isAuthorized(['seacat:tenant:assign'], props.app)) {
 		return null;
 	};
 
@@ -60,8 +59,8 @@ export function AuthHeaderInvitation(props) {
 
 export function AuthHeaderDropdown(props) {
 	const { t } = useTranslation();
-	const userinfo = useSelector(state => state.auth?.userinfo);
-	const isSuperuser = isAuthorized(['authz:superuser']);
+	const userinfo = useAppSelector(state => state.auth?.userinfo);
+	const isSuperuser = isAuthorized(['authz:superuser'], props.app);
 
 	const logout = () => {
 		props.AuthModule.logout();

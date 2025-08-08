@@ -7,7 +7,6 @@ export const DEL_TOAST = "asab/delToast";
 
 export const SET_HELP_PATH = "asab/setHelpContent";
 export const SET_SUBTITLE = "asab/setSubtitle";
-export const SET_FLAG = "asab/setFlag";
 
 export const SET_ADVANCED_MODE = "asab/setAdvancedMode";
 export const SET_FULLSCREEN_MODE = "asab/setFullscreenMode";

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { useAppSelector } from 'asab_webui_components';
 import { useTranslation } from 'react-i18next';
 
 import {
@@ -10,8 +10,11 @@ import {
 } from 'reactstrap';
 
 
-function TenantDropdown({tenants, current}) {
+export default function TenantDropdown() {
 	const { t } = useTranslation();
+	const current = useAppSelector(state => state?.tenant?.current);
+	const tenants = useAppSelector(state => state?.tenant?.tenants);
+
 	return (
 		<UncontrolledDropdown direction="down" title={t('tenant|Tenant')}>
 			<DropdownToggle nav caret>
@@ -38,16 +41,3 @@ function TenantLabel({tenant}) {
 		<span>{tenant}</span>
 	);
 }
-
-
-const mapStateToProps = state => {
-	return {
-		current: state.tenant.current,
-		tenants: state.tenant.tenants,
-	};
-};
-
-export default connect(
-	mapStateToProps,
-	null
-)(TenantDropdown);

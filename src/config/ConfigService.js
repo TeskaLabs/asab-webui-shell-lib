@@ -1,5 +1,6 @@
 import { Service } from 'asab_webui_components';
 import ConfigReducer from './ConfigReducer';
+
 import { CHANGE_CONFIG } from '../actions';
 
 
@@ -59,8 +60,9 @@ export default class ConfigService extends Service {
 		// Dispatch customs to config store
 		if (Object.keys(dynamicConfig).length > 0) {
 			this.Config._dynamic_config = dynamicConfig;
-			if (this.App.Store !== undefined) {
-				this.Config.dispatch(this.App.Store);
+
+			if (this.App.AppStore) {
+				this.Config.dispatch(this.App.AppStore);
 			} else {
 				console.warn('Dynamic configuration has not been dispatched to application store');
 			}
@@ -84,7 +86,12 @@ export default class ConfigService extends Service {
 			}
 		}
 
-		this.Config.dispatch(this.App.Store);
+		if (this.App.AppStore) {
+			this.Config.dispatch(this.App.AppStore);
+		} else {
+			console.warn('Default configuration has not been dispatched to application store');
+		}
+
 	}
 
 }
@@ -113,7 +120,7 @@ class Config {
 
 		// Then check the local config
 		if (this._local_config[key] != undefined) {
-			this._local_config[key];
+			return this._local_config[key];
 		};
 
 		// And finally, check defaults
@@ -127,7 +134,7 @@ class Config {
 
 	dispatch(store) {
 		var config = Object.assign({}, this._defaults, this._local_config, this._dynamic_config);
-		store.dispatch({
+		store?.dispatch?.({
 			type: CHANGE_CONFIG,
 			config: config
 		});

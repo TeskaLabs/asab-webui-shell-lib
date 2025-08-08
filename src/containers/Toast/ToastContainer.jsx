@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer } from 'react';
-import { useSelector } from 'react-redux';
+import { useAppSelector } from 'asab_webui_components';
 import { DEL_TOAST, ADD_TOAST } from '../../actions';
 
 import { ToastComponent } from './ToastComponent.jsx';
@@ -8,7 +8,7 @@ import { toastReducer } from './reducer.jsx';
 // Toast container
 export default function ToastContainer(props) {
 	// Get the toast data from Redux (assuming it comes from `attentionrequired.beacon`)
-	const attentionRequired = useSelector((state) => state.attentionrequired?.beacon);
+	const attentionRequired = useAppSelector((state) => state.attentionrequired?.beacon);
 	const toastData = attentionRequired?.['beacon.toast']?.data || [];
 
 	// useReducer to manage the local state of toasts
