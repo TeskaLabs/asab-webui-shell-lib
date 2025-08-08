@@ -59,7 +59,7 @@ export default function UnauthorizedAccessScreen(props) {
 				<CardBody className="text-center unauthorized-cardbody">
 					<Row className="justify-content-center">
 						<Col>
-							<div style={{ height: '300px' }}>
+							<div className="w-50 mx-auto">
 								<FlowbiteIllustration name="unauthorized" className="pb-4" title={t("UnauthorizedAccessScreen|Unauthorized access")}/>
 							</div>
 							{props.resource ?

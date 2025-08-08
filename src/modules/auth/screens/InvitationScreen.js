@@ -170,7 +170,7 @@ export default function InvitationScreen(props) {
 									</div>
 								</CardHeader>
 								<CardBody>
-									<div style={{ height: '180px' }}>
+									<div className="w-50 mx-auto">
 										<FlowbiteIllustration
 										name='invite'
 										className='pb-3'

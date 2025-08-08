@@ -60,7 +60,7 @@ function AccessControlCard(props) {
 				</div>
 			</CardHeader>
 			<ul className="list-group list-group-flush">
-				<div style={{ height: '300px' }}>
+				<div className="w-50 mx-auto">
 					<FlowbiteIllustration name="access" className="py-4" title={t('AccessControlScreen|Access control')} />
 				</div>
 				{userinfo?.username &&
