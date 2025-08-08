@@ -46,7 +46,7 @@ function AccessControlCard(props) {
 	const { t, i18n } = useTranslation();
 	const tenant = useAppSelector(state => state.tenant?.current);
 	const userinfo = useAppSelector(state => state.auth?.userinfo);
-	const resources = useAppSelector(state => state.auth?.resources)?.sort() || [];
+	const resources = (useAppSelector(state => state.auth?.resources) || []).slice().sort();
 
 	return (
 		<Card>
