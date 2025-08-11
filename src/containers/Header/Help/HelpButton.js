@@ -18,7 +18,7 @@ export default function HelpButton() {
 	const [modal, setModal] = useState(false);
 	const [isIframeLoading, setIsIframeLoading] = useState(true);
 
-	const path = useAppSelector(state => state?.header.helpPath);
+	const path = useAppSelector(state => state?.header?.helpPath);
 	if (path == undefined) return null;
 
 	const toggle = () => {

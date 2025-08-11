@@ -6,7 +6,7 @@ import ApplicationScreenTitle from "./ApplicationScreenTitle";
 import './header.scss';
 
 export default function Header(props) {
-	const headerNavItems = useAppSelector(state => state.header?.headerNavItems);
+	const headerNavItems = useAppSelector(state => state?.header?.headerNavItems);
 
 	return (
 		<header id="app-header">

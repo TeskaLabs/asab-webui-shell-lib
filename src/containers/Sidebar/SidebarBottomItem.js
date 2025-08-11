@@ -6,7 +6,7 @@ import { useAppSelector, useAppStore } from 'asab_webui_components';
 import { COLLAPSE_SIDEBAR } from '../../actions';
 
 const SidebarBottomItem = ({ sidebarLogo }) => {
-	const isSidebarCollapsed = useAppSelector(state => state.sidebar.isSidebarCollapsed);
+	const isSidebarCollapsed = useAppSelector(state => state?.sidebar?.isSidebarCollapsed);
 
 	const { t } = useTranslation();
 	const { dispatch } = useAppStore();
