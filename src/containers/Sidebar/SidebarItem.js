@@ -18,11 +18,11 @@ export const SidebarItem = ({
 	const location = useLocation();
 	const { t } = useTranslation();
 	const isSidebarCollapsed = useSelector(state => state.sidebar?.isSidebarCollapsed);
-	const attentionRequired = useSelector(state => state.attentionrequired?.beacon);
+	const attentionRequired = useSelector(state => state?.attentionrequired?.beacon);
 	const [isActive, setActive] = useState(false);
 	const lowercasedItemName = item?.name?.toLowerCase();
 	// Attention requred flag
-	const itemBeacon = beacon ? beacon[`beacon.${lowercasedItemName}`] : attentionRequired[`beacon.${lowercasedItemName}`];
+	const itemBeacon = beacon ? beacon[`beacon.${lowercasedItemName}`] : attentionRequired?.[`beacon.${lowercasedItemName}`];
 
 	useEffect(() => {
 		if(isOpen && !isActive) {
