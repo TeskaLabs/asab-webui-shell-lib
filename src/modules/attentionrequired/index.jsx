@@ -5,8 +5,8 @@ import reducer from './reducer.jsx';
 
 export default class AttentionRequiredModule extends Module {
 
-	constructor(app, name) {
-		super(app, "AttentionRequiredModule");
+	constructor(app, name = "AttentionRequiredModule") {
+		super(app, name);
 		this.App = app;
 
 		this.AttentionRequiredService = new AttentionRequiredService(app, "AttentionRequiredService");
