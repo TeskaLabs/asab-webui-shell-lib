@@ -1,5 +1,5 @@
 import { Service } from 'asab_webui_components';
-import { SET_ATTENTION_REQUIRED_BEACON } from '../actions';
+import { SET_ATTENTION_REQUIRED_BEACON } from '../../actions';
 
 // Service handling attention required
 export default class AttentionRequiredService extends Service {

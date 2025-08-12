@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 25.3.1
+
+- Make AttentionRequired service a reusable module. Then it is initialized only in desired application where it is imported. (#29)
+
 ## 25.2.8
 
 - Update page orientation in the theme-print styles (#21)
