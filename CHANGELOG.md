@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 25.2.9
+
+- Use updated version of ResultCard in `InvitationScreen` (#30)
+
 ## 25.2.8
 
 - Update page orientation in the theme-print styles (#21)
