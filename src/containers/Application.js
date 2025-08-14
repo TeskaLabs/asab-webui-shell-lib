@@ -102,10 +102,15 @@ class Application extends Component {
 		this.HelpService = new HelpService(this, "HelpService");
 
 		// Global AppStore variables
-		this.AppStore = {
-			dispatch: null,
-			state: null
-		};
+		const appStore = { state: null, dispatch: null }; // Create the store object (fields stays writable so the provider can update them)
+		Object.seal(appStore); // Lock the shape, so no adding/removing properties (but existing fields remain writable)
+		Object.defineProperty(this, 'AppStore', {
+			value: appStore,
+			writable: false, // Can't reassign this.AppStore
+			configurable: false, // Can't redefine/delete the property
+			enumerable: true // Makes it show up in Object.keys/console
+		}); // Define a read-only, non-configurable property on the instance
+
 		// Register reducers which are not part of any app service
 		this.ReduxService.addReducer("attentionrequired", attentionRequiredReducer);
 		this.ReduxService.addReducer("alerts", alertsReducer);
