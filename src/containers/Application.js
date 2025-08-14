@@ -80,6 +80,16 @@ class Application extends Component {
 	constructor(props) {
 		super(props);
 
+		// Global AppStore variables
+		const appStore = { state: null, dispatch: null }; // Create the store object (fields stays writable so the provider can update them)
+		Object.seal(appStore); // Lock the shape, so no adding/removing properties (but existing fields remain writable)
+		Object.defineProperty(this, 'AppStore', {
+			value: appStore,
+			writable: false, // Can't reassign this.AppStore
+			configurable: false, // Can't redefine/delete the property
+			enumerable: true // Makes it show up in Object.keys/console
+		}); // Define a read-only, non-configurable property on the instance
+
 		this.Modules = [];
 		this.Services = {};
 
@@ -100,16 +110,6 @@ class Application extends Component {
 		this.BrandingService = new BrandingService(this, "BrandingService");
 		this.TitleService = new TitleService(this, "TitleService");
 		this.HelpService = new HelpService(this, "HelpService");
-
-		// Global AppStore variables
-		const appStore = { state: null, dispatch: null }; // Create the store object (fields stays writable so the provider can update them)
-		Object.seal(appStore); // Lock the shape, so no adding/removing properties (but existing fields remain writable)
-		Object.defineProperty(this, 'AppStore', {
-			value: appStore,
-			writable: false, // Can't reassign this.AppStore
-			configurable: false, // Can't redefine/delete the property
-			enumerable: true // Makes it show up in Object.keys/console
-		}); // Define a read-only, non-configurable property on the instance
 
 		// Register reducers which are not part of any app service
 		this.ReduxService.addReducer("attentionrequired", attentionRequiredReducer);
