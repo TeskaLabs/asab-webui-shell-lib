@@ -24,6 +24,7 @@ export const SidebarItem = ({
 	const itemBeacon = beacon ? beacon[`beacon.${lowercasedItemName}`] : attentionRequired[`beacon.${lowercasedItemName}`];
 
 	useEffect(() => {
+		// TODO: refactor the handling of active and open states, since it does not behave as expected in some cases
 		if(isOpen && !isActive) {
 			setOpen(false)
 		}
