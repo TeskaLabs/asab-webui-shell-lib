@@ -1,6 +1,6 @@
 import React, { useLayoutEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useAppSelector } from 'asab_webui_components';
 
 import {
 	Container, Row, Col,
@@ -21,7 +21,7 @@ import './UnauthorizedAccessScreen.scss';
 */
 export default function UnauthorizedAccessScreen(props) {
 	const { t } = useTranslation();
-	const resources = useSelector((state) => state.auth?.resources ? state.auth.resources : []);
+	const resources = useAppSelector((state) => state.auth?.resources ? state.auth.resources : []);
 
 	// Check if auth module is active. If not, return the original component
 	// Check for desired resource. If present or user is superuser, return the original component

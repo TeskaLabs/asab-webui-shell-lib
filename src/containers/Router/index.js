@@ -21,6 +21,8 @@ export default class Router extends Component {
 			}
 		*/
 		this.Routes.push(route);
-		this.App.Store.dispatch({ type: SET_ROUTES, routes: this.Routes });
+		if (this.App.AppStore) {
+			this.App.AppStore.dispatch?.({ type: SET_ROUTES, routes: this.Routes });
+		}
 	}
 }

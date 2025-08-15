@@ -1,8 +1,12 @@
 # CHANGELOG for ASAB WebUI Shell
 
-## 25.2.9
+## 26.1.2
 
 - Import FlowbiteIllustration from `asab_webui_components` into informational screens (#27)
+
+## 26.1.1
+
+- Upgrade to react v19, remove redux dependency and replace it with custom redux-like context and AppStore, remove unused flag header (#17)
 
 ## 25.2.8
 
