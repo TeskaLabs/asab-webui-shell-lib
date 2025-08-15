@@ -6,6 +6,7 @@ import {
 	Card, CardBody
 } from 'reactstrap';
 
+import { FlowbiteIllustration } from 'asab_webui_components';
 import './InvalidRouteScreen.scss';
 
 export default function InvalidRouteScreen(props) {
@@ -17,7 +18,9 @@ export default function InvalidRouteScreen(props) {
 				<CardBody className="text-center invalid-route-cardbody">
 					<Row className="justify-content-center">
 						<Col>
-							<p><i className="bi bi-emoji-frown fs-1 text-primary" title={t("InvalidRouteScreen|Nothing here")}/></p>
+							<div className='h-75'>
+								<FlowbiteIllustration name="error" className="pb-4" title={t("InvalidRouteScreen|Nothing here")}/>
+							</div>
 							<p className="card-text">{t("InvalidRouteScreen|Sorry, we can't find the page you are looking for.")}</p>
 						</Col>
 					</Row>
