@@ -97,6 +97,16 @@ class Application extends Component {
 		this.ConfigService = new ConfigService(this, "ConfigService");
 		this.Config = this.ConfigService.Config;
 
+		// Register reducers which are not part of any app service
+		this.ReduxService.addReducer("attentionrequired", attentionRequiredReducer);
+		this.ReduxService.addReducer("alerts", alertsReducer);
+		this.ReduxService.addReducer("advmode", advancedModeReducer);
+		this.ReduxService.addReducer("fullscreenmode", fullscreenModeReducer);
+		this.ReduxService.addReducer("header", headerReducer);
+		this.ReduxService.addReducer("sidebar", sidebarReducer);
+		this.ReduxService.addReducer("navigation", navigationReducer);
+		this.ReduxService.addReducer("router", routerReducer);
+
 		this.Router = new Router(this);
 		this.Navigation = new Navigation(this);
 
@@ -110,16 +120,6 @@ class Application extends Component {
 		this.BrandingService = new BrandingService(this, "BrandingService");
 		this.TitleService = new TitleService(this, "TitleService");
 		this.HelpService = new HelpService(this, "HelpService");
-
-		// Register reducers which are not part of any app service
-		this.ReduxService.addReducer("attentionrequired", attentionRequiredReducer);
-		this.ReduxService.addReducer("alerts", alertsReducer);
-		this.ReduxService.addReducer("advmode", advancedModeReducer);
-		this.ReduxService.addReducer("fullscreenmode", fullscreenModeReducer);
-		this.ReduxService.addReducer("header", headerReducer);
-		this.ReduxService.addReducer("sidebar", sidebarReducer);
-		this.ReduxService.addReducer("navigation", navigationReducer);
-		this.ReduxService.addReducer("router", routerReducer);
 
 		// The application can provide a list of keys that should be automatically parsed as BigInt, when received from the server in Axios call
 		// This is important to preserve 64bit numbers from the server such as IP addresses, timestamps etc.
