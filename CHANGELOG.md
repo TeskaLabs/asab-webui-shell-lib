@@ -1,6 +1,6 @@
 # CHANGELOG for ASAB WebUI Shell
 
-## 25.3.1
+## 26.1.1
 
 - Upgrade to react v19, remove redux dependency and replace it with custom redux-like context and AppStore, remove unused flag header (#17)
 
