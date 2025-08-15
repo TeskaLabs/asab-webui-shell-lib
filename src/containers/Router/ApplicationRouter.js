@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
+import { useAppStore, useAppSelector } from 'asab_webui_components';
 
 import { SET_HELP_PATH } from '../../actions';
 import RouteErrorHandler from '../RouteErrorHandler';
@@ -10,7 +10,7 @@ import InvalidRouteScreen from "../../screens/InvalidRouteScreen";
 
 
 export default function ApplicationRouter(props) {
-	const routes = useSelector(state => state.router?.routes);
+	const routes = useAppSelector(state => state.router?.routes);
 	return(
 		<Routes>
 			{routes && routes.map((route, idx) => {
@@ -39,8 +39,8 @@ export default function ApplicationRouter(props) {
 
 
 function RouteRenderer(props) {
-	const resources = useSelector((state) => state.auth?.resources ? state.auth.resources : []);
-	const dispatch = useDispatch();
+	const resources = useAppSelector((state) => state.auth?.resources ? state.auth.resources : []);
+	const { dispatch } = useAppStore();
 	const defaultHelp = props.app.Config.get("help");
 
 	// Set up and dispatch help content

@@ -1,6 +1,6 @@
 {
 	"name": "asab_webui_shell",
-	"version": "25.2.9",
+	"version": "26.1.1",
 	"license": "BSD-3-Clause",
 	"description": "TeskaLabs ASAB WebUI Shell Application",
 	"contributors": [
@@ -43,17 +43,15 @@
 		"rimraf": "^5.0.0"
 	},
 	"peerDependencies": {
-		"asab_webui_components": "^25.1.1",
+		"asab_webui_components": "^26.1.1",
 		"@babel/runtime": "^7.22.11",
-		"react": "^17.0.0",
-		"react-dom": "^17.0.0",
+		"react": "^19.0.0",
+		"react-dom": "^19.0.0",
 		"axios": "^1.8.4",
 		"i18next": "^20.3.5",
 		"react-i18next": "^11.8.12",
-		"react-redux": "^7.2.0",
 		"react-router": "^6.16.0",
 		"react-router-dom": "^6.16.0",
-		"reactstrap": "^9.2.0",
-		"redux": "^4.0.5"
+		"reactstrap": "^9.2.0"
 	}
 }

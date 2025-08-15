@@ -1,8 +1,8 @@
 # CHANGELOG for ASAB WebUI Shell
 
-## 25.2.9
+## 26.1.1
 
-- Use updated version of ResultCard in `InvitationScreen` (#30)
+- Upgrade to react v19, remove redux dependency and replace it with custom redux-like context and AppStore, remove unused flag header (#17)
 
 ## 25.2.8
 
