@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 26.1.1
+
+- Upgrade to react v19, remove redux dependency and replace it with custom redux-like context and AppStore, remove unused flag header (#17)
+
 ## 25.2.8
 
 - Update page orientation in the theme-print styles (#21)

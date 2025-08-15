@@ -1,7 +1,7 @@
 import { Service } from 'asab_webui_components';
 import ThemeReducer from './ThemeReducer';
-import { CHANGE_THEME } from "./actions";
 import ThemeButton from "./ThemeButton";
+import { CHANGE_THEME } from './actions';
 
 export default class ThemeService extends Service {
 
@@ -25,8 +25,8 @@ export default class ThemeService extends Service {
 		: "light"
 		;
 
-		// Dispatch tenants obtained from userinfo
-		this.App.Store.dispatch({
+		// Dispatch theme
+		this.App?.AppStore?.dispatch?.({
 			type: CHANGE_THEME,
 			theme: prefersColorScheme
 		});

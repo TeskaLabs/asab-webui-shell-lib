@@ -1,15 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useSelector, useDispatch } from 'react-redux';
+import { useAppSelector, useAppStore } from 'asab_webui_components';
 
 import { COLLAPSE_SIDEBAR } from '../../actions';
 
 const SidebarBottomItem = ({ sidebarLogo }) => {
-	const isSidebarCollapsed = useSelector(state => state.sidebar.isSidebarCollapsed);
+	const isSidebarCollapsed = useAppSelector(state => state?.sidebar?.isSidebarCollapsed);
 
 	const { t } = useTranslation();
-	const dispatch = useDispatch();
+	const { dispatch } = useAppStore();
 
 	// Handle toggle of the sidebar's collapsed state
 	const onCollapse = (event) => {

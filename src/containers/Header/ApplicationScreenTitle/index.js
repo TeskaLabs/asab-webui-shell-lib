@@ -1,11 +1,11 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { useMatch} from 'react-router-dom';
+import { useAppSelector } from 'asab_webui_components';
+import { useMatch } from 'react-router-dom';
 
 import ApplicationScreenTitle from './ApplicationScreenTitle';
 
 const ApplicationTitleRouter = (props) => {
-	const routes = useSelector(state => state.router?.routes);
+	const routes = useAppSelector(state => state.router?.routes || []);
 	const filteredRoutes = filterRoutesByMatch(routes);
 
 	return (
