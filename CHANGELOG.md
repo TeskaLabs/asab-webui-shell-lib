@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 26.1.2
+
+- Refactor Application store with createStore() from asab_webui_components to make global variables dynamic and fix issues with not updating the AppStore state dynamically. (#31)
+
 ## 26.1.1
 
 - Upgrade to react v19, remove redux dependency and replace it with custom redux-like context and AppStore, remove unused flag header (#17)
