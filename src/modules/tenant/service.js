@@ -108,7 +108,7 @@ export default class TenantService extends Service {
 
 	// getCurrentTenant() method is used for obtaining current tenant
 	getCurrentTenant() {
-		const state = this.App?.AppStore?.state;
+		const state = this.App?.AppStore?.getState();
 		let currentTenant = state?.tenant?.current;
 		// If current tenant is not in Application store yet, get it from the URL params
 		if (!currentTenant) {

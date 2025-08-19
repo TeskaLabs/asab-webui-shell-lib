@@ -1,7 +1,7 @@
 import React, { Component, Suspense, useEffect } from 'react';
 import Axios from 'axios';
 
-import { Module, PubSubProvider, ErrorHandler, AppStoreProvider } from "asab_webui_components";
+import { Module, PubSubProvider, ErrorHandler, AppStoreProvider, createAppStore } from "asab_webui_components";
 
 import Header from './Header';
 import Sidebar from './Sidebar';
@@ -80,15 +80,8 @@ class Application extends Component {
 	constructor(props) {
 		super(props);
 
-		// Global AppStore variables
-		const appStore = { state: null, dispatch: null }; // Create the store object (fields stays writable so the provider can update them)
-		Object.seal(appStore); // Lock the shape, so no adding/removing properties (but existing fields remain writable)
-		Object.defineProperty(this, 'AppStore', {
-			value: appStore,
-			writable: false, // Can't reassign this.AppStore
-			configurable: false, // Can't redefine/delete the property
-			enumerable: true // Makes it show up in Object.keys/console
-		}); // Define a read-only, non-configurable property on the instance
+		// Create App store with global AppStore variables
+		this.AppStore = createAppStore();
 
 		this.Modules = [];
 		this.Services = {};
@@ -636,7 +629,7 @@ class Application extends Component {
 
 	setAdvancedMode(enabled) {
 		if (enabled === 0) {
-			const state = this.AppStore.state;
+			const state = this.AppStore.getState();
 			enabled = !state?.advmode?.enabled;
 		}
 		this.AppStore.dispatch?.({
@@ -655,7 +648,7 @@ class Application extends Component {
 		It takes a parameter called "status" to indicate whether to turn the full-screen mode on or off.
 	*/
 	setFullScreenMode(status) {
-		const state = this.AppStore.state;
+		const state = this.AppStore.getState();
 		if (status === 'on' && (state?.fullscreenmode?.status === 'on')) {
 			status = 'off';
 		}
