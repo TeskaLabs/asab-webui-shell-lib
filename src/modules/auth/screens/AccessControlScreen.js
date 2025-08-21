@@ -7,6 +7,7 @@ import {
 	Card, CardHeader
 } from 'reactstrap';
 
+import { FlowbiteIllustration } from 'asab_webui_components';
 
 /*
 
@@ -55,9 +56,13 @@ function AccessControlCard(props) {
 					<h3>
 						{t('AccessControlScreen|Access control')}
 					</h3>
+
 				</div>
 			</CardHeader>
 			<ul className="list-group list-group-flush">
+				<div className="w-50 mx-auto">
+					<FlowbiteIllustration name="access" className="py-4" title={t('AccessControlScreen|Access control')} />
+				</div>
 				{userinfo?.username &&
 				<li className="list-group-item">
 					<Row>

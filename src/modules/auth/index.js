@@ -162,7 +162,7 @@ export default class AuthModule extends Module {
 					}
 
 					this.App?.AppStore?.dispatch?.({ type: types.AUTH_RESOURCES, resources: resources });
-					await this.validateNavigation({resources});
+					this.validateNavigation({resources});
 				}
 
 				if (this.UserInfo != null) {
@@ -256,19 +256,18 @@ export default class AuthModule extends Module {
 		});
 	}
 
-	// TODO: reconsider removing async/await with promise
-	async validateNavigation({resources}) {
-		const state = this.App.AppStore.state;
+	validateNavigation({resources}) {
+		const state = this.App.AppStore.getState();
 		let navItems = state.navigation?.navItems;
 		let authorizedNavItems = [];
-		navItems && await Promise.all(navItems.map(async (itm, idx) => {
+		navItems && navItems.map((itm, idx) => {
 			if (resources.indexOf('authz:superuser') !== -1) {
 				// If user is superuser, validate every navigation item
 				authorizedNavItems.push(itm);
 			} else {
 				if (itm.resource) {
 					if (itm.children) {
-						itm.children = await this._validateChildrenNav(itm, resources);
+						itm.children = this._validateChildrenNav(itm, resources);
 					}
 					// Item validation
 					let access_auth = this._validateItemNav(itm.resource, resources);
@@ -277,30 +276,29 @@ export default class AuthModule extends Module {
 					}
 				} else {
 					if (itm.children) {
-						itm.children = await this._validateChildrenNav(itm, resources);
+						itm.children = this._validateChildrenNav(itm, resources);
 						if (itm.children.length > 0) {
 							authorizedNavItems.push(itm);
 						}
 					}
 				}
 			}
-		}))
-
+		})
 		this.App.AppStore.dispatch?.({ type: SET_NAVIGATION_ITEMS, navItems: authorizedNavItems });
 	}
 
 	// Validate sidebar's item children
-	async _validateChildrenNav(itm, resources) {
+	_validateChildrenNav(itm, resources) {
 		// Item's children validation
 		let authorizedNavChildren = [];
-		await Promise.all(itm.children.map(async (child, id) => {
+		itm.children.map((child, id) => {
 			if (child.resource) {
 				let access_auth = this._validateItemNav(child.resource, resources);
 				if (access_auth == true) {
 					authorizedNavChildren.push(child);
 				}
 			}
-		}))
+		})
 		return authorizedNavChildren;
 	}
 
