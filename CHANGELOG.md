@@ -1,8 +1,12 @@
 # CHANGELOG for ASAB WebUI Shell
 
-## 26.1.2
+## 26.1.3
 
 - Refactor Application store with createStore() from asab_webui_components to make global variables dynamic and fix issues with not updating the AppStore state dynamically. (#31)
+
+## 26.1.2
+
+- Import FlowbiteIllustration from `asab_webui_components` into informational screens (#27)
 
 ## 26.1.1
 
