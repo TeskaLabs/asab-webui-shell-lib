@@ -1,6 +1,6 @@
 # CHANGELOG for ASAB WebUI Shell
 
-## 26.1.2
+## 26.1.4
 
 - Use updated version of ResultCard in `InvitationScreen` (#30)
 
