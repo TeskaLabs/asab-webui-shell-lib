@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 26.1.4
+
+- Use updated version of ResultCard in `InvitationScreen` (#30)
+
 ## 26.1.3
 
 - Refactor Application store with createStore() from asab_webui_components to make global variables dynamic and fix issues with not updating the AppStore state dynamically. (#31)
