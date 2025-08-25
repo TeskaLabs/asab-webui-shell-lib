@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 26.2.1
+
+- Make AttentionRequired service a reusable module. Then it is initialized only in desired application where it is imported. (#29)
+
 ## 26.1.3
 
 - Refactor Application store with createStore() from asab_webui_components to make global variables dynamic and fix issues with not updating the AppStore state dynamically. (#31)
