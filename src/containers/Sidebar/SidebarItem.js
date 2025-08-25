@@ -2,13 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 
 import {
 	Collapse, Tooltip
 } from 'reactstrap';
 
-import { AttentionBadge } from 'asab_webui_components';
+import { AttentionBadge, useAppSelector } from 'asab_webui_components';
 
 import Icon from './SidebarIcon';
 
@@ -17,14 +16,15 @@ export const SidebarItem = ({
 }) => {
 	const location = useLocation();
 	const { t } = useTranslation();
-	const isSidebarCollapsed = useSelector(state => state.sidebar?.isSidebarCollapsed);
-	const attentionRequired = useSelector(state => state?.attentionrequired?.beacon);
+	const isSidebarCollapsed = useAppSelector(state => state.sidebar?.isSidebarCollapsed);
+	const attentionRequired = useAppSelector(state => state.attentionrequired?.beacon);
 	const [isActive, setActive] = useState(false);
 	const lowercasedItemName = item?.name?.toLowerCase();
 	// Attention requred flag
 	const itemBeacon = beacon ? beacon[`beacon.${lowercasedItemName}`] : attentionRequired?.[`beacon.${lowercasedItemName}`];
 
 	useEffect(() => {
+		// TODO: refactor the handling of active and open states, since it does not behave as expected in some cases
 		if(isOpen && !isActive) {
 			setOpen(false)
 		}
@@ -67,8 +67,8 @@ export const SidebarCollapsibleItem = ({
 	const [isOpen, setOpen] = useState(false);
 	const location = useLocation();
 	const { t } = useTranslation();
-	const isSidebarCollapsed = useSelector(state => state.sidebar?.isSidebarCollapsed);
-	const attentionRequired = useSelector(state => state.attentionrequired?.beacon);
+	const isSidebarCollapsed = useAppSelector(state => state.sidebar?.isSidebarCollapsed);
+	const attentionRequired = useAppSelector(state => state.attentionrequired?.beacon);
 	const lowercasedItemName = item.name.toLowerCase();
 
 	// Attention required flag

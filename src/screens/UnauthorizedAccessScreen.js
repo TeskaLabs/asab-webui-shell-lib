@@ -1,12 +1,13 @@
 import React, { useLayoutEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useAppSelector } from 'asab_webui_components';
 
 import {
 	Container, Row, Col,
 	Card, CardBody
 } from 'reactstrap';
 
+import { FlowbiteIllustration } from 'asab_webui_components';
 import './UnauthorizedAccessScreen.scss';
 
 /*
@@ -20,7 +21,7 @@ import './UnauthorizedAccessScreen.scss';
 */
 export default function UnauthorizedAccessScreen(props) {
 	const { t } = useTranslation();
-	const resources = useSelector((state) => state.auth?.resources ? state.auth.resources : []);
+	const resources = useAppSelector((state) => state.auth?.resources ? state.auth.resources : []);
 
 	// Check if auth module is active. If not, return the original component
 	// Check for desired resource. If present or user is superuser, return the original component
@@ -58,7 +59,9 @@ export default function UnauthorizedAccessScreen(props) {
 				<CardBody className="text-center unauthorized-cardbody">
 					<Row className="justify-content-center">
 						<Col>
-							<p><i className="bi bi-exclamation-triangle text-danger fs-1" title={t("UnauthorizedAccessScreen|Unauthorized access")}/></p>
+							<div className="w-50 mx-auto">
+								<FlowbiteIllustration name="unauthorized" className="pb-4" title={t("UnauthorizedAccessScreen|Unauthorized access")}/>
+							</div>
 							{props.resource ?
 								<>
 									<p className="card-text">{t("UnauthorizedAccessScreen|You are not authorized to access this part of the application. Please ask your application administrator for following resource")}:</p>

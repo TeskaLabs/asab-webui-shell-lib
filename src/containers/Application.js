@@ -1,9 +1,7 @@
 import React, { Component, Suspense, useEffect } from 'react';
-import { Provider } from 'react-redux';
-import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import Axios from 'axios';
 
-import { Module, PubSubProvider, ErrorHandler } from "asab_webui_components";
+import { Module, PubSubProvider, ErrorHandler, AppStoreProvider, createAppStore } from "asab_webui_components";
 
 import Header from './Header';
 import Sidebar from './Sidebar';
@@ -29,7 +27,6 @@ import ThemeService from '../theme/ThemeService';
 import BrandingService from '../services/BrandingService';
 import TitleService from "../services/TitleService";
 import HelpService from "./Header/Help/HelpService";
-import PreviewService from "./Header/Preview/PreviewService";
 
 import AccessDeniedCard from '../modules/tenant/access/AccessDeniedCard';
 import ApplicationRouter from './Router/ApplicationRouter';
@@ -38,7 +35,7 @@ import SuspenseScreen from '../screens/SuspenseScreen';
 
 import './Application.scss';
 
-import { ADD_ALERT, SET_ADVANCED_MODE, SET_FLAG, SET_FULLSCREEN_MODE } from '../actions';
+import { ADD_ALERT, SET_ADVANCED_MODE, SET_FULLSCREEN_MODE } from '../actions';
 
 class Application extends Component {
 
@@ -81,12 +78,25 @@ class Application extends Component {
 	constructor(props) {
 		super(props);
 
+		// Create App store with global AppStore variables
+		this.AppStore = createAppStore();
+
 		this.Modules = [];
 		this.Services = {};
 
 		this.ReduxService = new ReduxService(this, "ReduxService");
 		this.ConfigService = new ConfigService(this, "ConfigService");
 		this.Config = this.ConfigService.Config;
+
+		// Register reducers which are not part of any app service
+		this.ReduxService.addReducer("attentionrequired", attentionRequiredReducer);
+		this.ReduxService.addReducer("alerts", alertsReducer);
+		this.ReduxService.addReducer("advmode", advancedModeReducer);
+		this.ReduxService.addReducer("fullscreenmode", fullscreenModeReducer);
+		this.ReduxService.addReducer("header", headerReducer);
+		this.ReduxService.addReducer("sidebar", sidebarReducer);
+		this.ReduxService.addReducer("navigation", navigationReducer);
+		this.ReduxService.addReducer("router", routerReducer);
 
 		this.Router = new Router(this);
 		this.Navigation = new Navigation(this);
@@ -100,15 +110,6 @@ class Application extends Component {
 		this.BrandingService = new BrandingService(this, "BrandingService");
 		this.TitleService = new TitleService(this, "TitleService");
 		this.HelpService = new HelpService(this, "HelpService");
-		this.PreviewService = new PreviewService(this, "PreviewService");
-
-		this.ReduxService.addReducer("alerts", alertsReducer);
-		this.ReduxService.addReducer("advmode", advancedModeReducer);
-		this.ReduxService.addReducer("fullscreenmode", fullscreenModeReducer);
-		this.ReduxService.addReducer("header", headerReducer);
-		this.ReduxService.addReducer("sidebar", sidebarReducer);
-		this.ReduxService.addReducer("navigation", navigationReducer);
-		this.ReduxService.addReducer("router", routerReducer);
 
 		// The application can provide a list of keys that should be automatically parsed as BigInt, when received from the server in Axios call
 		// This is important to preserve 64bit numbers from the server such as IP addresses, timestamps etc.
@@ -121,11 +122,7 @@ class Application extends Component {
 			splashscreenRequestors: 0,
 		}
 
-		const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-		this.Store = createStore(combineReducers(this.ReduxService.Reducers), composeEnhancers(applyMiddleware()));
-
 		this.ConfigService.addDefaults(props.configdefaults);
-		this.Config.dispatch(this.Store);
 
 		this.addSplashScreenRequestor(this);
 		this.state.splashscreenRequestors = this.SplashscreenRequestors.size;
@@ -172,8 +169,6 @@ class Application extends Component {
 					that.Modules.push(mod);
 				}
 
-				that.Store.replaceReducer(combineReducers(that.ReduxService.Reducers));
-				that.Config.dispatch(that.Store);
 			}
 
 			// Initialize statically imported modules
@@ -187,8 +182,6 @@ class Application extends Component {
 		}
 
 		modules_init().then(async function () {
-			that.Store.replaceReducer(combineReducers(that.ReduxService.Reducers));
-			that.Config.dispatch(that.Store);
 
 			// Initialize all services
 			for (var i in that.Services) {
@@ -198,7 +191,6 @@ class Application extends Component {
 				// It unifies synchronous and asynchronous `initialize()` calls
 				await Promise.resolve(ret);
 
-				that.Config.dispatch(that.Store);
 			}
 
 			that.removeSplashScreenRequestor(that);
@@ -574,7 +566,7 @@ class Application extends Component {
 		* success
 	*/
 	addAlert(level, message, expire = 5, shouldBeTranslated = false, component = null) {
-		this.Store.dispatch({
+		this.AppStore.dispatch?.({
 			type: ADD_ALERT,
 			level: level,
 			message: message,
@@ -621,7 +613,7 @@ class Application extends Component {
 				exceptionMessage = <><h5>{exceptionMessage}</h5>{exception?.message && <div className="mt-2">{exception.message}</div>}</>;
 			}
 		}
-		this.Store.dispatch({
+		this.AppStore.dispatch?.({
 			type: ADD_ALERT,
 			level: "danger",
 			message: exceptionMessage,
@@ -634,10 +626,10 @@ class Application extends Component {
 
 	setAdvancedMode(enabled) {
 		if (enabled === 0) {
-			let state = this.Store.getState();
-			enabled = !state.advmode.enabled;
+			const state = this.AppStore.getState();
+			enabled = !state?.advmode?.enabled;
 		}
-		this.Store.dispatch({
+		this.AppStore.dispatch?.({
 			type: SET_ADVANCED_MODE,
 			enabled: enabled
 		});
@@ -653,11 +645,11 @@ class Application extends Component {
 		It takes a parameter called "status" to indicate whether to turn the full-screen mode on or off.
 	*/
 	setFullScreenMode(status) {
-		const state = this.Store.getState();
-		if (status === 'on' && (state.fullscreenmode.status === 'on')) {
+		const state = this.AppStore.getState();
+		if (status === 'on' && (state?.fullscreenmode?.status === 'on')) {
 			status = 'off';
 		}
-		this.Store.dispatch({
+		this.AppStore.dispatch?.({
 			type: SET_FULLSCREEN_MODE,
 			status: status
 		});
@@ -670,41 +662,26 @@ class Application extends Component {
 		}
 	}
 
-	setFlag(name) {
-		useEffect(() => {
-			this.Store.dispatch({
-				type: SET_FLAG,
-				flag: name
-			});
-			return () => {
-				this.Store.dispatch({
-					type: SET_FLAG,
-					flag: undefined
-				});
-			}
-		}, [name])
-	}
-
 	render() {
 
 	if (this.state.splashscreenRequestors > 0) return (
 		// When splashscreenRequestors is requested, the application is not rendered.
 		// This prevents race conditions during application init time.
+		<AppStoreProvider app={this}>
 		<PubSubProvider app={this}>
-		<Provider store={this.Store}>
 			<Suspense fallback={<div></div>}>
 				<Alerts app={this} />
 				<main id="app-main">
 					<AccessDeniedCard app={this} />
 				</main>
 			</Suspense>
-		</Provider>
 		</PubSubProvider>
+		</AppStoreProvider>
 	);
 
 	return (
+		<AppStoreProvider app={this}>
 		<PubSubProvider app={this}>
-		<Provider store={this.Store}>
 			<Suspense fallback={<div></div>}>
 				<div id="app-networking-indicator" className={"progress-bar progress-bar-animated progress-bar-striped" + ((this.state.networking == 0) ? " transparent" : "")} ></div>
 				<Alerts app={this} />
@@ -719,8 +696,8 @@ class Application extends Component {
 				</main>
 				<Sidepanel app={this} />
 			</Suspense>
-		</Provider>
 		</PubSubProvider>
+		</AppStoreProvider>
 	); }
 
 }

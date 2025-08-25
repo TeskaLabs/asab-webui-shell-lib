@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {useTranslation} from "react-i18next";
-import {useSelector} from 'react-redux';
+import {useAppSelector} from 'asab_webui_components';
 
 import {
 	Modal,
@@ -18,7 +18,7 @@ export default function HelpButton() {
 	const [modal, setModal] = useState(false);
 	const [isIframeLoading, setIsIframeLoading] = useState(true);
 
-	const path = useSelector(state => state?.header.helpPath);
+	const path = useAppSelector(state => state?.header?.helpPath);
 	if (path == undefined) return null;
 
 	const toggle = () => {
