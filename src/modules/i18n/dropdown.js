@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CHANGE_LANGUAGE } from './actions';
-import { useDispatch } from 'react-redux';
+import { useAppStore } from 'asab_webui_components';
 
 
 import {
@@ -22,7 +22,7 @@ export default function LanguageDropdown(props) {
 		});
 	}
 
-	const dispatch = useDispatch();
+	const { dispatch } = useAppStore();
 
 	useEffect(() => {
 		dispatch({ type: CHANGE_LANGUAGE, language: i18n?.language ?? window.navigator.language })

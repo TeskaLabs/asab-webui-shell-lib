@@ -18,7 +18,7 @@ export default class AuthModule extends Module {
 	constructor(app, name) {
 		super(app, "AuthModule");
 
-		this.OAuthToken = JSON.parse(sessionStorage.getItem('SeaCatOAuth2Token'));
+		this.OAuthTokens = JSON.parse(sessionStorage.getItem('SeaCatOAuth2Tokens'));
 		this.UserInfo = null;
 		this.Api = new SeaCatAuthApi(app);
 		this.RedirectURL = window.location.href;
@@ -83,7 +83,7 @@ export default class AuthModule extends Module {
 			}
 
 			if (authorization_code !== null) {
-				await this._updateToken(authorization_code);
+				await this._exchangeCodeForTokens(authorization_code);
 				// Remove 'code' from a query string
 				qs.delete('code');
 
@@ -116,12 +116,12 @@ export default class AuthModule extends Module {
 			}
 
 			// Do we have an oauth token (we are authorized to use the app)
-			if (this.OAuthToken != null) {
+			if (this.OAuthTokens != null) {
 				// Update the user info
 				let result = await this.updateUserInfo();
 				if (!result) {
 					// User info not found - go to login
-					sessionStorage.removeItem('SeaCatOAuth2Token');
+					sessionStorage.removeItem('SeaCatOAuth2Tokens');
 					let force_login_prompt = true;
 					await this.Api.login(this.RedirectURL, force_login_prompt);
 					return;
@@ -146,7 +146,7 @@ export default class AuthModule extends Module {
 				}
 
 				// Validate resources of items and children in navigation (resource validation depends on tenant)
-				if (this.App.Store && this.App.Services.TenantService && (this.UserInfo !== null)) {
+				if (this.App.AppStore && this.App.Services.TenantService && (this.UserInfo !== null)) {
 					let currentTenant = this.App.Services.TenantService.getCurrentTenant();
 					let resources = this.UserInfo.resources ? this.UserInfo.resources[currentTenant] : [];
 					/*
@@ -161,10 +161,8 @@ export default class AuthModule extends Module {
 						return;
 					}
 
-					if (this.App.Store != null) {
-						this.App.Store.dispatch({ type: types.AUTH_RESOURCES, resources: resources });
-					}
-					await this.validateNavigation();
+					this.App?.AppStore?.dispatch?.({ type: types.AUTH_RESOURCES, resources: resources });
+					this.validateNavigation({resources});
 				}
 
 				if (this.UserInfo != null) {
@@ -185,14 +183,14 @@ export default class AuthModule extends Module {
 
 	authInterceptor() {
 		const interceptor = config => {
-			config.headers['Authorization'] = 'Bearer ' + this.OAuthToken['access_token'];
+			config.headers['Authorization'] = 'Bearer ' + this.OAuthTokens['access_token'];
 			return config;
 		}
 		return interceptor;
 	}
 
 	webSocketAuthInterceptor() {
-		return `access_token_${this.OAuthToken['access_token']}`;
+		return `access_token_${this.OAuthTokens['access_token']}`;
 	}
 
 	async simulateUserinfo(mock_userinfo) {
@@ -228,9 +226,9 @@ export default class AuthModule extends Module {
 			mockParams["tenants"] = Object.values(mockParams.tenants)
 		}
 
-		if (this.App.Store != null) {
-			this.App.Store.dispatch({ type: types.AUTH_USERINFO, payload: mockParams });
-			this.App.Store.dispatch({ type: types.AUTH_RESOURCES, resources: mockParams["resources"] });
+		if (this.App.AppStore) {
+			this.App.AppStore.dispatch?.({ type: types.AUTH_USERINFO, payload: mockParams });
+			this.App.AppStore.dispatch?.({ type: types.AUTH_RESOURCES, resources: mockParams["resources"] });
 		}
 
 		/** Check for TenantService and pass tenants list obtained from userinfo */
@@ -245,8 +243,8 @@ export default class AuthModule extends Module {
 
 		this._stopSessionExpirationValidation(); // Stop session validation and clear the timeout
 
-		sessionStorage.removeItem('SeaCatOAuth2Token');
-		const promise = this.Api.logout(this.OAuthToken['access_token'])
+		sessionStorage.removeItem('SeaCatOAuth2Tokens');
+		const promise = this.Api.logout(this.OAuthTokens['access_token'])
 		if (promise == null) {
 			window.location.reload();
 		}
@@ -258,20 +256,18 @@ export default class AuthModule extends Module {
 		});
 	}
 
-	// TODO: reconsider removing async/await with promise
-	async validateNavigation() {
-		const state = this.App.Store.getState();
+	validateNavigation({resources}) {
+		const state = this.App.AppStore.getState();
 		let navItems = state.navigation?.navItems;
-		let resources = state.auth?.resources;
 		let authorizedNavItems = [];
-		navItems && await Promise.all(navItems.map(async (itm, idx) => {
+		navItems && navItems.map((itm, idx) => {
 			if (resources.indexOf('authz:superuser') !== -1) {
 				// If user is superuser, validate every navigation item
 				authorizedNavItems.push(itm);
 			} else {
 				if (itm.resource) {
 					if (itm.children) {
-						itm.children = await this._validateChildrenNav(itm, resources);
+						itm.children = this._validateChildrenNav(itm, resources);
 					}
 					// Item validation
 					let access_auth = this._validateItemNav(itm.resource, resources);
@@ -280,29 +276,29 @@ export default class AuthModule extends Module {
 					}
 				} else {
 					if (itm.children) {
-						itm.children = await this._validateChildrenNav(itm, resources);
+						itm.children = this._validateChildrenNav(itm, resources);
 						if (itm.children.length > 0) {
 							authorizedNavItems.push(itm);
 						}
 					}
 				}
 			}
-		}))
-		this.App.Store.dispatch({ type: SET_NAVIGATION_ITEMS, navItems: authorizedNavItems });
+		})
+		this.App.AppStore.dispatch?.({ type: SET_NAVIGATION_ITEMS, navItems: authorizedNavItems });
 	}
 
 	// Validate sidebar's item children
-	async _validateChildrenNav(itm, resources) {
+	_validateChildrenNav(itm, resources) {
 		// Item's children validation
 		let authorizedNavChildren = [];
-		await Promise.all(itm.children.map(async (child, id) => {
+		itm.children.map((child, id) => {
 			if (child.resource) {
 				let access_auth = this._validateItemNav(child.resource, resources);
 				if (access_auth == true) {
 					authorizedNavChildren.push(child);
 				}
 			}
-		}))
+		})
 		return authorizedNavChildren;
 	}
 
@@ -336,21 +332,21 @@ export default class AuthModule extends Module {
 	async updateUserInfo() {
 		let response;
 		try {
-			response = await this.Api.userinfo(this.OAuthToken.access_token);
+			response = await this.Api.userinfo(this.OAuthTokens.access_token);
 		}
 		catch (err) {
 			console.error("Failed to update user info", err);
 			this.UserInfo = null;
-			if (this.App.Store != null) {
-				this.App.Store.dispatch({ type: types.AUTH_USERINFO, payload: this.UserInfo });
+			if (this.App.AppStore) {
+				this.App.AppStore.dispatch?.({ type: types.AUTH_USERINFO, payload: this.UserInfo });
 			}
 			return false;
 		}
 
 		this.UserInfo = response.data;
 		this.SessionExpiration = response.data?.exp;
-		if (this.App.Store != null) {
-			this.App.Store.dispatch({ type: types.AUTH_USERINFO, payload: this.UserInfo });
+		if (this.App.AppStore) {
+			this.App.AppStore.dispatch?.({ type: types.AUTH_USERINFO, payload: this.UserInfo });
 		}
 
 		/** Check for TenantService and pass tenants list obtained from userinfo */
@@ -362,20 +358,37 @@ export default class AuthModule extends Module {
 		return true;
 	}
 
-
-	async _updateToken(authorization_code) {
-		let response;
+	// Method for obtaining and storing the OAuth tokens based on authorization code
+	async _exchangeCodeForTokens(authorization_code) {
 		try {
-			response = await this.Api.token_authorization_code(authorization_code, this.RedirectURL);
+			const response = await this.Api.token_authorization_code(authorization_code, this.RedirectURL);
+			this.OAuthTokens = response.data;
+			sessionStorage.setItem('SeaCatOAuth2Tokens', JSON.stringify(response.data));
+			return true;
 		}
 		catch (err) {
 			console.error("Failed to update token", err);
 			return false;
 		}
-		this.OAuthToken = response.data;
-		sessionStorage.setItem('SeaCatOAuth2Token', JSON.stringify(response.data));
+	}
 
-		return true;
+	// Method for refreshing OAuth tokens
+	async _refreshTokens() {
+		// If no refresh_token found, return false
+		if (!this.OAuthTokens?.refresh_token) {
+			return false;
+		}
+
+		try {
+			const response = await this.Api.token_refresh(this.OAuthTokens.refresh_token);
+			this.OAuthTokens = response.data;
+			sessionStorage.setItem('SeaCatOAuth2Tokens', JSON.stringify(response.data));
+			return true;
+		}
+		catch (err) {
+			console.error("Failed to refresh token", err);
+			return false;
+		}
 	}
 
 	_getAuthorizedTenant(userInfo) {
@@ -401,38 +414,78 @@ export default class AuthModule extends Module {
 			return;
 		}
 
+		// Max session duration
+		const MAX_SESSION_DURATION = Math.pow(2, 31) - 1;
+
+		// Proactivelly validate session expiration
+		let lastKnownExpiration = this.SessionExpiration; // Last known session expiration
+		let sessionStartTime = Date.now() / 1000; // Session start time
+		let sessionDuration = lastKnownExpiration - sessionStartTime; // Session duration
+		// Prevent glitches on very large time remaining values
+		if (sessionDuration > MAX_SESSION_DURATION) {
+			// Set timeout to maximum allowed value
+			sessionDuration = MAX_SESSION_DURATION;
+		}
+		let sessionMidpoint = sessionStartTime + sessionDuration / 2; // Session midpoint value
+		let refreshSessionDone = false; // Tracks if the session has been proactivelly refreshed
 		let warningDisplayed = false; // Tracks if the "about to expire" warning has been shown
 
 		const validateSession = async () => {
 			const currentTime = Date.now() / 1000; // Convert milliseconds to seconds
 			let timeRemaining = this.SessionExpiration - currentTime; // Time difference for triggering "about to expire" warning
 			// Prevent glitches on very large time remaining values
-			if (timeRemaining >= Math.pow(2, 31)) {
+			if (timeRemaining > MAX_SESSION_DURATION) {
 				// Set timeout to maximum allowed value
-				timeRemaining = Math.pow(2, 31) - 1;
+				timeRemaining = MAX_SESSION_DURATION;
+			}
+
+			// Validate session on half of the session expiration or if the remaining time is <= 5min
+			if (!refreshSessionDone && ((timeRemaining <= 300) || (currentTime >= sessionMidpoint))) {
+				refreshSessionDone = true;
+				const tokensRefreshed = await this._refreshTokens();
+				// Recalculate if session expiration was extended
+				if (tokensRefreshed) {
+					await this.updateUserInfo(); // Update userinfo
+					// If current session expiration differs from last known expiration, recalculate session variables
+					if (this.SessionExpiration !== lastKnownExpiration) {
+						lastKnownExpiration = this.SessionExpiration;
+						sessionStartTime = currentTime;
+						sessionDuration = lastKnownExpiration - sessionStartTime;
+						// Prevent glitches on very large time remaining values
+						if (sessionDuration > MAX_SESSION_DURATION) {
+							// Set timeout to maximum allowed value
+							sessionDuration = MAX_SESSION_DURATION;
+						}
+						sessionMidpoint = sessionStartTime + sessionDuration / 2;
+						refreshSessionDone = false;
+					}
+				}
 			}
 
 			// If remaining time is between 1 and 60s, repetitivelly ask for userInfo and trigger "about to expire" warning
 			if ((timeRemaining <= 60) && (timeRemaining > 0)) {
-				if (!warningDisplayed) {
+				const tokensRefreshed = await this._refreshTokens(); // Returns true/false if token is refreshed/not refreshed
+				await this.updateUserInfo(); // Continue updating user info
+				if (!tokensRefreshed && !warningDisplayed) {
 					this.App.addAlert("info", "General|Your session will expire soon", 30, true);
 					warningDisplayed = true; // Mark the warning as displayed
 				}
-				await this.updateUserInfo(); // Continue updating user info
 			}
 
 			// Validation on expired session
 			if (this.SessionExpiration <= currentTime) {
+				// Handle refresh token prior updating user info
+				await this._refreshTokens();
 				// Handle session expiration
 				const isUserInfoUpdated = await this.updateUserInfo();
 				if (!isUserInfoUpdated) {
 					// Stop further checks
 					clearTimeout(this.sessionValidationInterval);
 					this.sessionValidationInterval = null;
-					this.App.addAlert("info", "ASABAuthModule|Your session has expired.", 3600 * 1000, true, (alert, store) => <SessionExpirationAlert alert={alert} store={store} />);
+					this.App.addAlert("info", "ASABAuthModule|Your session has expired.", 3600 * 1000, true, (alert) => <SessionExpirationAlert alert={alert} />);
 					// Disable UI elements
-					if (this.App.Store) {
-						this.App.Store.dispatch({ type: types.AUTH_SESSION_EXPIRATION, sessionExpired: true });
+					if (this.App.AppStore) {
+						this.App.AppStore.dispatch?.({ type: types.AUTH_SESSION_EXPIRATION, sessionExpired: true });
 
 						// Disable UI elements
 						[...document.querySelectorAll('#app-sidebar .nav-link, [class^="btn"]:not(.alert-button), [class*=" btn"]:not(.alert-button), .btn-group a, .page-item, input, select')].forEach(i => {

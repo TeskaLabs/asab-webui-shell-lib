@@ -1,12 +1,13 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useAppSelector } from 'asab_webui_components';
 
 import {
 	Container, Row, Col,
 	Card, CardHeader
 } from 'reactstrap';
 
+import { FlowbiteIllustration } from 'asab_webui_components';
 
 /*
 
@@ -44,9 +45,9 @@ export default AccessControlScreen;
 
 function AccessControlCard(props) {
 	const { t, i18n } = useTranslation();
-	const tenant = useSelector(state => state.tenant?.current);
-	const userinfo = useSelector(state => state.auth?.userinfo);
-	const resources = useSelector(state => state.auth?.resources)?.sort() || [];
+	const tenant = useAppSelector(state => state.tenant?.current);
+	const userinfo = useAppSelector(state => state.auth?.userinfo);
+	const resources = (useAppSelector(state => state.auth?.resources) || []).slice().sort();
 
 	return (
 		<Card>
@@ -55,9 +56,13 @@ function AccessControlCard(props) {
 					<h3>
 						{t('AccessControlScreen|Access control')}
 					</h3>
+
 				</div>
 			</CardHeader>
 			<ul className="list-group list-group-flush">
+				<div className="w-50 mx-auto">
+					<FlowbiteIllustration name="access" className="py-4" title={t('AccessControlScreen|Access control')} />
+				</div>
 				{userinfo?.username &&
 				<li className="list-group-item">
 					<Row>

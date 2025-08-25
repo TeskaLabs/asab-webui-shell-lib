@@ -1,4 +1,3 @@
-import React from 'react';
 import { Service } from 'asab_webui_components';
 import { SET_SUBTITLE } from '../actions';
 
@@ -18,9 +17,9 @@ export default class TitleService extends Service {
 		this._updateSubtitle(undefined);
 	};
 
-	// Method for dispatching subtitle update to Redux store
+	// Method for dispatching subtitle update to Application store
 	_updateSubtitle = (subtitle) => {
-		this.App.Store.dispatch({
+		this.App?.AppStore?.dispatch?.({
 			type: SET_SUBTITLE,
 			subtitle: subtitle
 		});

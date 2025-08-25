@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppSelector, useAppStore } from 'asab_webui_components';
 
 import { Modal } from 'reactstrap';
 import SidebarBottomItem from './SidebarBottomItem';
@@ -21,22 +21,26 @@ import { SidebarItemRenderer } from './SidebarItemRenderer';
 		hasSidebar: false,
 	}
 
-	ReactDOM.render((
+	root.render(
 		<HashRouter>
-			<Application modules={modules} configDefaults={configDefaults}/>
+			<Application
+				configdefaults={ConfigDefaults} 
+				modules={modules}
+			/>
 		</HashRouter>
-	), document.getElementById('app'));
+	);
 */
 
 export default function Sidebar (props) {
 	const [isSmallResolution, setIsSmallResolution] = useState(false)
 	const [sidebarBottomBranding, setSidebarBottomBranding] = useState({});
 	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-	const sidebarItems = useSelector(state => state.navigation?.navItems);
-	const sessionExpired = useSelector(state => state.auth?.sessionExpired);
-	const hasSidebar = useSelector(state => state?.config?.hasSidebar);
-	const theme = useSelector(state => state.theme);
-	const dispatch = useDispatch();
+	const sidebarItems = useAppSelector(state => state.navigation?.navItems);
+	const hasSidebar = useAppSelector(state => state?.config?.hasSidebar);
+	const sessionExpired = useAppSelector(state => state.auth?.sessionExpired);
+	const theme = useAppSelector(state => state.theme);
+
+	const { dispatch } = useAppStore();
 
 	// Handling sidebar-hidden app class
 	useEffect(() => {
@@ -64,7 +68,7 @@ export default function Sidebar (props) {
 				isSidebarCollapsed: true
 			});
 		}
-	}, [])
+	}, []);
 
 	useEffect(() => {
 		setSidebarBottomBranding(getBrandImage(props, theme, 'sidebarLogo'));

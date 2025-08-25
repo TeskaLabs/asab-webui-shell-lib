@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
-import { ResultCard } from 'asab_webui_components';
+import { ResultCard, useAppSelector } from 'asab_webui_components';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -11,6 +10,7 @@ import {
 	InputGroup, InputGroupText, Input, Label
 } from 'reactstrap';
 
+import { FlowbiteIllustration } from 'asab_webui_components';
 
 // Component that handles user invitation
 export default function InvitationScreen(props) {
@@ -18,7 +18,7 @@ export default function InvitationScreen(props) {
 	const [isInvitationSuccessful, setIsInvitationSuccessful] = useState(undefined);
 	const [registrationUrl, setRegistrationUrl] = useState(undefined);
 	const [urlCopied, setUrlCopied] = useState(undefined);
-	const tenant = useSelector(state => state.tenant?.current);
+	const tenant = useAppSelector(state => state.tenant?.current);
 	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const SeaCatAuthAPI = props.app.axiosCreate('seacat-auth');
@@ -169,6 +169,13 @@ export default function InvitationScreen(props) {
 									</div>
 								</CardHeader>
 								<CardBody>
+									<div className="w-50 mx-auto">
+										<FlowbiteIllustration
+											name='invite'
+											className='pb-3'
+											title={t('InvitationScreen|Invite other user')}
+										/>
+									</div>
 									<Label>{t('InvitationScreen|Enter the user\'s email address')}</Label>
 									<InputGroup>
 										<InputGroupText>

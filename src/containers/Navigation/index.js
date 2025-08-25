@@ -34,7 +34,9 @@ export default class Navigation extends Component {
 			// If no existing item, push the new item
 			this.Items.push(item);
 		}
-		this.App.Store.dispatch({ type: SET_NAVIGATION_ITEMS, navItems: this.Items });
+		if (this.App.AppStore) {
+			this.App.AppStore.dispatch?.({ type: SET_NAVIGATION_ITEMS, navItems: this.Items });
+		}
 	}
 
 }
