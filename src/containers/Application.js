@@ -89,7 +89,6 @@ class Application extends Component {
 		this.Config = this.ConfigService.Config;
 
 		// Register reducers which are not part of any app service
-		this.ReduxService.addReducer("attentionrequired", attentionRequiredReducer);
 		this.ReduxService.addReducer("alerts", alertsReducer);
 		this.ReduxService.addReducer("advmode", advancedModeReducer);
 		this.ReduxService.addReducer("fullscreenmode", fullscreenModeReducer);
