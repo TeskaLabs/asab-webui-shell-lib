@@ -17,11 +17,10 @@ export const SidebarItem = ({
 	const location = useLocation();
 	const { t } = useTranslation();
 	const isSidebarCollapsed = useAppSelector(state => state.sidebar?.isSidebarCollapsed);
-	const attentionRequired = useAppSelector(state => state.attentionrequired?.beacon);
 	const [isActive, setActive] = useState(false);
 	const lowercasedItemName = item?.name?.toLowerCase();
 	// Attention requred flag
-	const itemBeacon = beacon ? beacon[`beacon.${lowercasedItemName}`] : attentionRequired?.[`beacon.${lowercasedItemName}`];
+	const itemBeacon = beacon ? beacon[`beacon.${lowercasedItemName}`] : {};
 
 	useEffect(() => {
 		// TODO: refactor the handling of active and open states, since it does not behave as expected in some cases
@@ -62,17 +61,16 @@ export const SidebarItem = ({
 
 
 export const SidebarCollapsibleItem = ({
-	item, disabled, isSmallResolution
+	item, disabled, isSmallResolution, beacon = undefined
 }) => {
 	const [isOpen, setOpen] = useState(false);
 	const location = useLocation();
 	const { t } = useTranslation();
 	const isSidebarCollapsed = useAppSelector(state => state.sidebar?.isSidebarCollapsed);
-	const attentionRequired = useAppSelector(state => state.attentionrequired?.beacon);
 	const lowercasedItemName = item.name.toLowerCase();
 
 	// Attention required flag
-	const itemsBeacon = parentBeacon(attentionRequired, `beacon.${lowercasedItemName}`, lowercasedItemName);
+	const itemsBeacon = parentBeacon(beacon, `beacon.${lowercasedItemName}`, lowercasedItemName);
 	// Summarize parent beacon count based on children
 	const beaconCount = itemsBeacon && Object.keys(itemsBeacon).length > 0
 		? Object.values(itemsBeacon).reduce((sum, current) => {

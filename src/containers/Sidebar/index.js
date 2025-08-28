@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useAppSelector, useAppStore } from 'asab_webui_components';
+import { useAppSelector, useAppStore, usePubSub } from 'asab_webui_components';
 
 import { Modal } from 'reactstrap';
 import SidebarBottomItem from './SidebarBottomItem';
@@ -10,14 +10,26 @@ import './sidebar.scss';
 import { SidebarItemRenderer } from './SidebarItemRenderer';
 
 export default function Sidebar (props) {
+	const { subscribe } = usePubSub();
 	const [isSmallResolution, setIsSmallResolution] = useState(false)
 	const [sidebarBottomBranding, setSidebarBottomBranding] = useState({});
 	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+	const [beacon, setBeacon] = useState({});
 	const sidebarItems = useAppSelector(state => state.navigation?.navItems);
 	const sessionExpired = useAppSelector(state => state.auth?.sessionExpired);
 	const theme = useAppSelector(state => state.theme);
 
 	const { dispatch } = useAppStore();
+
+	useEffect(() => {
+		const handleEvent = (message) => {
+			setBeacon(message?.beacon);
+		}
+		const subscription = subscribe('AttentionRequired.beacon!', handleEvent);
+		return () => {
+			subscription();
+		};
+	}, []);
 
 	useEffect(() => {
 		// Collapse sidebar if innerWidth is smaller or equal to 944px on page initialization
@@ -49,6 +61,7 @@ export default function Sidebar (props) {
 							sidebarItems={sidebarItems}
 							sessionExpired={sessionExpired}
 							isSmallResolution={isSmallResolution}
+							beacon={beacon}
 						/>
 					</div>
 				</Modal>
@@ -58,6 +71,7 @@ export default function Sidebar (props) {
 				<SidebarItemRenderer
 					sidebarItems={sidebarItems}
 					sessionExpired={sessionExpired}
+					beacon={beacon}
 				/>
 				<div className="flex-fill">&nbsp;</div>
 				<SidebarBottomItem sidebarLogo={sidebarBottomBranding} disabled={sessionExpired} />
