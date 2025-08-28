@@ -100,6 +100,7 @@ export default class AttentionRequiredService extends Service {
 	// Method for distributing the data into Application store
 	distributeData(data) {
 		const transformedData = this.transformData(data);
+		// TODO: use a pubsub instead of the appstore dispatch
 		this.App?.AppStore?.dispatch?.({ type: SET_ATTENTION_REQUIRED_BEACON, beacon: transformedData });
 	}
 
