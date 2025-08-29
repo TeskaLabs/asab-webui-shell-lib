@@ -14,22 +14,13 @@ export default function Sidebar (props) {
 	const [isSmallResolution, setIsSmallResolution] = useState(false)
 	const [sidebarBottomBranding, setSidebarBottomBranding] = useState({});
 	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-	const [beacon, setBeacon] = useState({});
 	const sidebarItems = useAppSelector(state => state.navigation?.navItems);
 	const sessionExpired = useAppSelector(state => state.auth?.sessionExpired);
 	const theme = useAppSelector(state => state.theme);
+	// Subscription to a beacon
+	const beacon = props.app?.Attention?.beacon;
 
 	const { dispatch } = useAppStore();
-
-	useEffect(() => {
-		const handleEvent = (message) => {
-			setBeacon(message?.beacon);
-		}
-		const subscription = subscribe('AttentionRequired.beacon!', handleEvent);
-		return () => {
-			subscription();
-		};
-	}, []);
 
 	useEffect(() => {
 		// Collapse sidebar if innerWidth is smaller or equal to 944px on page initialization

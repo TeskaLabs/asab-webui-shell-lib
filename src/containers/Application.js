@@ -115,11 +115,16 @@ class Application extends Component {
 		this.JSONParseBigInt = new Set(props?.bigint);
 
 		this._handleKeyUp = this._handleKeyUp.bind(this);
+		this._initAttentionSubscription = this._initAttentionSubscription.bind(this);
 
 		this.state = {
 			networking: 0, // If more than zero, some networking activity is happening
 			splashscreenRequestors: 0,
 		}
+
+		// Global Attention value and unsubscribe handle
+		this.Attention = {};
+		this._unsubscribeAttention = null;
 
 		this.ConfigService.addDefaults(props.configdefaults);
 
@@ -518,6 +523,9 @@ class Application extends Component {
 	componentDidMount() {
 		document.addEventListener("keyup", this._handleKeyUp, false);
 
+		// Subscribe to AttentionRequired.beacon! once PubSub is available
+		this._initAttentionSubscription();
+
 		// Add print-landscape class to body if not present
 		if (!document.body.classList.contains('print-landscape')) {
 			document.body.classList.add('print-landscape');
@@ -526,6 +534,11 @@ class Application extends Component {
 
 	componentWillUnmount() {
 		document.removeEventListener("keyup", this._handleKeyUp, false);
+		// Unsubscribe from AttentionRequired.beacon! PubSub
+		if (this._unsubscribeAttention) {
+			this._unsubscribeAttention();
+			this._unsubscribeAttention = null;
+		}
 	}
 
 
@@ -699,6 +712,26 @@ class Application extends Component {
 		</AppStoreProvider>
 	); }
 
+}
+
+/*
+	On Application initialization, initialize subscription to AttentionRequired.beacon!
+	once PubSub is assigned by PubSubProvider
+*/
+Application.prototype._initAttentionSubscription = function() {
+	if (this.PubSub && typeof this.PubSub.subscribe === 'function') {
+		if (!this._unsubscribeAttention) {
+			this._unsubscribeAttention = this.PubSub.subscribe('AttentionRequired.beacon!', (value) => {
+				this.Attention = value;
+			});
+		}
+		return;
+	}
+	/*
+		This is a safety precaution which retry initialization, PubSubProvider may assigns app.PubSub
+		in its useEffect after first render (however we use useLayoutEffect there, so it should not be an issue).
+	*/
+	setTimeout(this._initAttentionSubscription, 0);
 }
 
 export default Application;
