@@ -152,7 +152,7 @@ export default function InvitationScreen(props) {
 		<Container fluid className={(isInvitationSuccessful == undefined) ? '' : 'h-100'}>
 			{(isInvitationSuccessful != undefined) ? (
 				<ResultCard
-					isSuccessful={isInvitationSuccessful ? true : false}
+					status={isInvitationSuccessful ? 'success' : 'error'}
 					body={isInvitationSuccessful ? <SuccessfulInvitationCardBody/> : <UnsuccessfulInvitationCardBody/>}
 				/>
 			) : (
