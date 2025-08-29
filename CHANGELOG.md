@@ -1,8 +1,12 @@
 # CHANGELOG for ASAB WebUI Shell
 
-## 26.1.4
+## 26.2.2
 
 - Use updated version of ResultCard in `InvitationScreen` (#30)
+
+## 26.2.1
+
+- Make AttentionRequired service a reusable module. Then it is initialized only in desired application where it is imported. (#29)
 
 ## 26.1.3
 
