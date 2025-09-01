@@ -22,6 +22,7 @@ export default class AttentionRequiredService extends Service {
 		const currentTenant = this.App?.Services?.TenantService?.getCurrentTenant();
 		// Gracefully reconnect if tenant was not found
 		if (!currentTenant) {
+			// TODO: maybe set offline
 			console.error("Beacon WebSocket error: Tenant was not found!");
 			this.reconnectBeaconWebSocket();
 			return;
@@ -31,7 +32,7 @@ export default class AttentionRequiredService extends Service {
 		this.beaconWebSocket = BeaconServiceClient;
 
 		this.beaconWebSocket.onopen = () => {
-			// TODO: may be removed
+			this.connectionStatus('online');
 			console.log('Beacon WebSocket connection established.');
 		};
 
@@ -49,11 +50,13 @@ export default class AttentionRequiredService extends Service {
 		this.beaconWebSocket.onerror = (error) => {
 			console.error("Beacon WebSocket error:", error);
 			console.error("Beacon WebSocket is attempting to reconnect...");
+			this.connectionStatus('offline');
 			this.distributeData({});
 			this.reconnectBeaconWebSocket();
 		};
 
 		this.beaconWebSocket.onclose = () => {
+			this.connectionStatus('offline');
 			/*
 				WebSocket connection is closed by the browser automatically when user
 				leaves the application (not the screen).
@@ -139,4 +142,10 @@ export default class AttentionRequiredService extends Service {
 			return acc;
 		}, {});
 	};
+
+	connectionStatus(status) {
+		if (this.App?.PubSub) {
+			this.App?.PubSub?.publish('Application.status!', { status });
+		}
+	}
 }

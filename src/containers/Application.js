@@ -35,7 +35,7 @@ import SuspenseScreen from '../screens/SuspenseScreen';
 
 import './Application.scss';
 
-import { ADD_ALERT, SET_ADVANCED_MODE, SET_FULLSCREEN_MODE } from '../actions';
+import { ADD_ALERT, SET_ADVANCED_MODE, SET_FULLSCREEN_MODE, SET_CONNECTIVITY_STATUS } from '../actions';
 
 class Application extends Component {
 
@@ -125,6 +125,10 @@ class Application extends Component {
 		// Global Attention value and unsubscribe handle
 		this.Attention = {};
 		this._unsubscribeAttention = null;
+
+		// Subscribe and unsubscribe handlers for connectivity detection
+		this._initConnectivitySubscription = this._initConnectivitySubscription.bind(this);
+		this._unsubscribeConnectivity = null;
 
 		this.ConfigService.addDefaults(props.configdefaults);
 
@@ -526,6 +530,9 @@ class Application extends Component {
 		// Subscribe to AttentionRequired.beacon! once PubSub is available
 		this._initAttentionSubscription();
 
+		// Subscribe to Application.status! once PubSub is available
+		this._initConnectivitySubscription();
+
 		// Add print-landscape class to body if not present
 		if (!document.body.classList.contains('print-landscape')) {
 			document.body.classList.add('print-landscape');
@@ -538,6 +545,12 @@ class Application extends Component {
 		if (this._unsubscribeAttention) {
 			this._unsubscribeAttention();
 			this._unsubscribeAttention = null;
+		}
+
+		// Unsubscribe from Application.status! PubSub
+		if (this._unsubscribeConnectivity) {
+			this._unsubscribeConnectivity();
+			this._unsubscribeConnectivity = null;
 		}
 	}
 
@@ -733,5 +746,26 @@ Application.prototype._initAttentionSubscription = function() {
 	*/
 	setTimeout(this._initAttentionSubscription, 0);
 }
+
+
+/*
+	On Application initialization, initialize subscription to Application.status!
+	once PubSub is assigned by PubSubProvider
+*/
+Application.prototype._initConnectivitySubscription = function () {
+	if (this.PubSub && typeof this.PubSub.subscribe === 'function') {
+		if (!this._unsubscribeConnectivity) {
+			this._unsubscribeConnectivity = this.PubSub.subscribe('Application.status!', (value) => {
+				// Prefer store so UI updates predictably
+				this.AppStore.dispatch?.({
+					type: SET_CONNECTIVITY_STATUS,
+					status: value.status,
+				});
+			});
+		}
+		return;
+	}
+	setTimeout(this._initConnectivitySubscription, 0);
+};
 
 export default Application;

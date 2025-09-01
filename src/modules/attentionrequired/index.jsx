@@ -11,7 +11,7 @@ export default class AttentionRequiredModule extends Module {
 
 		this.AttentionRequiredService = new AttentionRequiredService(app, "AttentionRequiredService");
 
-		this.App.ReduxService.addReducer("attentionrequired", reducer);
+		this.App.ReduxService.addReducer("connectivity", reducer);
 	}
 
 }
