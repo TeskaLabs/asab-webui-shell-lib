@@ -19,10 +19,8 @@ import navigationReducer from './Navigation/reducer';
 import routerReducer from './Router/reducer';
 import fullscreenModeReducer from './FullscreenMode/reducer';
 import advancedModeReducer from './AdvancedMode/reducer';
-import attentionRequiredReducer from './AttentionRequired/reducer';
 
 import ReduxService from '../services/ReduxService';
-import AttentionRequiredService from '../services/AttentionRequiredService';
 import ConfigService from '../config/ConfigService';
 import HeaderService from '../services/HeaderService';
 import ThemeService from '../theme/ThemeService';
@@ -55,7 +53,6 @@ class Application extends Component {
 		this.Config = this.ConfigService.Config;
 
 		// Register reducers which are not part of any app service
-		this.ReduxService.addReducer("attentionrequired", attentionRequiredReducer);
 		this.ReduxService.addReducer("alerts", alertsReducer);
 		this.ReduxService.addReducer("advmode", advancedModeReducer);
 		this.ReduxService.addReducer("fullscreenmode", fullscreenModeReducer);
@@ -71,7 +68,6 @@ class Application extends Component {
 		this.AxiosInterceptors = new Set();
 		this.WebSocketInterceptors = new Set();
 
-		this.AttentionRequiredService = new AttentionRequiredService(this, "AttentionRequired");
 		this.HeaderService = new HeaderService(this, "HeaderService");
 		this.ThemeService = new ThemeService(this, "ThemeService");
 		this.BrandingService = new BrandingService(this, "BrandingService");
