@@ -45,6 +45,16 @@
 			opacity: 0%;
 		}
 	}
+
+	&.sidebar-hidden {
+		> #app-sidebar {
+			display: none;
+		}
+
+		> #app-main {
+			grid-area: 2 / 1 / 4 / 3;
+		}
+	}
 }
 
 body {

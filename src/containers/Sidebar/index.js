@@ -9,18 +9,59 @@ import { getBrandImage } from '../../components/branding/BrandImage';
 import './sidebar.scss';
 import { SidebarItemRenderer } from './SidebarItemRenderer';
 
+/*
+	Example of use hasSidebar.
+	It must be set in App configuration.
+	If not set to `false` or at all, it is considered as true.
+
+	...
+
+	const ConfigDefaults = {
+		...
+		hasSidebar: false,
+	}
+
+	root.render(
+		<HashRouter>
+			<Application
+				configdefaults={ConfigDefaults} 
+				modules={modules}
+			/>
+		</HashRouter>
+	);
+*/
+
 export default function Sidebar (props) {
 	const { subscribe } = usePubSub();
 	const [isSmallResolution, setIsSmallResolution] = useState(false)
 	const [sidebarBottomBranding, setSidebarBottomBranding] = useState({});
 	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 	const sidebarItems = useAppSelector(state => state.navigation?.navItems);
+	const hasSidebar = useAppSelector(state => state?.config?.hasSidebar);
 	const sessionExpired = useAppSelector(state => state.auth?.sessionExpired);
 	const theme = useAppSelector(state => state.theme);
 	// Subscription to a beacon
 	const beacon = props.app?.Attention?.beacon;
 
 	const { dispatch } = useAppStore();
+
+	// Handling sidebar-hidden app class
+	useEffect(() => {
+		const appElement = document.getElementById("app");
+		if (!appElement) return;
+
+		if (hasSidebar === false) {
+			appElement.classList.add("sidebar-hidden");
+		} else {
+			appElement.classList.remove("sidebar-hidden");
+		}
+	}, [hasSidebar]);
+
+
+	// If specifically declared in the configuration, that sidebar should not be available, dont display sidebar at all
+	if (hasSidebar === false) {
+		return null;
+	}
 
 	useEffect(() => {
 		// Collapse sidebar if innerWidth is smaller or equal to 944px on page initialization

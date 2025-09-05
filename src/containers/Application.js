@@ -39,42 +39,6 @@ import { ADD_ALERT, SET_ADVANCED_MODE, SET_FULLSCREEN_MODE, SET_CONNECTIVITY_STA
 
 class Application extends Component {
 
-	/*
-	Example of use hasSidebar.
-	It must be set in Application.
-	If not set, it is considered as true.
-	
-	...
-	
-	const config = {
-		hasSidebar: false,
-	}
-	
-	
-	ReactDOM.render((
-		<BrowserRouter>
-			<Application modules={modules} {...config}/>
-		</BrowserRouter>
-	), document.getElementById('app'));
-	
-	...
-	
-	Example of settings in Module of the Application
-	Following above settings, this will show the item in
-	the header and when the screen is diminished (e.g. screening
-	using the mobile phone), the item is moved to the sidebar and
-	it is accessible by the sidebar toggler button.
-	
-	...
-	
-		app.Navigation.addItem({
-			name: 'Item 1',
-			url: '',
-		});
-	
-	...
-		*/
-
 	constructor(props) {
 		super(props);
 
