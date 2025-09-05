@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAppSelector } from 'asab_webui_components';
-import { useMatch } from 'react-router-dom';
+import { useMatch } from 'react-router';
 
 import ApplicationScreenTitle from './ApplicationScreenTitle';
 
