@@ -1,16 +1,16 @@
-import { SET_ATTENTION_REQUIRED_BEACON } from "../../actions";
+import { SET_CONNECTIVITY_STATUS } from "../../actions";
 
 const initialState = {
-	beacon: {},
-}
+	status: null
+};
 
-// Reducer for attention required, returning beacon
-export default function attentionRequiredReducer(state = initialState, action) {
+// Reducer for connectivity status
+export default function connectivityReducer(state = initialState, action) {
 	switch (action.type) {
-		case SET_ATTENTION_REQUIRED_BEACON: {
+		case SET_CONNECTIVITY_STATUS: {
 			return {
 				...state,
-				beacon: action.beacon
+				status: action.status
 			}
 		}
 
