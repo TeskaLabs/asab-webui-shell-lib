@@ -1,5 +1,6 @@
 import { Service } from 'asab_webui_components';
 import { SET_ATTENTION_REQUIRED_BEACON } from '../../actions';
+import { OfflineIndication } from './components/OfflineIndication.jsx';
 
 // Service handling attention required
 export default class AttentionRequiredService extends Service {
@@ -145,6 +146,22 @@ export default class AttentionRequiredService extends Service {
 
 	connectionStatus(status) {
 		if (this.App?.PubSub) {
+			const headerService = this.App?.Services?.HeaderService;
+			if (headerService) {
+				const prevStatus = this.App?.AppStore?.getState()?.connectivity?.status;
+				if (prevStatus != status) {
+					if (status === 'offline') {
+						headerService?.addComponent({
+							component: OfflineIndication,
+							order: 100
+						});
+					} else {
+						headerService?.removeComponent(OfflineIndication);
+					}
+
+				}
+			}
+			// Distribute status
 			this.App?.PubSub?.publish('Application.status!', { status });
 		}
 	}
