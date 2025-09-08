@@ -1,8 +1,12 @@
 # CHANGELOG for ASAB WebUI Shell
 
-## 26.2.2
+## 26.3.2
 
 - Use updated version of ResultCard in `InvitationScreen` (#30)
+
+## 26.3.1
+
+- Implemented `hasSidebar` configuration option, implemented `hasHeaderTitle` configuration option, removed support for meta tags of header images in dynamic configuration (#8)
 
 ## 26.2.1
 
