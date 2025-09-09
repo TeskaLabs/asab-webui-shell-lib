@@ -439,8 +439,11 @@ export default class AuthModule extends Module {
 				timeRemaining = MAX_SESSION_DURATION;
 			}
 
+			// Check if the user is online based on presence of Ping module in the application
+			const isOnline = this.App?.AppStore?.getState()?.connectivity?.status === 'offline' ? false : true;
+
 			// Validate session on half of the session expiration or if the remaining time is <= 5min
-			if (!refreshSessionDone && ((timeRemaining <= 300) || (currentTime >= sessionMidpoint))) {
+			if (isOnline && !refreshSessionDone && ((timeRemaining <= 300) || (currentTime >= sessionMidpoint))) {
 				refreshSessionDone = true;
 				const tokensRefreshed = await this._refreshTokens();
 				// Recalculate if session expiration was extended
@@ -463,7 +466,7 @@ export default class AuthModule extends Module {
 			}
 
 			// If remaining time is between 1 and 60s, repetitivelly ask for userInfo and trigger "about to expire" warning
-			if ((timeRemaining <= 60) && (timeRemaining > 0)) {
+			if (isOnline && (timeRemaining <= 60) && (timeRemaining > 0)) {
 				const tokensRefreshed = await this._refreshTokens(); // Returns true/false if token is refreshed/not refreshed
 				await this.updateUserInfo(); // Continue updating user info
 				if (!tokensRefreshed && !warningDisplayed) {
@@ -473,7 +476,7 @@ export default class AuthModule extends Module {
 			}
 
 			// Validation on expired session
-			if (this.SessionExpiration <= currentTime) {
+			if (isOnline && (this.SessionExpiration <= currentTime)) {
 				// Handle refresh token prior updating user info
 				await this._refreshTokens();
 				// Handle session expiration
