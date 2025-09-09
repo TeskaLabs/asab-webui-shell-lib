@@ -10,6 +10,7 @@ export default class AttentionRequiredService extends Service {
 		this.beaconWebSocket = null; // beacon websocket variable
 		this.reconnectTimeout = null; // timeout variable
 		this.reconnectInterval = 5000; // initial reconnection interval (5 seconds)
+		this.prevStatus = null; // initial status
 	}
 
 	// Start beacon websocket connection on initialization
@@ -146,10 +147,11 @@ export default class AttentionRequiredService extends Service {
 
 	connectionStatus(status) {
 		if (this.App?.PubSub) {
+			// Distribute status
+			this.App?.PubSub?.publish('Application.status!', { status });
 			const headerService = this.App?.Services?.HeaderService;
 			if (headerService) {
-				const prevStatus = this.App?.AppStore?.getState()?.connectivity?.status;
-				if (prevStatus != status) {
+				if (this.prevStatus != status) {
 					if (status === 'offline') {
 						headerService?.addComponent({
 							component: OfflineIndication,
@@ -158,11 +160,10 @@ export default class AttentionRequiredService extends Service {
 					} else {
 						headerService?.removeComponent(OfflineIndication);
 					}
-
+					this.prevStatus = status;
 				}
 			}
-			// Distribute status
-			this.App?.PubSub?.publish('Application.status!', { status });
 		}
 	}
+
 }
