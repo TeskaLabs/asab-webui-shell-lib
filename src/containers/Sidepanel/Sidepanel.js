@@ -25,19 +25,24 @@ import './Sidepanel.scss';
 // Application sidepanel
 export default function Sidepanel(props) {
 	const { publish, subscribe } = usePubSub();
-	const [ sidepanelContent, setSidepanelContent ] = useState(undefined);
+	const [sidepanelContent, setSidepanelContent] = useState(undefined);
 	const [mode, setMode] = useState('dock');
+	const [isOpen, setIsOpen] = useState(false);
 
 	useEffect(() => {
 		const handleEvent = (message) => {
 			if (message.mode === 'close') {
-				setSidepanelContent(undefined);
-			} else {
-				setSidepanelContent(message.mode);
+				setIsOpen(false);
+				return;
 			}
 
-			setMode((message?.layout === 'overlay') ? 'overlay' : 'dock');
-		}
+			if (isOpen === false) {
+				setMode((message?.layout === 'overlay') ? 'overlay' : 'dock');
+				setSidepanelContent(message.mode);
+				setIsOpen(true);
+			}
+		};
+
 		// Subscription to Application.panel!
 		const subscriptionSidepanel = subscribe('Application.panel!', handleEvent);
 		// Clean up subscription on component unmount
@@ -48,20 +53,25 @@ export default function Sidepanel(props) {
 
 	// TODO: think of how to automatically close the sidepanel on screen leave
 	return (
-		<Collapse
-			id="app-sidepanel"
-			isOpen={((sidepanelContent != undefined) && (mode === 'dock')) ? true : false}
-			horizontal
-			className={mode === 'overlay' ? 'app-sidepanel-overlay' : ''}
-		>
-			<Card className='app-sidepanel-card h-100'>
-				<CardBody className='w-100 h-100 app-sidepanel-card-body'>
-					{sidepanelContent}
-				</CardBody>
-				<div className='app-sidepanel-chevron-wrapper'>
-					<i className='app-sidepanel-chevron bi bi-chevron-right' onClick={() => publish('Application.panel!', { mode: 'close' })}/>
-				</div>
-			</Card>
-		</Collapse>
-	)
+		<div id="app-sidepanel" className={(mode === 'overlay') ? 'app-sidepanel-overlay' : ''}>
+			<Collapse
+				className='h-100'
+				isOpen={isOpen}
+				horizontal
+				onExited={() => setSidepanelContent(undefined)}
+			>
+				<Card className="app-sidepanel-card h-100">
+					<CardBody className="w-100 h-100 app-sidepanel-card-body">
+						{sidepanelContent}
+					</CardBody>
+					<div className="app-sidepanel-chevron-wrapper">
+						<i
+							className="app-sidepanel-chevron bi bi-chevron-right"
+							onClick={() => publish('Application.panel!', { mode: 'close' })}
+						/>
+					</div>
+				</Card>
+			</Collapse>
+		</div>
+	);
 }
