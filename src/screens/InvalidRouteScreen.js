@@ -13,7 +13,7 @@ export default function InvalidRouteScreen(props) {
 	const { t } = useTranslation();
 
 	return(
-		<Container className="invalid-route-container h-100" fluid>
+		<Container className="invalid-route-container h-100">
 			<Card className="invalid-route-card">
 				<CardBody className="text-center invalid-route-cardbody">
 					<Row className="justify-content-center">
