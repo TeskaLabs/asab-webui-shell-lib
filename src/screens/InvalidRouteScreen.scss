@@ -1,5 +1,5 @@
 .invalid-route-container {
-	overflow-y: auto;
+	overflow: hidden;
 }
 
 .invalid-route-card {
@@ -9,7 +9,6 @@
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	// margin: 4rem auto 0;
 	border: 1px solid var(--bs-primary);
 }
 
@@ -18,4 +17,10 @@
 	align-items: center; /* Vertically center */
 	justify-content: center; /* Horizontally center */
 	overflow: hidden;
+	margin: 1rem;
+}
+
+.invalid-route-img-container{
+	height: 75%;
+	max-height: 60vh;
 }
