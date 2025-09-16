@@ -54,12 +54,12 @@ export default function UnauthorizedAccessScreen(props) {
 
 	// Else return the Not authorized screen
 	return(
-		<Container className="unauthorized-container h-100" fluid>
+		<Container className="unauthorized-container h-100">
 			<Card className="unauthorized-card">
 				<CardBody className="text-center unauthorized-cardbody">
 					<Row className="justify-content-center">
 						<Col>
-							<div className="w-50 mx-auto">
+							<div className="unauthorized-img-container">
 								<FlowbiteIllustration name="unauthorized" className="pb-4" title={t("UnauthorizedAccessScreen|Unauthorized access")}/>
 							</div>
 							{props.resource ?
