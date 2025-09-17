@@ -11,6 +11,7 @@ export default class AttentionRequiredService extends Service {
 		this.reconnectTimeout = null; // timeout variable
 		this.reconnectInterval = 5000; // initial reconnection interval (5 seconds)
 		this.prevStatus = null; // initial status
+		this.prevBeacon = null; // initial beacon
 	}
 
 	// Start beacon websocket connection on initialization
@@ -104,9 +105,22 @@ export default class AttentionRequiredService extends Service {
 
 	// Method for distributing the data into Application store
 	distributeData(data) {
-		const transformedData = this.transformData(data);
-		if (this.App?.PubSub) {
-			this.App?.PubSub?.publish('AttentionRequired.beacon!', { beacon: transformedData });
+		const next = this.transformData(data);
+		const initial = (this.prevBeacon === null);
+		const nextEmpty = _isEmptyObject(next);
+		const prevEmpty = _isEmptyObject(this.prevBeacon);
+
+		/*
+			We dont want to repetitivelly dispatch empty beacons to the AppStore
+			because it is causing unwanted re-rendering of the Application
+		*/
+		if (initial || !nextEmpty || (nextEmpty && !prevEmpty)) {
+			this.App?.AppStore?.dispatch?.({
+				type: SET_ATTENTION_REQUIRED_BEACON,
+				beacon: next,
+			});
+			// Update previous snapshot after dispatch
+			this.prevBeacon = next;
 		}
 	}
 
@@ -167,4 +181,9 @@ export default class AttentionRequiredService extends Service {
 		}
 	}
 
+}
+
+// Method for identifying an empty object
+function _isEmptyObject(o) {
+	return o != null && typeof o === 'object' && Object.keys(o).length === 0;
 }

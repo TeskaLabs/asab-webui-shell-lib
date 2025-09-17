@@ -79,16 +79,11 @@ class Application extends Component {
 		this.JSONParseBigInt = new Set(props?.bigint);
 
 		this._handleKeyUp = this._handleKeyUp.bind(this);
-		this._initAttentionSubscription = this._initAttentionSubscription.bind(this);
 
 		this.state = {
 			networking: 0, // If more than zero, some networking activity is happening
 			splashscreenRequestors: 0,
 		}
-
-		// Global Attention value and unsubscribe handle
-		this.Attention = {};
-		this._unsubscribeAttention = null;
 
 		// Subscribe and unsubscribe handlers for connectivity detection
 		this._initConnectivitySubscription = this._initConnectivitySubscription.bind(this);
@@ -491,9 +486,6 @@ class Application extends Component {
 	componentDidMount() {
 		document.addEventListener("keyup", this._handleKeyUp, false);
 
-		// Subscribe to AttentionRequired.beacon! once PubSub is available
-		this._initAttentionSubscription();
-
 		// Subscribe to Application.status! once PubSub is available
 		this._initConnectivitySubscription();
 
@@ -505,11 +497,6 @@ class Application extends Component {
 
 	componentWillUnmount() {
 		document.removeEventListener("keyup", this._handleKeyUp, false);
-		// Unsubscribe from AttentionRequired.beacon! PubSub
-		if (this._unsubscribeAttention) {
-			this._unsubscribeAttention();
-			this._unsubscribeAttention = null;
-		}
 
 		// Unsubscribe from Application.status! PubSub
 		if (this._unsubscribeConnectivity) {
@@ -692,27 +679,6 @@ class Application extends Component {
 }
 
 /*
-	On Application initialization, initialize subscription to AttentionRequired.beacon!
-	once PubSub is assigned by PubSubProvider
-*/
-Application.prototype._initAttentionSubscription = function() {
-	if (this.PubSub && typeof this.PubSub.subscribe === 'function') {
-		if (!this._unsubscribeAttention) {
-			this._unsubscribeAttention = this.PubSub.subscribe('AttentionRequired.beacon!', (value) => {
-				this.Attention = value;
-			});
-		}
-		return;
-	}
-	/*
-		This is a safety precaution which retry initialization, PubSubProvider may assigns app.PubSub
-		in its useEffect after first render (however we use useLayoutEffect there, so it should not be an issue).
-	*/
-	setTimeout(this._initAttentionSubscription, 0);
-}
-
-
-/*
 	On Application initialization, initialize subscription to Application.status!
 	once PubSub is assigned by PubSubProvider
 */
@@ -729,6 +695,10 @@ Application.prototype._initConnectivitySubscription = function () {
 		}
 		return;
 	}
+	/*
+		This is a safety precaution which retry initialization, PubSubProvider may assigns app.PubSub
+		in its useEffect after first render (however we use useLayoutEffect there, so it should not be an issue).
+	*/
 	setTimeout(this._initConnectivitySubscription, 0);
 };
 

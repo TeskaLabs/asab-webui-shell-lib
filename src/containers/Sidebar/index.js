@@ -41,7 +41,7 @@ export default function Sidebar (props) {
 	const sessionExpired = useAppSelector(state => state.auth?.sessionExpired);
 	const theme = useAppSelector(state => state.theme);
 	// Subscription to a beacon
-	const beacon = props.app?.Attention?.beacon;
+	const beacon = useAppSelector(state => state?.attentionrequired?.beacon);
 
 	const { dispatch } = useAppStore();
 

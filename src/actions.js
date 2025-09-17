@@ -21,3 +21,4 @@ export const SET_ROUTES = "asab/setRoutes";
 export const SET_HEADER_NAVIGATION_ITEMS = "asab/setHeaderNavigationItems";
 
 export const SET_CONNECTIVITY_STATUS = "asab/setConnectivityStatus";
+export const SET_ATTENTION_REQUIRED_BEACON = "asab/setAttentionRequiredBeacon";
