@@ -145,6 +145,7 @@ export default class AttentionRequiredService extends Service {
 		}, {});
 	};
 
+	// Method for publishing the connection status and displaying offline indication
 	connectionStatus(status) {
 		if (this.App?.PubSub) {
 			// Distribute status
