@@ -16,4 +16,11 @@
 	display: flex;
 	align-items: center; /* Vertically center */
 	justify-content: center; /* Horizontally center */
+	overflow: hidden;
+	margin: 1rem;
+}
+
+.unauthorized-img-container{
+	height: 75%;
+	max-height: 50vh;
 }
