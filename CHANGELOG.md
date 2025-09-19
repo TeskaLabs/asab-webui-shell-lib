@@ -1,5 +1,17 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 26.3.3
+
+- Implement overlay option to a Sidepanel (#34)
+
+## 26.3.2
+
+- Fix for informational screens with illustrations where layout was broken on screens with small height (#35)
+
+## 26.3.1
+
+- Implemented `hasSidebar` configuration option, implemented `hasHeaderTitle` configuration option, removed support for meta tags of header images in dynamic configuration (#8)
+
 ## 26.2.1
 
 - Make AttentionRequired service a reusable module. Then it is initialized only in desired application where it is imported. (#29)

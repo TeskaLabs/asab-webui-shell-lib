@@ -18,3 +18,14 @@
 .app-sidepanel-chevron:hover {
 	cursor: pointer;
 }
+
+/* Overlay mode */
+
+#app-sidepanel.app-sidepanel-overlay {
+	position: fixed; /* ignore grid placement; float over content */
+	right: 0;
+	top: var(--app-header-height, 65px); /* matches App header row height */
+	bottom: 0;
+	z-index: 1050; /* above main content, below modals */
+	display: block;
+}
