@@ -1,8 +1,16 @@
 # CHANGELOG for ASAB WebUI Shell
 
-## 26.3.2
+## 26.3.4
 
 - Use updated version of ResultCard in `InvitationScreen` (#30)
+
+## 26.3.3
+
+- Implement overlay option to a Sidepanel (#34)
+
+## 26.3.2
+
+- Fix for informational screens with illustrations where layout was broken on screens with small height (#35)
 
 ## 26.3.1
 
