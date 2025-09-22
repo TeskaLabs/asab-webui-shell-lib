@@ -151,10 +151,9 @@ export default function InvitationScreen(props) {
 	return (
 		<Container fluid className={(isInvitationSuccessful == undefined) ? '' : 'h-100'}>
 			{(isInvitationSuccessful != undefined) ? (
-				<ResultCard
-					isSuccessful={isInvitationSuccessful ? true : false}
-					body={isInvitationSuccessful ? <SuccessfulInvitationCardBody/> : <UnsuccessfulInvitationCardBody/>}
-				/>
+				<ResultCard status={isInvitationSuccessful ? 'success' : 'danger'}>
+					{isInvitationSuccessful ? <SuccessfulInvitationCardBody/> : <UnsuccessfulInvitationCardBody/>}
+				</ResultCard>
 			) : (
 				<Row className='justify-content-center pt-5'>
 					<Col md='4'>
