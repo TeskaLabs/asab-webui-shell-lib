@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.1.2
+
+- Fix on incorrect peerDependency version of ASAB WebUI Components (#36)
+
 ## 27.1.1
 
 - Upgrade to react router v7, upgrade other "out of date" dependencies (#33)
