@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router';
 import { useAppStore, useAppSelector } from 'asab_webui_components';
 
 import { SET_HELP_PATH } from '../../actions';
