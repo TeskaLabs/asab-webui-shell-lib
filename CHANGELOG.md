@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.1.1
+
+- Upgrade to react router v7, upgrade other "out of date" dependencies (#33)
+
 ## 26.3.3
 
 - Implement overlay option to a Sidepanel (#34)
