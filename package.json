@@ -1,6 +1,6 @@
 {
 	"name": "asab_webui_shell",
-	"version": "26.3.1",
+	"version": "27.1.2",
 	"license": "BSD-3-Clause",
 	"description": "TeskaLabs ASAB WebUI Shell Application",
 	"contributors": [
@@ -30,7 +30,7 @@
 		"build": "babel src --extensions '.js,.jsx' --out-dir dist && copyfiles -u 1 'src/**/*.{scss,jsx}' dist"
 	},
 	"dependencies": {
-		"i18next-browser-languagedetector": "^6.1.2"
+		"i18next-browser-languagedetector": "^8.2.0"
 	},
 	"devDependencies": {
 		"@babel/cli": "^7.22.11",
@@ -40,18 +40,17 @@
 		"@babel/preset-react": "^7.22.5",
 		"babel-plugin-module-resolver": "^5.0.2",
 		"copyfiles": "^2.4.1",
-		"rimraf": "^5.0.0"
+		"rimraf": "^6.0.1"
 	},
 	"peerDependencies": {
-		"asab_webui_components": "^26.1.1",
+		"asab_webui_components": "^27.1.1",
 		"@babel/runtime": "^7.22.11",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
 		"axios": "^1.8.4",
-		"i18next": "^20.3.5",
-		"react-i18next": "^11.8.12",
-		"react-router": "^6.16.0",
-		"react-router-dom": "^6.16.0",
+		"i18next": "^25.4.2",
+		"react-i18next": "^15.7.3",
+		"react-router": "^7.8.2",
 		"reactstrap": "^9.2.0"
 	}
 }

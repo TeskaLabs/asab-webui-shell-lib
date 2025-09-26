@@ -1,5 +1,21 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.1.2
+
+- Fix on incorrect peerDependency version of ASAB WebUI Components (#36)
+
+## 27.1.1
+
+- Upgrade to react router v7, upgrade other "out of date" dependencies (#33)
+
+## 26.3.3
+
+- Implement overlay option to a Sidepanel (#34)
+
+## 26.3.2
+
+- Fix for informational screens with illustrations where layout was broken on screens with small height (#35)
+
 ## 26.3.1
 
 - Implemented `hasSidebar` configuration option, implemented `hasHeaderTitle` configuration option, removed support for meta tags of header images in dynamic configuration (#8)

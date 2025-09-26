@@ -13,12 +13,12 @@ export default function InvalidRouteScreen(props) {
 	const { t } = useTranslation();
 
 	return(
-		<Container className="invalid-route-container h-100" fluid>
+		<Container className="invalid-route-container h-100">
 			<Card className="invalid-route-card">
 				<CardBody className="text-center invalid-route-cardbody">
 					<Row className="justify-content-center">
 						<Col>
-							<div className='h-75'>
+							<div className='invalid-route-img-container'>
 								<FlowbiteIllustration name="error" className="pb-4" title={t("InvalidRouteScreen|Nothing here")}/>
 							</div>
 							<p className="card-text">{t("InvalidRouteScreen|Sorry, we can't find the page you are looking for.")}</p>
