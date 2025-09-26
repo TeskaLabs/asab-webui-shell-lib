@@ -1,5 +1,6 @@
 import { Service } from 'asab_webui_components';
 import { SET_ATTENTION_REQUIRED_BEACON } from '../../actions';
+import { OfflineIndication } from './components/OfflineIndication.jsx';
 
 // Service handling attention required
 export default class AttentionRequiredService extends Service {
@@ -9,6 +10,8 @@ export default class AttentionRequiredService extends Service {
 		this.beaconWebSocket = null; // beacon websocket variable
 		this.reconnectTimeout = null; // timeout variable
 		this.reconnectInterval = 5000; // initial reconnection interval (5 seconds)
+		this.prevStatus = null; // initial status
+		this.prevBeacon = null; // initial beacon
 	}
 
 	// Start beacon websocket connection on initialization
@@ -22,6 +25,7 @@ export default class AttentionRequiredService extends Service {
 		const currentTenant = this.App?.Services?.TenantService?.getCurrentTenant();
 		// Gracefully reconnect if tenant was not found
 		if (!currentTenant) {
+			// TODO: maybe set offline
 			console.error("Beacon WebSocket error: Tenant was not found!");
 			this.reconnectBeaconWebSocket();
 			return;
@@ -31,7 +35,7 @@ export default class AttentionRequiredService extends Service {
 		this.beaconWebSocket = BeaconServiceClient;
 
 		this.beaconWebSocket.onopen = () => {
-			// TODO: may be removed
+			this.connectionStatus('online');
 			console.log('Beacon WebSocket connection established.');
 		};
 
@@ -49,11 +53,13 @@ export default class AttentionRequiredService extends Service {
 		this.beaconWebSocket.onerror = (error) => {
 			console.error("Beacon WebSocket error:", error);
 			console.error("Beacon WebSocket is attempting to reconnect...");
+			this.connectionStatus('offline');
 			this.distributeData({});
 			this.reconnectBeaconWebSocket();
 		};
 
 		this.beaconWebSocket.onclose = () => {
+			this.connectionStatus('offline');
 			/*
 				WebSocket connection is closed by the browser automatically when user
 				leaves the application (not the screen).
@@ -99,9 +105,23 @@ export default class AttentionRequiredService extends Service {
 
 	// Method for distributing the data into Application store
 	distributeData(data) {
-		const transformedData = this.transformData(data);
-		// TODO: use a pubsub instead of the appstore dispatch
-		this.App?.AppStore?.dispatch?.({ type: SET_ATTENTION_REQUIRED_BEACON, beacon: transformedData });
+		const next = this.transformData(data);
+		const initial = (this.prevBeacon === null);
+		const nextEmpty = _isEmptyObject(next);
+		const prevEmpty = _isEmptyObject(this.prevBeacon);
+
+		/*
+			We dont want to repetitivelly dispatch empty beacons to the AppStore
+			because it is causing unwanted re-rendering of the Application
+		*/
+		if (initial || !nextEmpty || (nextEmpty && !prevEmpty)) {
+			this.App?.AppStore?.dispatch?.({
+				type: SET_ATTENTION_REQUIRED_BEACON,
+				beacon: next,
+			});
+			// Update previous snapshot after dispatch
+			this.prevBeacon = next;
+		}
 	}
 
 	// Transform and group beacon data
@@ -138,4 +158,32 @@ export default class AttentionRequiredService extends Service {
 			return acc;
 		}, {});
 	};
+
+	// Method for publishing the connection status and displaying offline indication
+	connectionStatus(status) {
+		if (this.App?.PubSub) {
+			// Distribute status
+			this.App?.PubSub?.publish('Application.status!', { status });
+			const headerService = this.App?.Services?.HeaderService;
+			if (headerService) {
+				if (this.prevStatus != status) {
+					if (status === 'offline') {
+						headerService?.addComponent({
+							component: OfflineIndication,
+							order: 100
+						});
+					} else {
+						headerService?.removeComponent(OfflineIndication);
+					}
+					this.prevStatus = status;
+				}
+			}
+		}
+	}
+
+}
+
+// Method for identifying an empty object
+function _isEmptyObject(o) {
+	return o != null && typeof o === 'object' && Object.keys(o).length === 0;
 }
