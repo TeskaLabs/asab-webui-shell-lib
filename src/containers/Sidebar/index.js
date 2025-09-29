@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useAppSelector, useAppStore, usePubSub } from 'asab_webui_components';
+import { useAppSelector, useAppStore } from 'asab_webui_components';
 
 import { Modal } from 'reactstrap';
 import SidebarBottomItem from './SidebarBottomItem';
@@ -32,7 +32,6 @@ import { SidebarItemRenderer } from './SidebarItemRenderer';
 */
 
 export default function Sidebar (props) {
-	const { subscribe } = usePubSub();
 	const [isSmallResolution, setIsSmallResolution] = useState(false)
 	const [sidebarBottomBranding, setSidebarBottomBranding] = useState({});
 	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
