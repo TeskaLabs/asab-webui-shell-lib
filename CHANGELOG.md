@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.1.3
+
+- Use updated version of ResultCard in `InvitationScreen` (#30)
+
 ## 27.1.2
 
 - Fix on incorrect peerDependency version of ASAB WebUI Components (#36)
