@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useAppSelector } from 'asab_webui_components';
 import { isAuthorized } from 'asab_webui_components/seacat-auth';
