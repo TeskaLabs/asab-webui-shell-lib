@@ -260,7 +260,17 @@ class Application extends Component {
 			define recognition of the requests from the service perspective
 		*/
 		axios.interceptors.request.use(function (config) {
-			that.pushNetworkingIndicator();
+			/* Usage of networking indicator is optional and can be set as following among other headers:
+				headers: { 'X-Networking-Indicator': 'off' }
+			*/
+			const networkingIndicatorOff = config?.headers?.['X-Networking-Indicator'] === 'off';
+			// Store flag in config for response interceptors to access
+			config._networkingIndicatorOff = networkingIndicatorOff;
+			if (!networkingIndicatorOff) {
+				that.pushNetworkingIndicator();
+			}
+			// Remove the X-Networking-Indicator header before sending to service (its only for internal use)
+			delete config?.headers?.['X-Networking-Indicator'];
 			config.headers['X-App'] = "webui"; // Include X-App header in every axios API request
 			config.headers['X-Request-Id'] = that._generateUID(); // Include X-Request-Id header in every axios API request
 			return config;
@@ -271,7 +281,9 @@ class Application extends Component {
 		// We want to remove the networking indicator when we receive the response
 		axios.interceptors.response.use(function (response) {
 			// Call the `popNetworkingIndicator` method to remove the networking indicator (e.g., loading spinner)
-			that.popNetworkingIndicator();
+			if (!response.config._networkingIndicatorOff) {
+				that.popNetworkingIndicator();
+			}
 
 			/*
 				Custom flag to control JSON parsing for specific requests.
@@ -314,7 +326,9 @@ class Application extends Component {
 			// If the request was satisfied (application/json and presence of BigInt) return the modified object. If not, we return unchanged object
 			return response;
 		}, function (error) {
-			that.popNetworkingIndicator();
+			if (!error.config?._networkingIndicatorOff) {
+				that.popNetworkingIndicator();
+			}
 			const contentType = error?.response?.headers?.['content-type'];
 			// Check if the response content type is 'application/json' and data is a string
 			if (contentType?.startsWith('application/json') && (typeof error?.response?.data === 'string')) {

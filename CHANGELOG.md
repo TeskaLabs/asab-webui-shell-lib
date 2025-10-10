@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.1.4
+
+- Conditionally remove networking indicator by setting request header to `'X-Networking-Indicator': 'off'`. The header is only internal and is not included in the request header of the API call (#37)
+
 ## 27.1.3
 
 - Use updated version of ResultCard in `InvitationScreen` (#30)
