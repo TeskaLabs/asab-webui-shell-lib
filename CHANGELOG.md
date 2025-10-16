@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.1.5
+
+- Add `cursor-pointer` className with the same style (#38)
+
 ## 27.1.4
 
 - Conditionally remove networking indicator by setting request header to `'X-Networking-Indicator': 'off'`. The header is only internal and is not included in the request header of the API call (#37)
