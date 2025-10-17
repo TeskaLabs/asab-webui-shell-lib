@@ -1,9 +1,17 @@
 # CHANGELOG for ASAB WebUI Shell
 
-## 27.2.1
+## 27.2.5
 
 - Refactor beacons dispatching - it does not trigger unwanted re-renders of the application when beacons are not present. (#32)
 - Implement offline indication tightly connected to beacons websocket tunnel. (#32)
+
+## 27.1.4
+
+- Conditionally remove networking indicator by setting request header to `'X-Networking-Indicator': 'off'`. The header is only internal and is not included in the request header of the API call (#37)
+
+## 27.1.3
+
+- Use updated version of ResultCard in `InvitationScreen` (#30)
 
 ## 27.1.2
 
