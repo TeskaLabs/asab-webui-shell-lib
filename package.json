@@ -1,6 +1,6 @@
 {
 	"name": "asab_webui_shell",
-	"version": "27.1.5",
+	"version": "27.2.1",
 	"license": "BSD-3-Clause",
 	"description": "TeskaLabs ASAB WebUI Shell Application",
 	"contributors": [
@@ -43,7 +43,7 @@
 		"rimraf": "^6.0.1"
 	},
 	"peerDependencies": {
-		"asab_webui_components": "^27.2.1",
+		"asab_webui_components": "^27.3.1",
 		"@babel/runtime": "^7.22.11",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
