@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.1.6
+
+- Saving a theme in localstorage with manual modification (#40)
+
 ## 27.1.5
 
 - Add `cursor-pointer` className with the same style (#38)
