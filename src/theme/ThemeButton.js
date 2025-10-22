@@ -11,6 +11,14 @@ const ThemeButton = () => {
 
 	const changeTheme = () => {
 		const newTheme = (theme == "light") ? "dark" : "light";
+
+		// Saving the theme in localStorage only with manual modification
+		try {
+			localStorage.setItem('asabTheme', newTheme);
+		} catch (error) {
+			console.warn('Failed to save theme to localStorage:', error);
+		}
+
 		dispatch({
 			type: CHANGE_THEME,
 			theme: newTheme
