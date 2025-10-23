@@ -1,17 +1,17 @@
 import { Service } from 'asab_webui_components';
 import ThemeReducer from './ThemeReducer';
-import ThemeButton from "./ThemeButton";
+import ThemeButton from './ThemeButton';
 import { CHANGE_THEME } from './actions';
 
 export default class ThemeService extends Service {
 
-	constructor(app, serviceName = "ThemeService") {
+	constructor(app, serviceName = 'ThemeService') {
 		super(app, serviceName);
-		app.ReduxService.addReducer("theme", ThemeReducer);
+		app.ReduxService.addReducer('theme', ThemeReducer);
 	}
 
 	initialize() {
-		const headerService = this.App.locateService("HeaderService");
+		const headerService = this.App.locateService('HeaderService');
 		headerService.addComponent({
 			component: ThemeButton,
 			order: 400,
@@ -38,8 +38,8 @@ export default class ThemeService extends Service {
 				more info https://bugs.chromium.org/p/chromium/issues/detail?id=998903
 			*/
 			initialTheme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
-				? "dark"
-				: "light";
+				? 'dark'
+				: 'light';
 		}
 
 		// Dispatch theme
