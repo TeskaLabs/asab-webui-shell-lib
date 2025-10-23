@@ -530,6 +530,8 @@ class Application extends Component {
 		if (this.SplashscreenRequestors.size == 0) {
 			let splashscreen = document.getElementById('app-splashscreen'); // See public/index.html
 			splashscreen?.classList.add("d-none");
+
+			document.documentElement.removeAttribute('data-theme');
 		}
 	}
 
