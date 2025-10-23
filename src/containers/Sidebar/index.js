@@ -39,6 +39,8 @@ export default function Sidebar (props) {
 	const hasSidebar = useAppSelector(state => state?.config?.hasSidebar);
 	const sessionExpired = useAppSelector(state => state.auth?.sessionExpired);
 	const theme = useAppSelector(state => state.theme);
+	// Subscription to a beacon
+	const beacon = useAppSelector(state => state?.attentionrequired?.beacon);
 
 	const { dispatch } = useAppStore();
 
@@ -90,6 +92,7 @@ export default function Sidebar (props) {
 							sidebarItems={sidebarItems}
 							sessionExpired={sessionExpired}
 							isSmallResolution={isSmallResolution}
+							beacon={beacon}
 						/>
 					</div>
 				</Modal>
@@ -99,6 +102,7 @@ export default function Sidebar (props) {
 				<SidebarItemRenderer
 					sidebarItems={sidebarItems}
 					sessionExpired={sessionExpired}
+					beacon={beacon}
 				/>
 				<div className="flex-fill">&nbsp;</div>
 				<SidebarBottomItem sidebarLogo={sidebarBottomBranding} disabled={sessionExpired} />

@@ -1,7 +1,7 @@
 import React from "react";
 import { SidebarItem, SidebarCollapsibleItem } from "./SidebarItem";
 
-export const SidebarItemRenderer = ({ sidebarItems, sessionExpired, isSmallResolution = undefined }) => {
+export const SidebarItemRenderer = ({ sidebarItems, sessionExpired, isSmallResolution = undefined, beacon = undefined }) => {
 
 	return (
 		<nav className="nav flex-column">
@@ -12,6 +12,7 @@ export const SidebarItemRenderer = ({ sidebarItems, sessionExpired, isSmallResol
 						item={item}
 						disabled={sessionExpired}
 						isSmallResolution={isSmallResolution}
+						beacon={beacon}
 					/>
 				) : (
 					<SidebarItem
@@ -19,6 +20,7 @@ export const SidebarItemRenderer = ({ sidebarItems, sessionExpired, isSmallResol
 						item={item}
 						disabled={sessionExpired}
 						isSmallResolution={isSmallResolution}
+						beacon={beacon}
 					/>
 				)
 			))}
