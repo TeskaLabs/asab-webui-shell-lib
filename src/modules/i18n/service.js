@@ -86,6 +86,7 @@ export default class I18nService extends Service {
 
 
 	async initialize() {
+		this.addLibrarySource();
 		await this.i18n
 		await i18n.reloadResources();
 		this.App.removeSplashScreenRequestor(this);
@@ -96,5 +97,41 @@ export default class I18nService extends Service {
 		this.Sources.push(promise);
 	}
 
-}
+	addLibrarySource() {
+		const tenantService = this.App.Services.TenantService;
 
+		if (!tenantService) {
+			console.info('TenantService not available, skipping Library localization source.');
+			return;
+		}
+
+		this.Sources.push(async (language, namespace) => {
+			const currentTenant = tenantService.getCurrentTenant();
+
+			if (!currentTenant) {
+				console.warn('Current tenant not available, skipping Library localization source.');
+				return {};
+			}
+
+			try {
+				const ASABLibraryAPI = this.App.axiosCreate('asab-library');
+				const response = await ASABLibraryAPI.get(
+					`/library/item/Localization/${language}/${namespace}.json`,
+					{
+						params: { tenant: currentTenant }
+					}
+				);
+
+				return response.data;
+			} catch (error) {
+				// Library localization is optional, so we don't warn on 404
+				if (error?.response?.status !== 404) {
+					console.warn(`Failed to load localization from Library for ${language}/${namespace}:`, error.message);
+				}
+				return {};
+			}
+		});
+
+		console.info('Library localization source added.');
+	}
+}
