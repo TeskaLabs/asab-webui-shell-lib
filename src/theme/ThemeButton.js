@@ -31,7 +31,7 @@ const ThemeButton = () => {
 			title={t('General|Change theme')}
 			href='#'
 		>
-			<i className='bi bi-circle-half'></i>
+			<i className='bi bi-circle-half' />
 		</NavLink>
 	);
 }
