@@ -35,7 +35,7 @@ import SuspenseScreen from '../screens/SuspenseScreen';
 
 import './Application.scss';
 
-import { ADD_ALERT, SET_ADVANCED_MODE, SET_FULLSCREEN_MODE } from '../actions';
+import { ADD_ALERT, SET_ADVANCED_MODE, SET_FULLSCREEN_MODE, SET_CONNECTIVITY_STATUS } from '../actions';
 
 class Application extends Component {
 
@@ -84,6 +84,10 @@ class Application extends Component {
 			networking: 0, // If more than zero, some networking activity is happening
 			splashscreenRequestors: 0,
 		}
+
+		// Subscribe and unsubscribe handlers for connectivity detection
+		this._initConnectivitySubscription = this._initConnectivitySubscription.bind(this);
+		this._unsubscribeConnectivity = null;
 
 		this.ConfigService.addDefaults(props.configdefaults);
 
@@ -496,6 +500,9 @@ class Application extends Component {
 	componentDidMount() {
 		document.addEventListener("keyup", this._handleKeyUp, false);
 
+		// Subscribe to Application.status! once PubSub is available
+		this._initConnectivitySubscription();
+
 		// Add print-landscape class to body if not present
 		if (!document.body.classList.contains('print-landscape')) {
 			document.body.classList.add('print-landscape');
@@ -504,6 +511,12 @@ class Application extends Component {
 
 	componentWillUnmount() {
 		document.removeEventListener("keyup", this._handleKeyUp, false);
+
+		// Unsubscribe from Application.status! PubSub
+		if (this._unsubscribeConnectivity) {
+			this._unsubscribeConnectivity();
+			this._unsubscribeConnectivity = null;
+		}
 	}
 
 
@@ -680,5 +693,29 @@ class Application extends Component {
 	); }
 
 }
+
+/*
+	On Application initialization, initialize subscription to Application.status!
+	once PubSub is assigned by PubSubProvider
+*/
+Application.prototype._initConnectivitySubscription = function () {
+	if (this.PubSub && typeof this.PubSub.subscribe === 'function') {
+		if (!this._unsubscribeConnectivity) {
+			this._unsubscribeConnectivity = this.PubSub.subscribe('Application.status!', (value) => {
+				// Prefer store so UI updates predictably
+				this.AppStore.dispatch?.({
+					type: SET_CONNECTIVITY_STATUS,
+					status: value.status,
+				});
+			});
+		}
+		return;
+	}
+	/*
+		This is a safety precaution which retry initialization, PubSubProvider may assigns app.PubSub
+		in its useEffect after first render (however we use useLayoutEffect there, so it should not be an issue).
+	*/
+	setTimeout(this._initConnectivitySubscription, 0);
+};
 
 export default Application;

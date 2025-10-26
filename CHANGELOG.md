@@ -1,8 +1,13 @@
 # CHANGELOG for ASAB WebUI Shell
 
-## 27.1.6
+## 27.2.2
 
 - Saving a theme in localstorage with manual modification (#40)
+
+## 27.2.1
+
+- Refactor beacons dispatching - it does not trigger unwanted re-renders of the application when beacons are not present. (#32)
+- Implement offline indication tightly connected to beacons websocket tunnel. (#32)
 
 ## 27.1.5
 
