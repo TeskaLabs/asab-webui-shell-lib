@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.2.2
+
+- Use trusted publishing to NPM repo using OIDC (#41)
+
 ## 27.2.1
 
 - Refactor beacons dispatching - it does not trigger unwanted re-renders of the application when beacons are not present. (#32)
