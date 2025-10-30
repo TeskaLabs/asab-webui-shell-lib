@@ -37,6 +37,8 @@ export default class AttentionRequiredService extends Service {
 		this.beaconWebSocket.onopen = () => {
 			this.connectionStatus('online');
 			console.log('Beacon WebSocket connection established.');
+			// Reset reconnection interval on successful connection
+			this.reconnectInterval = 5000;
 		};
 
 		this.beaconWebSocket.onmessage = (message) => {
@@ -52,10 +54,10 @@ export default class AttentionRequiredService extends Service {
 
 		this.beaconWebSocket.onerror = (error) => {
 			console.error("Beacon WebSocket error:", error);
-			console.error("Beacon WebSocket is attempting to reconnect...");
+			console.error("Beacon WebSocket will attempt to reconnect...");
 			this.connectionStatus('offline');
 			this.distributeData({});
-			this.reconnectBeaconWebSocket();
+			// onerror is always followed by onclose, so there is no need to reconnect here, since the reconnection happens in onclose
 		};
 
 		this.beaconWebSocket.onclose = () => {
@@ -65,26 +67,17 @@ export default class AttentionRequiredService extends Service {
 				leaves the application (not the screen).
 			*/
 			if (this.beaconWebSocket) {
-				// Close the WebSocket connection
-				this.beaconWebSocket.close();
-
-				// Clean up event listeners
 				this.beaconWebSocket.onopen = null;
 				this.beaconWebSocket.onmessage = null;
 				this.beaconWebSocket.onerror = null;
 				this.beaconWebSocket.onclose = null;
-
-				// Set WebSocket reference to null to free up memory
 				this.beaconWebSocket = null;
 			}
 
-			// Clear the reconnect timeout if it exists
-			if (this.reconnectTimeout) {
-				clearTimeout(this.reconnectTimeout);
-				this.reconnectTimeout = null;
-			}
 
-			console.log("Beacon WebSocket connection closed.");
+			// Service should maintain connection throughout the application lifecycle.
+			console.log("Beacon WebSocket connection closed. Attempting to reconnect...");
+			this.reconnectBeaconWebSocket();
 		};
 	}
 
