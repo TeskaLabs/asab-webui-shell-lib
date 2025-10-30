@@ -1,8 +1,12 @@
 # CHANGELOG for ASAB WebUI Shell
 
-## 27.2.2
+## 27.2.3
 
 - Saving a theme in localstorage with manual modification (#40)
+
+## 27.2.2
+
+- Use trusted publishing to NPM repo using OIDC (#41)
 
 ## 27.2.1
 
