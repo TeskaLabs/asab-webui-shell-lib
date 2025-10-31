@@ -97,8 +97,9 @@ export default class I18nService extends Service {
 		this.Sources.push(promise);
 	}
 
-	addLibrarySource() {
+	addLibrarySource(folder = '') {
 		const tenantService = this.App.Services.TenantService;
+		const basePath = folder ? `/library/item/Localization/${folder}` : `/library/item/Localization`;
 
 		if (!tenantService) {
 			console.info('TenantService not available, skipping Library localization source.');
@@ -116,7 +117,7 @@ export default class I18nService extends Service {
 			try {
 				const ASABLibraryAPI = this.App.axiosCreate('asab-library');
 				const response = await ASABLibraryAPI.get(
-					`/library/item/Localization/${language}/${namespace}.json`,
+					`${basePath}/${language}/${namespace}.json`,
 					{
 						params: { tenant: currentTenant }
 					}
