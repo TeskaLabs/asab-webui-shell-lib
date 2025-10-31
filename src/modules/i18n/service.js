@@ -97,16 +97,19 @@ export default class I18nService extends Service {
 		this.Sources.push(promise);
 	}
 
+	/*
+		Adds a library source for localization.
+		@param {string} folder - The folder name in the library.
 
-	/**
-	 * Adds a library source for localization.
-	 * @param {string} folder - The folder name in the library.
-	 * 
-	 * Usage:
-	 * in the main.js file of the microfrontend application add the following line:
-	 * 
-	 * app.Services?.I18nService.addLibrarySource('FolderName');
-	**/
+		Usage:
+		in the main.js file of the microfrontend application add the following line:
+		app.Services?.I18nService.addLibrarySource('FolderName');
+		
+		All available translations are merged and the priority/precedence (when there are duplicate keys) is the following:
+		1. Library
+		2. Microfrontend (src/locales)
+		3. Container (public/locales)
+	*/
 	addLibrarySource(folder = '') {
 		const tenantService = this.App.Services.TenantService;
 		const basePath = folder ? `/library/item/Localization/${folder}` : `/library/item/Localization`;
