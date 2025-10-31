@@ -1,5 +1,22 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.2.4
+
+- Saving a theme in localstorage with manual modification (#40)
+
+## 27.2.3
+
+- Improve connection stability and recovery for the Beacon websocket service and connection, ensuring more reliable reconnection handling when network disruptions occur (#42)
+
+## 27.2.2
+
+- Use trusted publishing to NPM repo using OIDC (#41)
+
+## 27.2.1
+
+- Refactor beacons dispatching - it does not trigger unwanted re-renders of the application when beacons are not present. (#32)
+- Implement offline indication tightly connected to beacons websocket tunnel. (#32)
+
 ## 27.1.5
 
 - Add `cursor-pointer` className with the same style (#38)
