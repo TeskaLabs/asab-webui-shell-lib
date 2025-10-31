@@ -123,7 +123,7 @@ export default class I18nService extends Service {
 			const currentTenant = tenantService.getCurrentTenant();
 
 			if (!currentTenant) {
-				console.warn('Current tenant not available, skipping Library localization source.');
+				console.debug('Current tenant not available, skipping Library localization source.');
 				return {};
 			}
 
