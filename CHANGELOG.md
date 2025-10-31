@@ -1,8 +1,12 @@
 # CHANGELOG for ASAB WebUI Shell
 
-## 27.2.3
+## 27.2.4
 
 - Saving a theme in localstorage with manual modification (#40)
+
+## 27.2.3
+
+- Improve connection stability and recovery for the Beacon websocket service and connection, ensuring more reliable reconnection handling when network disruptions occur (#42)
 
 ## 27.2.2
 
