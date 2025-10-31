@@ -86,6 +86,7 @@ export default class I18nService extends Service {
 
 
 	async initialize() {
+		this.addLibrarySource();
 		await this.i18n
 		await i18n.reloadResources();
 		this.App.removeSplashScreenRequestor(this);
@@ -96,5 +97,55 @@ export default class I18nService extends Service {
 		this.Sources.push(promise);
 	}
 
-}
+	/*
+		Adds a library source for localization.
+		@param {string} folder - The folder name in the library.
 
+		Usage:
+			in the main.js file of the microfrontend application add the following line:
+			app.Services?.I18nService.addLibrarySource('FolderName');
+		
+		All available translations are merged and the priority/precedence (when there are duplicate keys) is the following:
+			1. Library
+			2. Microfrontend (src/locales)
+			3. Container (public/locales)
+	*/
+	addLibrarySource(folder = '') {
+		const tenantService = this.App.Services.TenantService;
+		const basePath = folder ? `/library/item/Localization/${folder}` : `/library/item/Localization`;
+
+		if (!tenantService) {
+			console.info('TenantService not available, skipping Library localization source.');
+			return;
+		}
+
+		this.Sources.push(async (language, namespace) => {
+			const currentTenant = tenantService.getCurrentTenant();
+
+			if (!currentTenant) {
+				console.debug('Current tenant not available, skipping Library localization source.');
+				return {};
+			}
+
+			try {
+				const ASABLibraryAPI = this.App.axiosCreate('asab-library');
+				const response = await ASABLibraryAPI.get(
+					`${basePath}/${language}/${namespace}.json`,
+					{
+						params: { tenant: currentTenant }
+					}
+				);
+
+				return response.data;
+			} catch (error) {
+				// Library localization is optional, so we don't warn on 404
+				if (error?.response?.status !== 404) {
+					console.warn(`Failed to load localization from Library for ${language}/${namespace}:`, error.message);
+				}
+				return {};
+			}
+		});
+
+		console.info('Library localization source added.');
+	}
+}
