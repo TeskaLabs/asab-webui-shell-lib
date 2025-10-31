@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.2.5
+
+- Extend I18nService module to also support loading localization from the Library (#39)
+
 ## 27.2.4
 
 - Saving a theme in localstorage with manual modification (#40)
