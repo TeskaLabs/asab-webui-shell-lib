@@ -23,6 +23,7 @@
 
 	/* Needed for background color of status indicator widget */
 	html {
+		print-color-adjust: exact;
 		-webkit-print-color-adjust: exact;
 	}
 
