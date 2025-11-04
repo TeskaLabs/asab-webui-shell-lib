@@ -23,6 +23,7 @@
 
 	/* Needed for background color of status indicator widget */
 	html {
+		print-color-adjust: exact;
 		-webkit-print-color-adjust: exact;
 	}
 
@@ -166,7 +167,10 @@
 
 
 		.reports-container {
-			padding-top: 0 !important;
+			margin-top: 0 !important; /* Remove margin-top to prevent blank first page */
+			padding-top: 0 !important; /* Remove padding to prevent blank first page */
+			padding-bottom: 0 !important; /* Remove bottom padding to prevent blank spaces at the endof the sheet */
+			margin-bottom: 0 !important; /* Remove bottom margin to prevent blank spaces at the endof the sheet */
 			.react-grid-layout {
 				height: unset !important;
 				display: table;
