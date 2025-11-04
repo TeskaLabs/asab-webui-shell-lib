@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.2.5
+
+- Refactor print style for Reports due to issues with blank pages at the beginning of the print report (#43)
+
 ## 27.2.4
 
 - Saving a theme in localstorage with manual modification (#40)
