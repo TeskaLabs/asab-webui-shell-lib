@@ -86,7 +86,6 @@ export default class I18nService extends Service {
 
 
 	async initialize() {
-		this.addLibrarySource();
 		await this.i18n
 		await i18n.reloadResources();
 		this.App.removeSplashScreenRequestor(this);
