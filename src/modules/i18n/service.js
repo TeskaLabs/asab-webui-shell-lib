@@ -115,7 +115,7 @@ export default class I18nService extends Service {
 		const basePath = path ? `/library/item/Localization/${path}` : `/library/item/Localization`;
 
 		if (!tenantService) {
-			console.info('TenantService not available, skipping Library localization source.');
+			console.warn('TenantService not available, skipping Library localization source.');
 			return;
 		}
 
@@ -138,14 +138,9 @@ export default class I18nService extends Service {
 
 				return response.data;
 			} catch (error) {
-				// Library localization is optional, so we don't warn on 404
-				if (error?.response?.status !== 404) {
-					console.warn(`Failed to load localization from Library for ${language}/${namespace}:`, error.message);
-				}
+				console.error(`Failed to load localization from Library for ${language}/${namespace}:`, error.message);
 				return {};
 			}
 		});
-
-		console.info('Library localization source added.');
 	}
 }
