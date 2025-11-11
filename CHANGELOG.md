@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.2.6
+
+- Extend I18nService module to also support loading localization from the Library (#39)
+
 ## 27.2.5
 
 - Refactor print style for Reports due to issues with blank pages at the beginning of the print report (#43)
