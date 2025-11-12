@@ -92,6 +92,9 @@ class Application extends Component {
 		this._initConnectivitySubscription = this._initConnectivitySubscription.bind(this);
 		this._unsubscribeConnectivity = null;
 
+		this._initPrintReadySubscription = this._initPrintReadySubscription.bind(this);
+		this._unsubscribePrintReady = null;
+
 		this.ConfigService.addDefaults(props.configdefaults);
 
 		this.addSplashScreenRequestor(this);
@@ -470,14 +473,14 @@ class Application extends Component {
 	}
 
 	pushPrintReadyIndicator() {
-		this.setState((prevState, props) => ({
+		this.setState((prevState) => ({
 			printReadyIndicators: prevState.printReadyIndicators + 1,
 		}));
 	}
 
 	popPrintReadyIndicator() {
-		this.setState((prevState, props) => ({
-			printReadyIndicators: prevState.printReadyIndicators - 1,
+		this.setState((prevState) => ({
+			printReadyIndicators: Math.max(prevState.printReadyIndicators - 1, 0),
 		}));
 	}
 
@@ -517,7 +520,7 @@ class Application extends Component {
 
 		// Subscribe to Application.status! once PubSub is available
 		this._initConnectivitySubscription();
-
+		this._initPrintReadySubscription();
 		// Add print-landscape class to body if not present
 		if (!document.body.classList.contains('print-landscape')) {
 			document.body.classList.add('print-landscape');
@@ -550,6 +553,11 @@ class Application extends Component {
 		if (this._unsubscribeConnectivity) {
 			this._unsubscribeConnectivity();
 			this._unsubscribeConnectivity = null;
+		}
+
+		if (this._unsubscribePrintReady) {
+			this._unsubscribePrintReady();
+			this._unsubscribePrintReady = null;
 		}
 
 		this._clearPrintReadyTimeout();
@@ -757,6 +765,25 @@ Application.prototype._initConnectivitySubscription = function () {
 		in its useEffect after first render (however we use useLayoutEffect there, so it should not be an issue).
 	*/
 	setTimeout(this._initConnectivitySubscription, 0);
+};
+
+Application.prototype._initPrintReadySubscription = function () {
+	if (this.PubSub && typeof this.PubSub.subscribe === 'function') {
+		if (!this._unsubscribePrintReady) {
+			const unsubscribeStart = this.PubSub.subscribe('echart.frame.start!', () => this.pushPrintReadyIndicator());
+			const unsubscribeEnd = this.PubSub.subscribe('echart.frame.end!', () => this.popPrintReadyIndicator());
+			this._unsubscribePrintReady = () => {
+				unsubscribeStart?.();
+				unsubscribeEnd?.();
+			};
+		}
+		return;
+	}
+	/*
+		This is a safety precaution which retry initialization, PubSubProvider may assigns app.PubSub
+		in its useEffect after first render (however we use useLayoutEffect there, so it should not be an issue).
+	*/
+	setTimeout(this._initPrintReadySubscription, 0);
 };
 
 export default Application;
