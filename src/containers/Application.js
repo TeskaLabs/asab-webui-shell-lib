@@ -79,10 +79,13 @@ class Application extends Component {
 		this.JSONParseBigInt = new Set(props?.bigint);
 
 		this._handleKeyUp = this._handleKeyUp.bind(this);
+		this._clearPrintReadyTimeout = this._clearPrintReadyTimeout.bind(this);
+		this._printReadyTimeout = null;
 
 		this.state = {
 			networking: 0, // If more than zero, some networking activity is happening
 			splashscreenRequestors: 0,
+			printReadyIndicators: 0,
 		}
 
 		// Subscribe and unsubscribe handlers for connectivity detection
@@ -273,6 +276,7 @@ class Application extends Component {
 			if (!networkingIndicatorOff) {
 				that.pushNetworkingIndicator();
 			}
+			that.pushPrintReadyIndicator();
 			// Remove the X-Networking-Indicator header before sending to service (its only for internal use)
 			delete config?.headers?.['X-Networking-Indicator'];
 			config.headers['X-App'] = "webui"; // Include X-App header in every axios API request
@@ -288,7 +292,7 @@ class Application extends Component {
 			if (!response.config._networkingIndicatorOff) {
 				that.popNetworkingIndicator();
 			}
-
+			that.popPrintReadyIndicator();
 			/*
 				Custom flag to control JSON parsing for specific requests.
 				If 'skipJsonParsing' is set to true in the request config,
@@ -465,6 +469,17 @@ class Application extends Component {
 		}));
 	}
 
+	pushPrintReadyIndicator() {
+		this.setState((prevState, props) => ({
+			printReadyIndicators: prevState.printReadyIndicators + 1,
+		}));
+	}
+
+	popPrintReadyIndicator() {
+		this.setState((prevState, props) => ({
+			printReadyIndicators: prevState.printReadyIndicators - 1,
+		}));
+	}
 
 	registerService(service) {
 		if (service.Name in this.Services) {
@@ -509,6 +524,25 @@ class Application extends Component {
 		}
 	}
 
+	componentDidUpdate(prevProps, prevState) {
+		if (prevState.printReadyIndicators === this.state.printReadyIndicators) {
+			return;
+		}
+
+		if (this.state.printReadyIndicators === 0) {
+			this._clearPrintReadyTimeout();
+			this._printReadyTimeout = setTimeout(() => {
+				if (this.state.printReadyIndicators === 0) {
+					document.body.setAttribute('print-ready', 'true');
+					this._printReadyTimeout = null;
+				}
+			}, 500); // Add 500ms delay to ensure that the print-ready attribute is set after the last print-ready indicator is popped
+		} else {
+			this._clearPrintReadyTimeout();
+			document.body.setAttribute('print-ready', 'false');
+		}
+	}
+
 	componentWillUnmount() {
 		document.removeEventListener("keyup", this._handleKeyUp, false);
 
@@ -517,8 +551,17 @@ class Application extends Component {
 			this._unsubscribeConnectivity();
 			this._unsubscribeConnectivity = null;
 		}
+
+		this._clearPrintReadyTimeout();
+		document.body.removeAttribute('print-ready');
 	}
 
+	_clearPrintReadyTimeout() {
+		if (this._printReadyTimeout !== null) {
+			clearTimeout(this._printReadyTimeout);
+			this._printReadyTimeout = null;
+		}
+	}
 
 	// Splash screen
 
