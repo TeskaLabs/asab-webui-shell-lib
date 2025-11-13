@@ -82,12 +82,11 @@ class Application extends Component {
 		// Clear print-ready timeout handler
 		this._clearPrintReadyTimeout = this._clearPrintReadyTimeout.bind(this);
 		this._printReadyTimeout = null;
-		this._isMounted = false; // Track if component is mounted
 
 		this.state = {
 			networking: 0, // If more than zero, some networking activity is happening
 			splashscreenRequestors: 0,
-			printReadyIndicators: 0, // If more than zero, some print-ready activity is happening
+			printReadyIndicators: 1, // Initial value is set to 1, because we start the application with Splashscreen. When the Splashscreen is removed, the value is extracted. If value is more than zero, some print-ready activity is happening
 		}
 
 		// Subscribe and unsubscribe handlers for connectivity detection
@@ -95,8 +94,6 @@ class Application extends Component {
 		this._unsubscribeConnectivity = null;
 
 		// Subscribe and unsubscribe handlers for print-ready state detection
-		this._initPrintReadySubscription = this._initPrintReadySubscription.bind(this);
-		this._unsubscribePrintReady = null;
 
 		this.ConfigService.addDefaults(props.configdefaults);
 
@@ -478,35 +475,21 @@ class Application extends Component {
 
 	// Display and hide print-ready indication
 	pushPrintReadyIndicator() {
-		if (this._isMounted) {
-			this.setState((prevState) => ({
-				printReadyIndicators: prevState.printReadyIndicators + 1,
-			}));
-		} else {
-			// Fallback for constructor-time, usually for cases when Application is not mounted yet (during the splashscreen, we dont have a state object yet)
-			this.state.printReadyIndicators += 1;
-		}
+		this.setState((prevState) => ({
+			printReadyIndicators: prevState.printReadyIndicators + 1,
+		}));
 	}
 
 	popPrintReadyIndicator() {
-		if (this._isMounted) {
-			this.setState((prevState) => {
-				const nextValue = prevState.printReadyIndicators - 1;
-				if (nextValue < 0) {
-					console.warn('printReadyIndicators would go negative, setting its value to 0. The value was:', nextValue);
-				}
-				return {
-					printReadyIndicators: Math.max(nextValue, 0),
-				};
-			});
-		} else {
-			// Fallback for constructor-time, usually for cases when Application is not mounted yet (during the splashscreen, we dont have a state object yet)
-			const nextValue = this.state.printReadyIndicators - 1;
+		this.setState((prevState) => {
+			const nextValue = prevState.printReadyIndicators - 1;
 			if (nextValue < 0) {
 				console.warn('printReadyIndicators would go negative, setting its value to 0. The value was:', nextValue);
 			}
-			this.state.printReadyIndicators = Math.max(nextValue, 0);
-		}
+			return {
+				printReadyIndicators: Math.max(nextValue, 0),
+			};
+		});
 	}
 
 	registerService(service) {
@@ -541,13 +524,10 @@ class Application extends Component {
 	}
 
 	componentDidMount() {
-		this._isMounted = true;
 		document.addEventListener("keyup", this._handleKeyUp, false);
 
 		// Subscribe to Application.status! once PubSub is available
 		this._initConnectivitySubscription();
-		// Subscribe to print-ready indication subscription if PubSub is available
-		this._initPrintReadySubscription();
 		// Add print-landscape class to body if not present
 		if (!document.body.classList.contains('print-landscape')) {
 			document.body.classList.add('print-landscape');
@@ -575,7 +555,6 @@ class Application extends Component {
 	}
 
 	componentWillUnmount() {
-		this._isMounted = false;
 		document.removeEventListener("keyup", this._handleKeyUp, false);
 
 		// Unsubscribe from Application.status! PubSub
@@ -584,10 +563,6 @@ class Application extends Component {
 			this._unsubscribeConnectivity = null;
 		}
 
-		if (this._unsubscribePrintReady) {
-			this._unsubscribePrintReady();
-			this._unsubscribePrintReady = null;
-		}
 
 		this._clearPrintReadyTimeout();
 		document.body.removeAttribute('print-ready');
@@ -603,13 +578,13 @@ class Application extends Component {
 	// Splash screen
 
 	addSplashScreenRequestor(obj) {
+		/*
+			For print-ready, the initial value is set to 1, because we always start the application
+			with Splashscreen and therefore we dont need to increment the print-ready number here.
+		*/
 		const origLen = this.SplashscreenRequestors.size;
 		this.SplashscreenRequestors.add(obj);
 		if (origLen != this.SplashscreenRequestors.size) {
-			// Set print-ready indicator if no splash screen requestors are present
-			if (origLen == 0) {
-				this.pushPrintReadyIndicator();
-			}
 			this.state.splashscreenRequestors = this.SplashscreenRequestors.size;
 		}
 		let splashscreen = document.getElementById('app-splashscreen'); // See public/index.html`
@@ -627,7 +602,7 @@ class Application extends Component {
 		if (this.SplashscreenRequestors.size == 0) {
 			let splashscreen = document.getElementById('app-splashscreen'); // See public/index.html
 			splashscreen?.classList.add("d-none");
-			// Remove print-ready indicator if no splash screen requestors are present
+			// Decrement print-ready indicator value if no splash screen requestors are present
 			this.popPrintReadyIndicator();
 		}
 	}
@@ -800,33 +775,6 @@ Application.prototype._initConnectivitySubscription = function () {
 		in its useEffect after first render (however we use useLayoutEffect there, so it should not be an issue).
 	*/
 	setTimeout(this._initConnectivitySubscription, 0);
-};
-
-
-/*
-	On Application initialization, initialize subscription to echart.fetchData!, echart.frame.end! and echart.error!
-	once PubSub is assigned by PubSubProvider.
-	This subscription serves the purpose of indicating the print-ready state of the application.
-*/
-Application.prototype._initPrintReadySubscription = function () {
-	if (this.PubSub && typeof this.PubSub.subscribe === 'function') {
-		if (!this._unsubscribePrintReady) {
-			const unsubscribeStart = this.PubSub.subscribe('echart.fetchData!', () => this.pushPrintReadyIndicator());
-			const unsubscribeEnd = this.PubSub.subscribe('echart.frame.end!', () => this.popPrintReadyIndicator());
-			const unsubscribeError = this.PubSub.subscribe('echart.error!', () => this.popPrintReadyIndicator());
-			this._unsubscribePrintReady = () => {
-				unsubscribeStart?.();
-				unsubscribeEnd?.();
-				unsubscribeError?.();
-			};
-		}
-		return;
-	}
-	/*
-		This is a safety precaution which retry initialization, PubSubProvider may assigns app.PubSub
-		in its useEffect after first render (however we use useLayoutEffect there, so it should not be an issue).
-	*/
-	setTimeout(this._initPrintReadySubscription, 0);
 };
 
 export default Application;
