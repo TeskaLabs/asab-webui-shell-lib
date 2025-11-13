@@ -529,6 +529,7 @@ class Application extends Component {
 
 		// Subscribe to Application.status! once PubSub is available
 		this._initConnectivitySubscription();
+		// Subscribe to print-ready indication subscription if PubSub is available
 		this._initPrintReadySubscription();
 		// Add print-landscape class to body if not present
 		if (!document.body.classList.contains('print-landscape')) {
