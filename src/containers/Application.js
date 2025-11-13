@@ -79,6 +79,7 @@ class Application extends Component {
 		this.JSONParseBigInt = new Set(props?.bigint);
 
 		this._handleKeyUp = this._handleKeyUp.bind(this);
+		// Clear print-ready timeout handler
 		this._clearPrintReadyTimeout = this._clearPrintReadyTimeout.bind(this);
 		this._printReadyTimeout = null;
 
