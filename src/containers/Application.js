@@ -85,13 +85,14 @@ class Application extends Component {
 		this.state = {
 			networking: 0, // If more than zero, some networking activity is happening
 			splashscreenRequestors: 0,
-			printReadyIndicators: 0,
+			printReadyIndicators: 0, // If more than zero, some print-ready activity is happening
 		}
 
 		// Subscribe and unsubscribe handlers for connectivity detection
 		this._initConnectivitySubscription = this._initConnectivitySubscription.bind(this);
 		this._unsubscribeConnectivity = null;
 
+		// Subscribe and unsubscribe handlers for print-ready state detection
 		this._initPrintReadySubscription = this._initPrintReadySubscription.bind(this);
 		this._unsubscribePrintReady = null;
 
@@ -472,6 +473,7 @@ class Application extends Component {
 		}));
 	}
 
+	// Display and hide print-ready indication
 	pushPrintReadyIndicator() {
 		this.setState((prevState) => ({
 			printReadyIndicators: prevState.printReadyIndicators + 1,
@@ -532,6 +534,7 @@ class Application extends Component {
 			return;
 		}
 
+		// Setting a print-ready attribute to the body of the application element
 		if (this.state.printReadyIndicators === 0) {
 			this._clearPrintReadyTimeout();
 			this._printReadyTimeout = setTimeout(() => {
@@ -767,14 +770,22 @@ Application.prototype._initConnectivitySubscription = function () {
 	setTimeout(this._initConnectivitySubscription, 0);
 };
 
+
+/*
+	On Application initialization, initialize subscription to echart.fetchData!, echart.frame.end! and echart.error!
+	once PubSub is assigned by PubSubProvider.
+	This subscription serves the purpose of indicating the print-ready state of the application.
+*/
 Application.prototype._initPrintReadySubscription = function () {
 	if (this.PubSub && typeof this.PubSub.subscribe === 'function') {
 		if (!this._unsubscribePrintReady) {
-			const unsubscribeStart = this.PubSub.subscribe('echart.frame.start!', () => this.pushPrintReadyIndicator());
+			const unsubscribeStart = this.PubSub.subscribe('echart.fetchData!', () => this.pushPrintReadyIndicator());
 			const unsubscribeEnd = this.PubSub.subscribe('echart.frame.end!', () => this.popPrintReadyIndicator());
+			const unsubscribeError = this.PubSub.subscribe('echart.error!', () => this.popPrintReadyIndicator());
 			this._unsubscribePrintReady = () => {
 				unsubscribeStart?.();
 				unsubscribeEnd?.();
+				unsubscribeError?.();
 			};
 		}
 		return;
