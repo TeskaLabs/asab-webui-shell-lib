@@ -341,6 +341,7 @@ class Application extends Component {
 			if (!error.config?._networkingIndicatorOff) {
 				that.popNetworkingIndicator();
 			}
+			that.popPrintReadyIndicator();
 			const contentType = error?.response?.headers?.['content-type'];
 			// Check if the response content type is 'application/json' and data is a string
 			if (contentType?.startsWith('application/json') && (typeof error?.response?.data === 'string')) {
@@ -481,9 +482,15 @@ class Application extends Component {
 	}
 
 	popPrintReadyIndicator() {
-		this.setState((prevState) => ({
-			printReadyIndicators: Math.max(prevState.printReadyIndicators - 1, 0),
-		}));
+		this.setState((prevState) => {
+			const nextValue = prevState.printReadyIndicators - 1;
+			if (nextValue < 0) {
+				console.warn('printReadyIndicators would go negative, setting its value to 0. The value was:', nextValue);
+			}
+			return {
+				printReadyIndicators: Math.max(nextValue, 0),
+			};
+		});
 	}
 
 	registerService(service) {
@@ -580,6 +587,10 @@ class Application extends Component {
 		const origLen = this.SplashscreenRequestors.size;
 		this.SplashscreenRequestors.add(obj);
 		if (origLen != this.SplashscreenRequestors.size) {
+			// Set print-ready indicator if no splash screen requestors are present
+			if (origLen == 0) {
+				this.pushPrintReadyIndicator();
+			}
 			this.state.splashscreenRequestors = this.SplashscreenRequestors.size;
 		}
 		let splashscreen = document.getElementById('app-splashscreen'); // See public/index.html`
@@ -597,6 +608,8 @@ class Application extends Component {
 		if (this.SplashscreenRequestors.size == 0) {
 			let splashscreen = document.getElementById('app-splashscreen'); // See public/index.html
 			splashscreen?.classList.add("d-none");
+			// Remove print-ready indicator if no splash screen requestors are present
+			this.popPrintReadyIndicator();
 		}
 	}
 
