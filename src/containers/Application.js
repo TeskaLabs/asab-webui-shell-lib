@@ -93,8 +93,6 @@ class Application extends Component {
 		this._initConnectivitySubscription = this._initConnectivitySubscription.bind(this);
 		this._unsubscribeConnectivity = null;
 
-		// Subscribe and unsubscribe handlers for print-ready state detection
-
 		this.ConfigService.addDefaults(props.configdefaults);
 
 		this.addSplashScreenRequestor(this);
