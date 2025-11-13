@@ -82,6 +82,7 @@ class Application extends Component {
 		// Clear print-ready timeout handler
 		this._clearPrintReadyTimeout = this._clearPrintReadyTimeout.bind(this);
 		this._printReadyTimeout = null;
+		this._isMounted = false; // Track if component is mounted
 
 		this.state = {
 			networking: 0, // If more than zero, some networking activity is happening
@@ -477,21 +478,35 @@ class Application extends Component {
 
 	// Display and hide print-ready indication
 	pushPrintReadyIndicator() {
-		this.setState((prevState) => ({
-			printReadyIndicators: prevState.printReadyIndicators + 1,
-		}));
+		if (this._isMounted) {
+			this.setState((prevState) => ({
+				printReadyIndicators: prevState.printReadyIndicators + 1,
+			}));
+		} else {
+			// Fallback for constructor-time, usually for cases when Application is not mounted yet (during the splashscreen, we dont have a state object yet)
+			this.state.printReadyIndicators += 1;
+		}
 	}
 
 	popPrintReadyIndicator() {
-		this.setState((prevState) => {
-			const nextValue = prevState.printReadyIndicators - 1;
+		if (this._isMounted) {
+			this.setState((prevState) => {
+				const nextValue = prevState.printReadyIndicators - 1;
+				if (nextValue < 0) {
+					console.warn('printReadyIndicators would go negative, setting its value to 0. The value was:', nextValue);
+				}
+				return {
+					printReadyIndicators: Math.max(nextValue, 0),
+				};
+			});
+		} else {
+			// Fallback for constructor-time, usually for cases when Application is not mounted yet (during the splashscreen, we dont have a state object yet)
+			const nextValue = this.state.printReadyIndicators - 1;
 			if (nextValue < 0) {
 				console.warn('printReadyIndicators would go negative, setting its value to 0. The value was:', nextValue);
 			}
-			return {
-				printReadyIndicators: Math.max(nextValue, 0),
-			};
-		});
+			this.state.printReadyIndicators = Math.max(nextValue, 0);
+		}
 	}
 
 	registerService(service) {
@@ -526,6 +541,7 @@ class Application extends Component {
 	}
 
 	componentDidMount() {
+		this._isMounted = true;
 		document.addEventListener("keyup", this._handleKeyUp, false);
 
 		// Subscribe to Application.status! once PubSub is available
@@ -559,6 +575,7 @@ class Application extends Component {
 	}
 
 	componentWillUnmount() {
+		this._isMounted = false;
 		document.removeEventListener("keyup", this._handleKeyUp, false);
 
 		// Unsubscribe from Application.status! PubSub
