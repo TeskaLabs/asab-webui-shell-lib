@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.2.7
+
+- Implement print-ready attribute state for whole application (#44)
+
 ## 27.2.6
 
 - Extend I18nService module to also support loading localization from the Library (#39)

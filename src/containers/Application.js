@@ -79,10 +79,14 @@ class Application extends Component {
 		this.JSONParseBigInt = new Set(props?.bigint);
 
 		this._handleKeyUp = this._handleKeyUp.bind(this);
+		// Clear print-ready timeout handler
+		this._clearPrintReadyTimeout = this._clearPrintReadyTimeout.bind(this);
+		this._printReadyTimeout = null;
 
 		this.state = {
 			networking: 0, // If more than zero, some networking activity is happening
 			splashscreenRequestors: 0,
+			printReadyIndicators: 1, // Initial value is set to 1, because we start the application with Splashscreen. When the Splashscreen is removed, the value is extracted. If value is more than zero, some print-ready activity is happening
 		}
 
 		// Subscribe and unsubscribe handlers for connectivity detection
@@ -273,6 +277,7 @@ class Application extends Component {
 			if (!networkingIndicatorOff) {
 				that.pushNetworkingIndicator();
 			}
+			that.pushPrintReadyIndicator();
 			// Remove the X-Networking-Indicator header before sending to service (its only for internal use)
 			delete config?.headers?.['X-Networking-Indicator'];
 			config.headers['X-App'] = "webui"; // Include X-App header in every axios API request
@@ -288,7 +293,7 @@ class Application extends Component {
 			if (!response.config._networkingIndicatorOff) {
 				that.popNetworkingIndicator();
 			}
-
+			that.popPrintReadyIndicator();
 			/*
 				Custom flag to control JSON parsing for specific requests.
 				If 'skipJsonParsing' is set to true in the request config,
@@ -333,6 +338,7 @@ class Application extends Component {
 			if (!error.config?._networkingIndicatorOff) {
 				that.popNetworkingIndicator();
 			}
+			that.popPrintReadyIndicator();
 			const contentType = error?.response?.headers?.['content-type'];
 			// Check if the response content type is 'application/json' and data is a string
 			if (contentType?.startsWith('application/json') && (typeof error?.response?.data === 'string')) {
@@ -465,6 +471,24 @@ class Application extends Component {
 		}));
 	}
 
+	// Display and hide print-ready indication
+	pushPrintReadyIndicator() {
+		this.setState((prevState) => ({
+			printReadyIndicators: prevState.printReadyIndicators + 1,
+		}));
+	}
+
+	popPrintReadyIndicator() {
+		this.setState((prevState) => {
+			const nextValue = prevState.printReadyIndicators - 1;
+			if (nextValue < 0) {
+				console.warn('printReadyIndicators would go negative, setting its value to 0. The value was:', nextValue);
+			}
+			return {
+				printReadyIndicators: Math.max(nextValue, 0),
+			};
+		});
+	}
 
 	registerService(service) {
 		if (service.Name in this.Services) {
@@ -502,10 +526,29 @@ class Application extends Component {
 
 		// Subscribe to Application.status! once PubSub is available
 		this._initConnectivitySubscription();
-
 		// Add print-landscape class to body if not present
 		if (!document.body.classList.contains('print-landscape')) {
 			document.body.classList.add('print-landscape');
+		}
+	}
+
+	componentDidUpdate(prevProps, prevState) {
+		if (prevState.printReadyIndicators === this.state.printReadyIndicators) {
+			return;
+		}
+
+		// Setting a print-ready attribute to the body of the application element
+		if (this.state.printReadyIndicators === 0) {
+			this._clearPrintReadyTimeout();
+			this._printReadyTimeout = setTimeout(() => {
+				if (this.state.printReadyIndicators === 0) {
+					document.body.setAttribute('print-ready', 'true');
+					this._printReadyTimeout = null;
+				}
+			}, 500); // Add 500ms delay to ensure that the print-ready attribute is set after the last print-ready indicator is popped
+		} else {
+			this._clearPrintReadyTimeout();
+			document.body.setAttribute('print-ready', 'false');
 		}
 	}
 
@@ -517,12 +560,26 @@ class Application extends Component {
 			this._unsubscribeConnectivity();
 			this._unsubscribeConnectivity = null;
 		}
+
+
+		this._clearPrintReadyTimeout();
+		document.body.removeAttribute('print-ready');
 	}
 
+	_clearPrintReadyTimeout() {
+		if (this._printReadyTimeout !== null) {
+			clearTimeout(this._printReadyTimeout);
+			this._printReadyTimeout = null;
+		}
+	}
 
 	// Splash screen
 
 	addSplashScreenRequestor(obj) {
+		/*
+			For print-ready, the initial value is set to 1, because we always start the application
+			with Splashscreen and therefore we dont need to increment the print-ready number here.
+		*/
 		const origLen = this.SplashscreenRequestors.size;
 		this.SplashscreenRequestors.add(obj);
 		if (origLen != this.SplashscreenRequestors.size) {
@@ -543,6 +600,8 @@ class Application extends Component {
 		if (this.SplashscreenRequestors.size == 0) {
 			let splashscreen = document.getElementById('app-splashscreen'); // See public/index.html
 			splashscreen?.classList.add("d-none");
+			// Decrement print-ready indicator value if no splash screen requestors are present
+			this.popPrintReadyIndicator();
 		}
 	}
 
