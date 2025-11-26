@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.2.8
+
+- Fix on websocket interceptor (#45)
+
 ## 27.2.7
 
 - Implement print-ready attribute state for whole application (#44)
