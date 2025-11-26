@@ -190,7 +190,8 @@ export default class AuthModule extends Module {
 	}
 
 	webSocketAuthInterceptor() {
-		return `access_token_${this.OAuthTokens['access_token']}`;
+		// Return a function to ensure that the token is always current and not static
+		return () => `access_token_${this.OAuthTokens['access_token']}`;
 	}
 
 	async simulateUserinfo(mock_userinfo) {
