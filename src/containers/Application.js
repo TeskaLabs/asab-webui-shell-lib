@@ -447,7 +447,14 @@ class Application extends Component {
 		for (let interceptor of this.WebSocketInterceptors.keys()) {
 			// Avoid pushing undefined interceptor values
 			if (interceptor) {
-				subprotocols.push(interceptor);
+				/*
+					Interceptor should be a function that returns the current subprotocol value
+					Otherwise use the value directly (for backward compatibility)
+				*/
+				const interceptorValue = (typeof interceptor === 'function') ? interceptor() : interceptor;
+				if (interceptorValue) {
+					subprotocols.push(interceptorValue);
+				}
 			}
 		}
 
