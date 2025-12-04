@@ -1,6 +1,6 @@
 import React from 'react';
+import { Link } from 'react-router';
 import { useAppSelector } from 'asab_webui_components';
-import { ButtonWithAuthz } from 'asab_webui_components/seacat-auth';
 import { useTranslation } from 'react-i18next';
 
 import {
@@ -18,8 +18,6 @@ export default function TenantDropdown() {
 
 	const resources = useAppSelector(state => state?.auth?.resources);
 	const tenantCreateResource = 'authz:superuser'; // "seacat:tenant:create";
-
-	// Check if user can create tenant (same logic as ButtonWithAuthz uses internally)
 	const canCreateTenant = resources?.includes(tenantCreateResource) || resources?.includes('authz:superuser');
 
 	return (
@@ -39,18 +37,8 @@ export default function TenantDropdown() {
 					{canCreateTenant && (
 						<>
 							<DropdownItem divider />
-							<DropdownItem header>
-								<ButtonWithAuthz
-									type='button'
-									outline
-									color='primary'
-									onClick={() => confirmForm('/config/tenant/!create')}
-									resource={tenantCreateResource}
-									resources={resources}
-									hideOnUnauthorizedAccess={true}
-								>
-									{t('TenantDetailScreen|Create tenant')}
-								</ButtonWithAuthz>
+							<DropdownItem tag={Link} to="/config/tenant/!create">
+								{t('TenantDropdown|Create tenant')}
 							</DropdownItem>
 						</>
 					)}
