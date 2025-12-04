@@ -1,11 +1,12 @@
-import React, { Component } from 'react';
+import React from 'react';
+import { Link } from 'react-router';
 import { useAppSelector } from 'asab_webui_components';
 import { useTranslation } from 'react-i18next';
 
 import {
 	UncontrolledDropdown,
 	DropdownItem,
-	DropdownMenu, 
+	DropdownMenu,
 	DropdownToggle,
 } from 'reactstrap';
 
@@ -15,13 +16,17 @@ export default function TenantDropdown() {
 	const current = useAppSelector(state => state?.tenant?.current);
 	const tenants = useAppSelector(state => state?.tenant?.tenants);
 
+	const resources = useAppSelector(state => state?.auth?.resources);
+	const tenantCreateResource = 'authz:superuser'; // "seacat:tenant:create";
+	const canCreateTenant = resources?.includes(tenantCreateResource) || resources?.includes('authz:superuser');
+
 	return (
 		<UncontrolledDropdown direction="down" title={t('tenant|Tenant')}>
 			<DropdownToggle nav caret>
 				<i className="bi bi-house-lock pe-2"></i>
 				<TenantLabel tenant={current}/>
 			</DropdownToggle>
-			{ (tenants && tenants.length > 0) ?
+			{(tenants && tenants.length > 0 || canCreateTenant) && (
 				<DropdownMenu className="shadow">
 					<DropdownItem header>Tenants</DropdownItem>
 					{tenants.map((tenant, i) => (
@@ -29,12 +34,19 @@ export default function TenantDropdown() {
 							<TenantLabel tenant={tenant}/>
 						</DropdownItem>
 					))}
+					{canCreateTenant && (
+						<>
+							<DropdownItem divider />
+							<DropdownItem tag={Link} to="/config/tenant/!create">
+								{t('TenantDropdown|Create tenant')}
+							</DropdownItem>
+						</>
+					)}
 				</DropdownMenu>
-			 : null}
+			)}
 		</UncontrolledDropdown>
 	);
 }
-
 
 function TenantLabel({tenant}) {
 	return (
