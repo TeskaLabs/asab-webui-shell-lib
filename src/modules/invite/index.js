@@ -6,14 +6,14 @@ const InvitationScreen = lazy(() => import('./InvitationScreen'));
 export default class InviteModule extends Module {
 
 	constructor(app, name) {
-		super(app, "InviteModule");
+		super(app, 'InviteModule');
 		// Invitation screen
 		app.Router.addRoute({
 			path: '/auth/invite',
 			end: true,
 			name: 'Invite',
 			component: InvitationScreen,
-			resource: "seacat:tenant:assign"
+			resource: 'seacat:tenant:assign'
 		});
 	}
 }
