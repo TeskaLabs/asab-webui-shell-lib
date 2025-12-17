@@ -231,6 +231,29 @@ class Application extends Component {
 		return service_url.replace(/\/$/, '') + "/" + service_path;
 	}
 
+	jsonParseWithBigInt(source) {
+		if (typeof source !== 'string') {
+			return source;
+		}
+
+		const that = this;
+
+		// Fast path — no BigInt handling required
+		if (!that.JSONParseBigInt || that.JSONParseBigInt.size === 0) {
+			return JSON.parse(source);
+		}
+
+		return JSON.parse(
+			source,
+			(key, value, context) => {
+				// Convert numeric values to BigInt only for explicitly configured keys
+				if (that.JSONParseBigInt.has(key) && (typeof value === 'number') && context?.source !== undefined) {
+					return BigInt(context.source);
+				}
+				return value;
+			}
+		);
+	}
 
 	/*
 	 *	Creates an AXIOS object for communication with TeskaLabs API's
