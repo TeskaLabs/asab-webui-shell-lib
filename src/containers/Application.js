@@ -231,25 +231,32 @@ class Application extends Component {
 		return service_url.replace(/\/$/, '') + "/" + service_path;
 	}
 
+	// Parses a JSON string safely and converts specific numeric values to BigInt.
 	jsonParseWithBigInt(source) {
+		// If the input is not a string, return it immediately (no parsing needed)
 		if (typeof source !== 'string') {
 			return source;
 		}
 
+		// Save reference to 'this' for accessing instance properties
 		const that = this;
 
-		// Fast path — no BigInt handling required
-		if (!that.JSONParseBigInt || that.JSONParseBigInt.size === 0) {
+		// Fast path: if no BigInt keys are configured, parse the JSON normally
+		if (!that.JSONParseBigInt || (that.JSONParseBigInt.size === 0)) {
 			return JSON.parse(source);
 		}
 
+		// Parse the JSON string with a custom reviver function to handle BigInt
 		return JSON.parse(
 			source,
 			(key, value, context) => {
-				// Convert numeric values to BigInt only for explicitly configured keys
-				if (that.JSONParseBigInt.has(key) && (typeof value === 'number') && context?.source !== undefined) {
+				// Check if the current key should be converted to BigInt
+				if (that.JSONParseBigInt.has(key) && (typeof value === 'number') && (context?.source !== undefined)) {
+					// Convert the numeric value to a BigInt to avoid precision loss
 					return BigInt(context.source);
 				}
+
+				// For all other keys/values, return the value as-is
 				return value;
 			}
 		);
@@ -332,24 +339,8 @@ class Application extends Component {
 				// If the response is JSON, then parse it with respect to BigInt
 				// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse
 				try {
-					// Parse the response data using a custom reviver function
-					response.data = JSON.parse(
-						response.data,
-						// Custom reviver function to handle BigInt values
-						(key, value, context) => {
-							// If there is no data in the JSONParseBigInt, return the value immediately
-							if (that.JSONParseBigInt.size === 0) {
-								return value
-							}
-							// Check if the key is in the `JSONParseBigInt` set and the value is a number
-							if (that.JSONParseBigInt.has(key) && (typeof value === 'number')) {
-								// Convert the number to a BigInt
-								return BigInt(context.source);
-							}
-							// Return the original value if no conversion is needed
-							return value;
-						}
-					);
+					// Parse the response data using jsonParseWithBigInt reviver function
+					response.data = that.jsonParseWithBigInt(response.data);
 				} catch (e) {
 					// Log any errors that occur during JSON parsing
 					console.error("Error in axios.interceptors.response", e);
