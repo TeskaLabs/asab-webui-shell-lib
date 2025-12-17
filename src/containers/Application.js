@@ -1,7 +1,7 @@
-import React, { Component, Suspense, useEffect } from 'react';
+import React, {Component, Suspense} from 'react';
 import Axios from 'axios';
 
-import { Module, PubSubProvider, ErrorHandler, AppStoreProvider, createAppStore } from "asab_webui_components";
+import {AppStoreProvider, createAppStore, ErrorHandler, Module, PubSubProvider} from "asab_webui_components";
 
 import Header from './Header';
 import Sidebar from './Sidebar';
@@ -35,7 +35,7 @@ import SuspenseScreen from '../screens/SuspenseScreen';
 
 import './Application.scss';
 
-import { ADD_ALERT, SET_ADVANCED_MODE, SET_FULLSCREEN_MODE, SET_CONNECTIVITY_STATUS } from '../actions';
+import {ADD_ALERT, SET_ADVANCED_MODE, SET_CONNECTIVITY_STATUS, SET_FULLSCREEN_MODE} from '../actions';
 
 class Application extends Component {
 
@@ -271,13 +271,13 @@ class Application extends Component {
 	 *		towards TeskaLabs API's, since it adds Bearer token to all calls.
 	 */
 	axiosCreate(service, props) {
-		var service_url = this.getServiceURL(service);
+		const service_url = this.getServiceURL(service);
 		if (service_url == undefined) {
 			this.addAlert('danger', "ASABApplicationContainer|Service URL is undefined, please check service paths passed to axios", 5, true);
 			return undefined;
 		}
 
-		var axios = Axios.create({
+		const axios = Axios.create({
 			...props,
 			transformResponse: res => res,  // Disable implicit JSON parsing, we explicitly parse JSON in the interceptor ( https://stackoverflow.com/questions/41013082/disable-json-parsing-in-axios )
 			baseURL: service_url,
@@ -288,7 +288,7 @@ class Application extends Component {
 			this.interceptorRequest(axios, interceptor);
 		}
 
-		var that = this;
+		const that = this;
 
 		/*
 			We want to be notified when networking activity is taking place,
@@ -440,7 +440,7 @@ class Application extends Component {
 
 
 	createWebSocket(service, subpath) {
-		var socket_url = this.getWebSocketURL(service, subpath);
+		const socket_url = this.getWebSocketURL(service, subpath);
 		if (socket_url == undefined) {
 			this.addAlert('danger', "ASABApplicationContainer|WebSocket URL is undefined, please check service and subpath passed to WebSocket", 5, true);
 			return undefined;
@@ -473,9 +473,7 @@ class Application extends Component {
 		}
 
 		// Create new WebSocket based on socket URL
-		const socket = new WebSocket(socket_url, subprotocols);
-
-		return socket;
+		return new WebSocket(socket_url, subprotocols);
 	}
 
 
