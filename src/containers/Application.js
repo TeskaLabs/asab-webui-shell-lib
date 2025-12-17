@@ -472,8 +472,31 @@ class Application extends Component {
 			}
 		}
 
-		// Create new WebSocket based on socket URL
-		return new WebSocket(socket_url, subprotocols);
+		const source = new WebSocket(socket_url, subprotocols);
+
+		// console.log(source)
+		//
+		// // Custom helper instead of patching event.data
+		// source.onParsedMessage = (handler) => {
+		// 	source.addEventListener('message', (event) => {
+		// 		let parsed = event.data;
+		//
+		// 		if (typeof event.data === 'string') {
+		// 			try {
+		// 				parsed = this.jsonParseWithBigInt(event.data);
+		// 				console.log(parsed, 'parsed')
+		// 			} catch (e) {
+		// 				console.error('Failed to parse WS message with BigInt', e);
+		// 				return;
+		// 			}
+		// 		}
+		//
+		// 		handler(parsed, event);
+		// 	});
+		// };
+
+
+		return source;
 	}
 
 
