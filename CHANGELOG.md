@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.3.1
+
+- Move Invite other users from the Header to the User dropdown menu, create a InviteModule and make InviteModule as a voluntary imported module within the application (#47)
+
 ## 27.2.8
 
 - Fix on websocket interceptor (#45)
