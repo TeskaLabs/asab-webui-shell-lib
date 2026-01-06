@@ -21,6 +21,8 @@ Possible imports:
 - AuthModule
 - TenantModule
 - I18nModule
+- AttentionRequiredModule
+- InviteModule
 - getBrandImage
 
 ## Documentation
