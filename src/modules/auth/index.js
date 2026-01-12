@@ -1,7 +1,7 @@
 import React, { lazy } from 'react';
 import { Module } from 'asab_webui_components';
 
-import { AuthHeaderDropdown, AuthHeaderInvitation } from './header';
+import { AuthHeaderDropdown } from './header';
 import reducer from './reducer';
 import { types } from './actions';
 import { SET_NAVIGATION_ITEMS } from '../../actions';
@@ -11,7 +11,6 @@ import { locationReplace } from '../../components/locationReplace';
 // TODO: Use SessionExpirationAlert only after proper fix of the component
 import { SessionExpirationAlert }from './components/SessionExpirationAlert';
 const AccessControlScreen = lazy(() => import('./screens/AccessControlScreen'));
-const InvitationScreen = lazy(() => import('./screens/InvitationScreen'));
 
 export default class AuthModule extends Module {
 
@@ -38,24 +37,10 @@ export default class AuthModule extends Module {
 			component: AccessControlScreen,
 			resource: "*"
 		});
-
-		// Invitation screen
-		app.Router.addRoute({
-			path: '/auth/invite',
-			end: true,
-			name: 'Invite',
-			component: InvitationScreen,
-			resource: "seacat:tenant:assign"
-		});
 	}
 
 	async initialize() {
 		const headerService = this.App.locateService("HeaderService");
-		headerService.addComponent({
-			component: AuthHeaderInvitation,
-			componentProps: { AuthModule: this },
-			order: 200
-		});
 		headerService.addComponent({
 			component: AuthHeaderDropdown,
 			componentProps: { AuthModule: this },
