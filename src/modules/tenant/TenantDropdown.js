@@ -28,7 +28,7 @@ export default function TenantDropdown() {
 			</DropdownToggle>
 			{(tenants && tenants.length > 0 || canCreateTenant) && (
 				<DropdownMenu className="shadow">
-					<DropdownItem header>Tenants</DropdownItem>
+					<DropdownItem header>{t('TenantDropdown|Tenants')}</DropdownItem>
 					{tenants?.map((tenant, i) => (
 						<DropdownItem key={i} tag="a" href={'?tenant='+tenant+'#/'}>
 							<TenantLabel tenant={tenant}/>
