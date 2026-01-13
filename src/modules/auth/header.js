@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link, useNavigate } from 'react-router';
+import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useAppSelector } from 'asab_webui_components';
 import { isAuthorized } from 'asab_webui_components/seacat-auth';
@@ -8,8 +8,7 @@ import {
 	UncontrolledDropdown,
 	DropdownToggle,
 	DropdownMenu,
-	DropdownItem,
-	Button
+	DropdownItem
 } from 'reactstrap';
 
 import './header.scss';
@@ -34,37 +33,20 @@ import './header.scss';
 
 */
 
-export function AuthHeaderInvitation(props) {
-	const tenant = useAppSelector(state => state.tenant?.current);
-	let navigate = useNavigate();
-	const { t } = useTranslation();
-
-	if (!tenant || !isAuthorized(['seacat:tenant:assign'], props.app)) {
-		return null;
-	};
-
-	return(
-		<Button
-			outline
-			onClick={(e) => {e.preventDefault(), navigate('/auth/invite')}}
-			title={t('AuthHeader|Invite other users')}
-			className='invite-nav-button'
-			color='primary'
-		>
-			<i className='bi bi-person-plus me-2' />
-			{t('AuthHeader|Invite other users')}
-		</Button>
-	)
-}
-
 export function AuthHeaderDropdown(props) {
 	const { t } = useTranslation();
+	const tenant = useAppSelector(state => state.tenant?.current);
 	const userinfo = useAppSelector(state => state.auth?.userinfo);
 	const isSuperuser = isAuthorized(['authz:superuser'], props.app);
 
 	const logout = () => {
 		props.AuthModule.logout();
 	}
+
+	// Validation on displaying the invite option
+	const displayInvite = props.app?.Modules?.some(obj => obj?.Name === "InviteModule")
+		&& tenant
+		&& isAuthorized(['seacat:tenant:assign'], props.app);
 
 	return (
 		<UncontrolledDropdown direction='down'>
@@ -83,6 +65,15 @@ export function AuthHeaderDropdown(props) {
 			</DropdownToggle>
 			<DropdownMenu className='shadow'>
 				<DropdownItem header>{t('AuthHeader|My account')}</DropdownItem>
+				{displayInvite && (
+					<>
+						<DropdownItem divider />
+						<DropdownItem tag={Link} to='/auth/invite'>
+							{t('AuthHeader|Invite other users')}
+						</DropdownItem>
+						<DropdownItem divider />
+					</>
+				)}
 				<DropdownItem tag={Link} to='/auth/access-control'>
 					{t('AuthHeader|Access control')}
 				</DropdownItem>
