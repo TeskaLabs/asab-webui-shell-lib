@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router';
 import { useAppSelector } from 'asab_webui_components';
 import { useTranslation } from 'react-i18next';
+import { isAuthorized } from 'asab_webui_components/seacat-auth';
 
 import {
 	UncontrolledDropdown,
@@ -11,14 +12,12 @@ import {
 } from 'reactstrap';
 
 
-export default function TenantDropdown() {
+export default function TenantDropdown({ app }) {
 	const { t } = useTranslation();
 	const current = useAppSelector(state => state?.tenant?.current);
 	const tenants = useAppSelector(state => state?.tenant?.tenants);
-
-	const resources = useAppSelector(state => state?.auth?.resources);
-	const tenantCreateResource = 'authz:superuser'; // "seacat:tenant:create";
-	const canCreateTenant = resources?.includes(tenantCreateResource) || resources?.includes('authz:superuser');
+	// TODO: when lmio_trex_ resource available, change this resource accordingly
+	const canCreateTenant = isAuthorized(['seacat:tenant:create'], app);
 
 	return (
 		<UncontrolledDropdown direction="down" title={t('tenant|Tenant')}>
@@ -34,6 +33,7 @@ export default function TenantDropdown() {
 							<TenantLabel tenant={tenant}/>
 						</DropdownItem>
 					))}
+					{/* Link to lmio_trex_webui tenant creation screen */}
 					{canCreateTenant && (
 						<>
 							<DropdownItem divider />
