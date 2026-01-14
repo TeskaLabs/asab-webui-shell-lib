@@ -16,7 +16,7 @@ export default function TenantDropdown({ app }) {
 	const { t } = useTranslation();
 	const current = useAppSelector(state => state?.tenant?.current);
 	const tenants = useAppSelector(state => state?.tenant?.tenants);
-	// TODO: when lmio_trex_ resource available, change this resource accordingly
+	// TODO: when lmio_trex resource available, change this resource accordingly
 	const canCreateTenant = isAuthorized(['seacat:tenant:create'], app);
 
 	return (
