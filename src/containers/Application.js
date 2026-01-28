@@ -474,27 +474,20 @@ class Application extends Component {
 
 		const source = new WebSocket(socket_url, subprotocols);
 
-		// console.log(source)
-		//
-		// // Custom helper instead of patching event.data
-		// source.onParsedMessage = (handler) => {
-		// 	source.addEventListener('message', (event) => {
-		// 		let parsed = event.data;
-		//
-		// 		if (typeof event.data === 'string') {
-		// 			try {
-		// 				parsed = this.jsonParseWithBigInt(event.data);
-		// 				console.log(parsed, 'parsed')
-		// 			} catch (e) {
-		// 				console.error('Failed to parse WS message with BigInt', e);
-		// 				return;
-		// 			}
-		// 		}
-		//
-		// 		handler(parsed, event);
-		// 	});
-		// };
+		source.onParsedMessage = (handler) => {
+			source.addEventListener('message', (event) => {
+				// console.log(typeof  event.data)
+				// console.log(event.data)
+				const da1 = `{"type": "frame.hit", "corrid": 1, "data": {"log.syslog.priority": 30, "@timestamp": "2026-01-28T09:26:50.000000Z", "source.ip": 98765432109876543214, "host.hostname": "fu03", "process.pid": 1250, "message": "Unable to read additional data from client, it probably closed the socket: address = /192.0.2.3:49456, session = 0x301f64e60f90296\\n", "lmio.node.id": "fu03", "lmio.service.id": "zookeeper", "lmio.instance.id": "zookeeper-3", "log.level": "INFO", "log.logger": "NIOServerCnxn", "event.dataset": "system-zookeeper", "device.manufacturer": "TeskaLabs", "host.id": "fu03", "log.syslog.facility.code": 3, "log.syslog.facility.name": "daemon", "log.syslog.severity.code": 6, "log.syslog.severity.name": "information", "tags": ["lmio-parsec:v26.02-alpha"], "event.created": "2026-01-28T08:04:24.538590Z", "event.ingested": "2026-01-28T08:04:24.963776Z", "event.original": "<30>1 2026-01-28T08:04:24Z fu03 instance_id=zookeeper-3,service_id=zookeeper,node_id=fu03 1250 instance_id=zookeeper-3,service_id=zookeeper,node_id=fu03 - level=INFO|timestamp=2026-01-28T08:04:24.445|logger=NIOServerCnxn|message=Unable to read additional data from client, it probably closed the socket: address = /192.0.2.3:49456, session = 0x301f64e60f90296\\n", "tenant": "system", "lmio.source": "127.0.0.1 47233 D", "lmio.logsource.ip": "127.0.0.1", "lmio.logsource.port": 47233, "lmio.logsource.protocol": "udp", "related.ip": ["127.0.0.1"], "_id": "555560789837"}}`
+				if (typeof event.data !== 'string') {
+					handler(event);
+					return;
+				}
 
+				const parsed = this.jsonParseWithBigInt(event.data); // НЕ JSON.parse
+				handler({ ...event, data: parsed });
+			});
+		};
 
 		return source;
 	}
