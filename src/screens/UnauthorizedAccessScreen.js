@@ -35,15 +35,18 @@ export default function UnauthorizedAccessScreen(props) {
 		if (!isAuthorized) {
 			document.body.setAttribute('print-ready', 'true');
 			document.body.setAttribute('print-unauthorized', 'true');
+			console.log('print-ready', document.body.getAttribute('print-ready'), 'UnauthorizedAccessScreen set true');
 		} else {
 			document.body.removeAttribute('print-ready');
 			document.body.removeAttribute('print-unauthorized');
+			console.log('print-ready', document.body.getAttribute('print-ready'), 'UnauthorizedAccessScreen cleared');
 		}
 
 		// Cleanup function to remove the attributes when the component unmounts
 		return () => {
 			document.body.removeAttribute('print-ready');
 			document.body.removeAttribute('print-unauthorized');
+			console.log('print-ready', document.body.getAttribute('print-ready'), 'UnauthorizedAccessScreen cleanup');
 		};
 	}, [isAuthorized]);
 
