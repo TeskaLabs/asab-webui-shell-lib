@@ -35,7 +35,7 @@ import SuspenseScreen from '../screens/SuspenseScreen';
 
 import './Application.scss';
 
-import {ADD_ALERT, SET_ADVANCED_MODE, SET_CONNECTIVITY_STATUS, SET_FULLSCREEN_MODE} from '../actions';
+import { ADD_ALERT, SET_ADVANCED_MODE, SET_CONNECTIVITY_STATUS, SET_FULLSCREEN_MODE } from '../actions';
 
 class Application extends Component {
 
@@ -250,10 +250,14 @@ class Application extends Component {
 		return JSON.parse(
 			source,
 			(key, value, context) => {
-				// Check if the current key should be converted to BigInt
-				if (that.JSONParseBigInt.has(key) && (typeof value === 'number') && (context?.source !== undefined)) {
-					// Convert the numeric value to a BigInt to avoid precision loss
-					return BigInt(context.source);
+				try {
+					// Convert numeric values to BigInt only for explicitly configured keys
+					if (that.JSONParseBigInt.has(key) && (typeof value === 'number') && (context?.source !== undefined)) {
+						// Convert the numeric value to a BigInt to avoid precision loss
+						return BigInt(context.source);
+					}
+				} catch (e) {
+					console.error("Error converting to BigInt:", e, "key:", key, "value:", value);
 				}
 
 				// For all other keys/values, return the value as-is
@@ -476,19 +480,18 @@ class Application extends Component {
 
 		source.onParsedMessage = (handler) => {
 			source.addEventListener('message', (event) => {
-				const da1 = `{"type": "frame.hit", "corrid": 1, "data": {"log.syslog.priority": 30, "@timestamp": "2026-03-02T10:28:00.000000Z", "source.ip": {"h": 3026989289844019232, "l": 109517}, "h": 3026989289844019232, "host.hostname": "fu03", "process.pid": 1250, "message": "Unable to read additional data from client, it probably closed the socket: address = /192.0.2.3:49456, session = 0x301f64e60f90296\\n", "lmio.node.id": "fu03", "lmio.service.id": "zookeeper", "lmio.instance.id": "zookeeper-3", "log.level": "INFO", "log.logger": "NIOServerCnxn", "event.dataset": "system-zookeeper", "device.manufacturer": "TeskaLabs", "host.id": "fu03", "log.syslog.facility.code": 3, "log.syslog.facility.name": "daemon", "log.syslog.severity.code": 6, "log.syslog.severity.name": "information", "tags": ["lmio-parsec:v26.02-alpha"], "event.created": "2026-01-28T08:04:24.538590Z", "event.ingested": "2026-01-28T08:04:24.963776Z", "event.original": "<30>1 2026-01-28T08:04:24Z fu03 instance_id=zookeeper-3,service_id=zookeeper,node_id=fu03 1250 instance_id=zookeeper-3,service_id=zookeeper,node_id=fu03 - level=INFO|timestamp=2026-01-28T08:04:24.445|logger=NIOServerCnxn|message=Unable to read additional data from client, it probably closed the socket: address = /192.0.2.3:49456, session = 0x301f64e60f90296\\n", "tenant": "system", "lmio.source": "127.0.0.1 47233 D", "lmio.logsource.ip": "127.0.0.1", "lmio.logsource.port": 47233, "lmio.logsource.protocol": "udp", "_id": "555560789837"}}`
-				// not a string → pass as is
+				// not a string => pass as is
 				if (typeof event.data !== 'string') {
 					handler(event);
 					return;
 				}
 
-				// string → let's try to parse it
+				// string => try to parse it
 				try {
 					const parsed = this.jsonParseWithBigInt(event.data);
 					handler({ ...event, data: parsed });
 				} catch (e) {
-					// string, but not JSON → return as is
+					// string, but not JSON => return as is
 					handler(event);
 				}
 			});
