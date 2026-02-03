@@ -35,7 +35,7 @@ import SuspenseScreen from '../screens/SuspenseScreen';
 
 import './Application.scss';
 
-import { ADD_ALERT, SET_ADVANCED_MODE, SET_CONNECTIVITY_STATUS, SET_FULLSCREEN_MODE } from '../actions';
+import { ADD_ALERT, SET_ADVANCED_MODE, SET_FULLSCREEN_MODE, SET_CONNECTIVITY_STATUS } from '../actions';
 
 class Application extends Component {
 
@@ -476,8 +476,10 @@ class Application extends Component {
 			}
 		}
 
+		// Create new WebSocket based on socket URL
 		const source = new WebSocket(socket_url, subprotocols);
 
+		// Method like onmessage, it processes bigint if the frame is a string and it is JSON
 		source.onParsedMessage = (handler) => {
 			source.addEventListener('message', (event) => {
 				// not a string => pass as is
