@@ -444,7 +444,7 @@ class Application extends Component {
 
 
 	createWebSocket(service, subpath) {
-		const socket_url = this.getWebSocketURL(service, subpath);
+		var socket_url = this.getWebSocketURL(service, subpath);
 		if (socket_url == undefined) {
 			this.addAlert('danger', "ASABApplicationContainer|WebSocket URL is undefined, please check service and subpath passed to WebSocket", 5, true);
 			return undefined;
@@ -477,29 +477,9 @@ class Application extends Component {
 		}
 
 		// Create new WebSocket based on socket URL
-		const source = new WebSocket(socket_url, subprotocols);
+		const socket = new WebSocket(socket_url, subprotocols);
 
-		// Method like onmessage, it processes bigint if the frame is a string and it is JSON
-		source.onParsedMessage = (handler) => {
-			source.addEventListener('message', (event) => {
-				// not a string => pass as is
-				if (typeof event.data !== 'string') {
-					handler(event);
-					return;
-				}
-
-				// string => try to parse it
-				try {
-					const parsed = this.jsonParseWithBigInt(event.data);
-					handler({ ...event, data: parsed });
-				} catch (e) {
-					// string, but not JSON => return as is
-					handler(event);
-				}
-			});
-		};
-
-		return source;
+		return socket;
 	}
 
 
