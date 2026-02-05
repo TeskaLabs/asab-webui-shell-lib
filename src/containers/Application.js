@@ -258,8 +258,11 @@ class Application extends Component {
 	 *   response.data = this.jsonParseWithBigInt(response.data);
 	 *
 	 * WebSocket:
-	 *   const message = app.jsonParseWithBigInt(event.data);
-	 *
+	 *   ws.onmessage = (event) => {
+	 *     // event.data is a string received from the WebSocket frame
+	 *     const message = app.jsonParseWithBigInt(event.data);
+	 *     ...
+	 *   };
 	 * BEHAVIOR:
 	 * - If source is not a string → returns it unchanged
 	 * - If no BigInt keys are configured → falls back to JSON.parse
