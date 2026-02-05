@@ -230,8 +230,41 @@ class Application extends Component {
 
 		return service_url.replace(/\/$/, '') + "/" + service_path;
 	}
-
-	// Parses a JSON string safely and converts specific numeric values to BigInt.
+	/**
+	 * Safely parses JSON and preserves numeric precision by converting configured keys to BigInt.
+	 *
+	 * WHY THIS EXISTS:
+	 * JavaScript loses precision for integers larger than Number.MAX_SAFE_INTEGER.
+	 * This helper allows selected JSON numeric fields to be converted into BigInt
+	 * based on keys configured in `this.JSONParseBigInt`.
+	 *
+	 * WHERE THIS IS USED:
+	 * 1. Axios response interceptor
+	 *    - Default JSON parsing is disabled via `transformResponse`.
+	 *    - JSON responses are manually parsed here to preserve BigInt values.
+	 *
+	 * 2. WebSocket message processing
+	 *    - WebSocket frames arrive as raw strings.
+	 *    - `event.data` is parsed using this helper before being passed
+	 *      to message handlers and UI logic.
+	 *
+	 * CONFIGURATION:
+	 * `this.JSONParseBigInt` must be a Set containing JSON keys
+	 * whose numeric values should be converted to BigInt.
+	 *
+	 * USAGE EXAMPLES:
+	 *
+	 * Axios (response interceptor):
+	 *   response.data = this.jsonParseWithBigInt(response.data);
+	 *
+	 * WebSocket:
+	 *   const message = app.jsonParseWithBigInt(event.data);
+	 *
+	 * BEHAVIOR:
+	 * - If source is not a string → returns it unchanged
+	 * - If no BigInt keys are configured → falls back to JSON.parse
+	 * - Only explicitly configured keys are converted to BigInt
+	 */
 	jsonParseWithBigInt(source) {
 		// If the input is not a string, return it immediately (no parsing needed)
 		if (typeof source !== 'string') {
