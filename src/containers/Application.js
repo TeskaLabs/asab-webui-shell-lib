@@ -555,7 +555,7 @@ class Application extends Component {
 					this._printReadyTimeout = null;
 					console.log('print-ready', document.body.getAttribute('print-ready'), 'set true');
 				}
-			}, 500); // Add 500ms delay to ensure that the print-ready attribute is set after the last print-ready indicator is popped
+			}, 1500); // Add 1500ms delay to ensure that the print-ready attribute is set after the last print-ready indicator is popped
 		} else {
 			this._clearPrintReadyTimeout();
 			document.body.setAttribute('print-ready', 'false');
