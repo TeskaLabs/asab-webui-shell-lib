@@ -10,6 +10,7 @@ on:
     branches: [ "main" ]
 
 permissions:
+  id-token: write
   contents: read
 
 jobs:
@@ -31,6 +32,9 @@ jobs:
         registry-url: "https://registry.npmjs.org/"
         always-auth: true
 
+    - name: Update npm
+      run: npm install -g npm@latest
+
     - name: Install pnpm
       run: npm install -g pnpm
 
@@ -47,10 +51,8 @@ jobs:
 
         if [[ $TAG_NAME == *"-alpha"* || $TAG_NAME == *"-beta"* || $TAG_NAME == *"-rc"* ]]; then
           echo "Publishing pre-release $TAG_NAME as PUBLIC with 'beta' tag"
-          pnpm publish --tag beta --access public --no-git-checks
+          npm publish --tag beta --access public --no-git-checks
         else
           echo "Publishing stable version $TAG_NAME as PUBLIC with 'latest' tag"
-          pnpm publish --tag latest --access public --no-git-checks
+          npm publish --tag latest --access public --no-git-checks
         fi
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPMJS_PUBLISH_TOKEN }}
