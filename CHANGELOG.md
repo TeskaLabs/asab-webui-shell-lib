@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 26.3.1-alpha.0
+
+- Patch on `26.3.1` with backport of conditionally removal of networking indicator (#51)
+
 ## 26.3.1
 
 - Implemented `hasSidebar` configuration option, implemented `hasHeaderTitle` configuration option, removed support for meta tags of header images in dynamic configuration (#8)
