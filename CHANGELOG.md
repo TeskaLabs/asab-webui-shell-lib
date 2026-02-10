@@ -1,6 +1,6 @@
 # CHANGELOG for ASAB WebUI Shell
 
-## 26.3.1-alpha.0
+## 26.3.1-alpha.1
 
 - Patch on `26.3.1` with backport of conditionally removal of networking indicator (#51)
 
