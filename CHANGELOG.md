@@ -2,6 +2,10 @@
 
 ## 27.3.2
 
+- Implement `jsonParseWithBigInt` method for handle bigint in the axios and websocket requests (#48)
+
+## 27.3.2
+
 - Extend timeout for setting up `print-ready=true` to the DOM from 500ms to 1500ms (#49)
 
 ## 27.3.1
