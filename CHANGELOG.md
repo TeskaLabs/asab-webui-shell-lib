@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.3.2
+
+- Extend timeout for setting up `print-ready=true` to the DOM from 500ms to 1500ms (#49)
+
 ## 27.3.1
 
 - Move Invite other users from the Header to the User dropdown menu, create a InviteModule and make InviteModule as a voluntary imported module within the application (#47)
