@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.2.8-alpha.1
+
+- Patch on 27.2.8 release increasing the timeout for `print-ready=true` from 500ms to 1500ms (#50)
+
 ## 27.2.8
 
 - Fix on websocket interceptor (#45)
