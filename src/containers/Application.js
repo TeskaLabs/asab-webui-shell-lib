@@ -249,8 +249,8 @@ class Application extends Component {
 	 *      to message handlers and UI logic.
 	 *
 	 * CONFIGURATION:
-	 * `this.JSONParseBigInt` must be a Set containing JSON keys
-	 * whose numeric values should be converted to BigInt.
+	 *  `this.JSONParseBigInt` must be a Set containing JSON keys
+	 *  whose numeric values should be converted to BigInt.
 	 *
 	 * USAGE EXAMPLES:
 	 *
