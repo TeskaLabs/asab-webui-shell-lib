@@ -1,4 +1,4 @@
-import React, { Component, Suspense, useEffect } from 'react';
+import React, { Component, Suspense } from 'react';
 import Axios from 'axios';
 
 import { Module, PubSubProvider, ErrorHandler, AppStoreProvider, createAppStore } from "asab_webui_components";
@@ -230,7 +230,77 @@ class Application extends Component {
 
 		return service_url.replace(/\/$/, '') + "/" + service_path;
 	}
+	/**
+	 * Safely parses JSON and preserves numeric precision by converting configured keys to BigInt.
+	 *
+	 * WHY THIS EXISTS:
+	 * JavaScript loses precision for integers larger than Number.MAX_SAFE_INTEGER.
+	 * This helper allows selected JSON numeric fields to be converted into BigInt
+	 * based on keys configured in `this.JSONParseBigInt`.
+	 *
+	 * WHERE THIS IS USED:
+	 * 1. Axios response interceptor
+	 *    - Default JSON parsing is disabled via `transformResponse`.
+	 *    - JSON responses are manually parsed here to preserve BigInt values.
+	 *
+	 * 2. WebSocket message processing
+	 *    - WebSocket frames arrive as raw strings.
+	 *    - `event.data` is parsed using this helper before being passed
+	 *      to message handlers and UI logic.
+	 *
+	 * CONFIGURATION:
+	 *  `this.JSONParseBigInt` must be a Set containing JSON keys
+	 *  whose numeric values should be converted to BigInt.
+	 *
+	 * USAGE EXAMPLES:
+	 *
+	 * Axios (response interceptor):
+	 *   response.data = this.jsonParseWithBigInt(response.data);
+	 *
+	 * WebSocket:
+	 *   ws.onmessage = (event) => {
+	 *     // event.data is a string received from the WebSocket frame
+	 *     const message = app.jsonParseWithBigInt(event.data);
+	 *     ...
+	 *   };
+	 * BEHAVIOR:
+	 * - If source is not a string → returns it unchanged
+	 * - If no BigInt keys are configured → falls back to JSON.parse
+	 * - Only explicitly configured keys are converted to BigInt
+	 */
+	jsonParseWithBigInt(source) {
+		// If the input is not a string, return it immediately (no parsing needed)
+		if (typeof source !== 'string') {
+			return source;
+		}
 
+		// Save reference to 'this' for accessing instance properties
+		const that = this;
+
+		// Fast path: if no BigInt keys are configured, parse the JSON normally
+		if (!that.JSONParseBigInt || (that.JSONParseBigInt.size === 0)) {
+			return JSON.parse(source);
+		}
+
+		// Parse the JSON string with a custom reviver function to handle BigInt
+		return JSON.parse(
+			source,
+			(key, value, context) => {
+				try {
+					// Convert numeric values to BigInt only for explicitly configured keys
+					if (that.JSONParseBigInt.has(key) && (typeof value === 'number') && (context?.source !== undefined)) {
+						// Convert the numeric value to a BigInt to avoid precision loss
+						return BigInt(context.source);
+					}
+				} catch (e) {
+					console.error("Error converting to BigInt:", e, "key:", key, "value:", value);
+				}
+
+				// For all other keys/values, return the value as-is
+				return value;
+			}
+		);
+	}
 
 	/*
 	 *	Creates an AXIOS object for communication with TeskaLabs API's
@@ -241,13 +311,13 @@ class Application extends Component {
 	 *		towards TeskaLabs API's, since it adds Bearer token to all calls.
 	 */
 	axiosCreate(service, props) {
-		var service_url = this.getServiceURL(service);
+		const service_url = this.getServiceURL(service);
 		if (service_url == undefined) {
 			this.addAlert('danger', "ASABApplicationContainer|Service URL is undefined, please check service paths passed to axios", 5, true);
 			return undefined;
 		}
 
-		var axios = Axios.create({
+		const axios = Axios.create({
 			...props,
 			transformResponse: res => res,  // Disable implicit JSON parsing, we explicitly parse JSON in the interceptor ( https://stackoverflow.com/questions/41013082/disable-json-parsing-in-axios )
 			baseURL: service_url,
@@ -258,7 +328,7 @@ class Application extends Component {
 			this.interceptorRequest(axios, interceptor);
 		}
 
-		var that = this;
+		const that = this;
 
 		/*
 			We want to be notified when networking activity is taking place,
@@ -309,24 +379,8 @@ class Application extends Component {
 				// If the response is JSON, then parse it with respect to BigInt
 				// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse
 				try {
-					// Parse the response data using a custom reviver function
-					response.data = JSON.parse(
-						response.data,
-						// Custom reviver function to handle BigInt values
-						(key, value, context) => {
-							// If there is no data in the JSONParseBigInt, return the value immediately
-							if (that.JSONParseBigInt.size === 0) {
-								return value
-							}
-							// Check if the key is in the `JSONParseBigInt` set and the value is a number
-							if (that.JSONParseBigInt.has(key) && (typeof value === 'number')) {
-								// Convert the number to a BigInt
-								return BigInt(context.source);
-							}
-							// Return the original value if no conversion is needed
-							return value;
-						}
-					);
+					// Parse the response data using jsonParseWithBigInt reviver function
+					response.data = that.jsonParseWithBigInt(response.data);
 				} catch (e) {
 					// Log any errors that occur during JSON parsing
 					console.error("Error in axios.interceptors.response", e);
