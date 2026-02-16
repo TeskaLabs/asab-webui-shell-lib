@@ -1,12 +1,12 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.3.4
+
+- Implement `jsonParseWithBigInt` method for handle bigint in the axios and websocket requests (#48)
+
 ## 27.3.3
 
 - Release tag fix on `27.3.2` (#52)
-
-## 27.3.2
-
-- Implement `jsonParseWithBigInt` method for handle bigint in the axios and websocket requests (#48)
 
 ## 27.3.2
 
