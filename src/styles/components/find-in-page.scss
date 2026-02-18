@@ -6,13 +6,15 @@
 	https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/::search-text
 */
 
-:root::search-text {
-	color: var(--bs-primary);
-	background-color: rgba(var(--bs-primary-rgb), 0.2);
-}
+@supports selector(::search-text) {
+	:root::search-text {
+		color: var(--bs-primary);
+		background-color: rgba(var(--bs-primary-rgb), 0.2);
+	}
 
-:root::search-text:current {
-	color: var(--bs-light);
-	background-color: rgba(var(--bs-primary-rgb), 0.8);
-	text-decoration: underline;
+	:root::search-text:current {
+		color: var(--bs-light);
+		background-color: rgba(var(--bs-primary-rgb), 0.8);
+		text-decoration: underline;
+	}
 }
