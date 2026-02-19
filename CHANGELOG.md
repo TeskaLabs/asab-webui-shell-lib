@@ -1,8 +1,20 @@
 # CHANGELOG for ASAB WebUI Shell
 
-## 27.3.2
+## 27.3.5
 
 - Move Create tenant from the Header to the Tenants dropdown menu (#46)
+
+## 27.3.4
+
+- Implement `jsonParseWithBigInt` method for handle bigint in the axios and websocket requests (#48)
+
+## 27.3.3
+
+- Release tag fix on `27.3.2` (#52)
+
+## 27.3.2
+
+- Extend timeout for setting up `print-ready=true` to the DOM from 500ms to 1500ms (#49)
 
 ## 27.3.1
 
