@@ -16,7 +16,8 @@ export default function TenantDropdown({ app }) {
 	const { t } = useTranslation();
 	const current = useAppSelector(state => state?.tenant?.current);
 	const tenants = useAppSelector(state => state?.tenant?.tenants);
-	const canCreateTenant = isAuthorized(['lmio:tenant:create'], app);
+	const canCreateTenant = isAuthorized(['lmio:tenant:create'], app)
+		&& app?.Modules?.some(obj => obj?.Name === "LmioTrexFederationModule");
 	const tenantsAvailable = tenants && tenants.length > 0;
 	const showDropdown = tenantsAvailable || canCreateTenant;
 
