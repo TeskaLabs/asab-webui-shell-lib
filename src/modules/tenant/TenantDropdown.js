@@ -34,7 +34,7 @@ export default function TenantDropdown({ app }) {
 								{t('TenantDropdown|Tenants')}
 							</DropdownItem>
 							{tenants?.map((tenant, i) => (
-								<DropdownItem key={i} tag="a" href={`?tenant=${tenant}#/`}>
+								<DropdownItem key={i} tag="a" href={'?tenant='+tenant+'#/'}>
 									<TenantLabel tenant={tenant} />
 								</DropdownItem>
 							))}
