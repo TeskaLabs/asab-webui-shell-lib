@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.3.5
+
+- Move Create tenant from the Header to the Tenants dropdown menu (#46)
+
 ## 27.3.4
 
 - Implement `jsonParseWithBigInt` method for handle bigint in the axios and websocket requests (#48)
