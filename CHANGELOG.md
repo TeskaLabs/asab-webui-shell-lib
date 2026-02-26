@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.2.10-beta.1
+
+- Enable print-ready console.logging (#50)
+
 ## 27.2.9
 
 - Patch on 27.2.8 release increasing the timeout for `print-ready=true` from 500ms to 1500ms (#50)
