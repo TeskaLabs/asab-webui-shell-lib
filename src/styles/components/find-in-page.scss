@@ -7,14 +7,20 @@
 */
 
 @supports selector(::search-text) {
-	:root::search-text {
+	[data-bs-theme=dark]:root::search-text {
+		color: var(--black);
+		background-color: rgba(var(--light-honey-rgb), 0.9);
+	}
+
+	[data-bs-theme=light]:root::search-text {
 		color: var(--fiery-sunset);
 		background-color: rgba(var(--bright-orange-rgb), 0.25);
 	}
 
+	// current selected is same in both themes
 	:root::search-text:current {
 		color: var(--white);
-		background-color: rgba(var(--bright-orange-rgb), 9);
+		background-color: rgba(var(--bright-orange-rgb), 0.9);
 		text-decoration: underline;
 	}
 }
