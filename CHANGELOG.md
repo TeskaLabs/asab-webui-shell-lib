@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.3.7
+
+- Safely unescape common characters in dynamic value translation of i18n module. (#55)
+
 ## 27.3.6
 
 - Add custom styling for the browser's find-in-page (Ctrl/Cmd+F) functionality (highlights matches, currently supported by Chrome). (#53)
