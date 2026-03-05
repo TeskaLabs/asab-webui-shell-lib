@@ -4,6 +4,10 @@
 
 - Add custom styling for the browser's find-in-page (Ctrl/Cmd+F) functionality (highlights matches, currently supported by Chrome). (#53)
 
+## 27.3.5
+
+- Add console.log for print-ready state to determine issues with printing reports (#54)
+
 ## 27.3.4
 
 - Implement `jsonParseWithBigInt` method for handle bigint in the axios and websocket requests (#48)
