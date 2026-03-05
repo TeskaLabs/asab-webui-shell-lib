@@ -1,6 +1,6 @@
 # CHANGELOG for ASAB WebUI Shell
 
-## 27.3.7
+## 27.3.8
 
 - Safely unescape common characters in dynamic value translation of i18n module. (#55)
 
