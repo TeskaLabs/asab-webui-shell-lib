@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.3.6
+
+- Add custom styling for the browser's find-in-page (Ctrl/Cmd+F) functionality (highlights matches, currently supported by Chrome). (#53)
+
 ## 27.3.5
 
 - Add console.log for print-ready state to determine issues with printing reports (#54)
