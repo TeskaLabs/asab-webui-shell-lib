@@ -10,8 +10,7 @@
  *
  * Supported value shapes for a configured key:
  *   - Scalar number: BigInt via context.source (no precision loss)
- *   - Scalar string: BigInt when it looks like an integer
- *   - Array of numbers: → each element converted via context.source
+ *   - Array of numbers: each element converted via context.source
  */
 export function jsonParseWithBigInt(source, bigIntKeys) {
 	if (typeof source !== 'string') {
@@ -48,14 +47,17 @@ export function jsonParseWithBigInt(source, bigIntKeys) {
 			if ((typeof value === 'number') && (context?.source != undefined)) {
 				return BigInt(context.source);
 			}
-			// Array of numbers: apply the stashed sources.
+			/*
+				Array of numbers: apply the stashed sources. Convert on a copy and return it only if
+				all elements are converted successfully. This prevents mixed arrays on failure.
+			*/
 			if (Array.isArray(value)) {
-				pending.get(value)?.forEach(({ index, src }) => { value[index] = BigInt(src); });
-				return value;
-			}
-			// Quoted integer string (e.g. "10711025630743843471").
-			if ((typeof value === 'string') && /^-?\d+$/.test(value)) {
-				return BigInt(value);
+				const convertedArray = [...value];
+				const numericSources = pending.get(value) || [];
+				numericSources.forEach(({ index, src }) => {
+					convertedArray[index] = BigInt(src);
+				});
+				return convertedArray;
 			}
 		} catch (e) {
 			console.error("Error converting to BigInt:", e, "key:", key, "value:", value);
