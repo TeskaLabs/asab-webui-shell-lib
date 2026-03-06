@@ -3,6 +3,7 @@ import Axios from 'axios';
 
 import { Module, PubSubProvider, ErrorHandler, AppStoreProvider, createAppStore } from "asab_webui_components";
 
+import { jsonParseWithBigInt as _jsonParseWithBigInt } from '../utils/jsonParseWithBigInt';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import Toast from './Toast/ToastContainer.jsx';
@@ -269,37 +270,8 @@ class Application extends Component {
 	 * - Only explicitly configured keys are converted to BigInt
 	 */
 	jsonParseWithBigInt(source) {
-		// If the input is not a string, return it immediately (no parsing needed)
-		if (typeof source !== 'string') {
-			return source;
-		}
-
-		// Save reference to 'this' for accessing instance properties
-		const that = this;
-
-		// Fast path: if no BigInt keys are configured, parse the JSON normally
-		if (!that.JSONParseBigInt || (that.JSONParseBigInt.size === 0)) {
-			return JSON.parse(source);
-		}
-
-		// Parse the JSON string with a custom reviver function to handle BigInt
-		return JSON.parse(
-			source,
-			(key, value, context) => {
-				try {
-					// Convert numeric values to BigInt only for explicitly configured keys
-					if (that.JSONParseBigInt.has(key) && (typeof value === 'number') && (context?.source !== undefined)) {
-						// Convert the numeric value to a BigInt to avoid precision loss
-						return BigInt(context.source);
-					}
-				} catch (e) {
-					console.error("Error converting to BigInt:", e, "key:", key, "value:", value);
-				}
-
-				// For all other keys/values, return the value as-is
-				return value;
-			}
-		);
+		// Use the internal function to parse the JSON with BigInt
+		return _jsonParseWithBigInt(source, this.JSONParseBigInt);
 	}
 
 	/*
