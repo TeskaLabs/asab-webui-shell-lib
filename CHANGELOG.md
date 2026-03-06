@@ -2,7 +2,7 @@
 
 ## 27.3.9
 
-- Safely unescape common characters in dynamic value translation of i18n module. (#57)
+- Refactor BigInt JSON parsing method for BigInt values that it can handle also array of BigInt numbers. (#57)
 
 ## 27.3.8
 
