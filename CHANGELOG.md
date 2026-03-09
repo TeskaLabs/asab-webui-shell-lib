@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.3.10
+
+- Fix on BigInt serialization with JSON.stringify (#58)
+
 ## 27.3.9
 
 - Refactor BigInt JSON parsing method for BigInt values that it can handle also array of BigInt numbers. (#57)

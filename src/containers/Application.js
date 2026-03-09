@@ -79,6 +79,20 @@ class Application extends Component {
 		// This is important to preserve 64bit numbers from the server such as IP addresses, timestamps etc.
 		this.JSONParseBigInt = new Set(props?.bigint);
 
+		/*
+			Prevent JSON.stringify from throwing on BigInt values (including inside React's
+			own dev-mode error handling). BigInt has no native JSON representation so it is
+			serialized as a decimal string.
+		*/
+		if (typeof BigInt !== "undefined" && typeof BigInt.prototype.toJSON !== "function") {
+			Object.defineProperty(BigInt.prototype, "toJSON", {
+				value() { return this.toString(); },
+				enumerable: false,
+				configurable: true,
+				writable: true,
+			});
+		}
+
 		this._handleKeyUp = this._handleKeyUp.bind(this);
 		// Clear print-ready timeout handler
 		this._clearPrintReadyTimeout = this._clearPrintReadyTimeout.bind(this);
