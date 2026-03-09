@@ -3,6 +3,7 @@ import Axios from 'axios';
 
 import { Module, PubSubProvider, ErrorHandler, AppStoreProvider, createAppStore } from "asab_webui_components";
 
+import { jsonParseWithBigInt as _jsonParseWithBigInt } from '../utils/jsonParseWithBigInt';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import Toast from './Toast/ToastContainer.jsx';
@@ -77,6 +78,20 @@ class Application extends Component {
 		// The application can provide a list of keys that should be automatically parsed as BigInt, when received from the server in Axios call
 		// This is important to preserve 64bit numbers from the server such as IP addresses, timestamps etc.
 		this.JSONParseBigInt = new Set(props?.bigint);
+
+		/*
+			Prevent JSON.stringify from throwing on BigInt values (including inside React's
+			own dev-mode error handling). BigInt has no native JSON representation so it is
+			serialized as a decimal string.
+		*/
+		if (typeof BigInt !== "undefined" && typeof BigInt.prototype.toJSON !== "function") {
+			Object.defineProperty(BigInt.prototype, "toJSON", {
+				value() { return this.toString(); },
+				enumerable: false,
+				configurable: true,
+				writable: true,
+			});
+		}
 
 		this._handleKeyUp = this._handleKeyUp.bind(this);
 		// Clear print-ready timeout handler
@@ -353,6 +368,11 @@ class Application extends Component {
 		});
 
 		return axios;
+	}
+
+	jsonParseWithBigInt(source) {
+		// Use the internal function to parse the JSON with BigInt
+		return _jsonParseWithBigInt(source, this.JSONParseBigInt);
 	}
 
 	// Internal method for generating random UID's
