@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.2.10-beta.2
+
+- Enable BigInt parsing for websocket (#50)
+
 ## 27.2.10-beta.1
 
 - Enable print-ready console.logging (#50)
