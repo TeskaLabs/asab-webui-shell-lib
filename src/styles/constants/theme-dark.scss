@@ -8,14 +8,20 @@
 	--bs-primary: var(--soft-sky-blue);
 	--bs-primary-rgb: var(--soft-sky-blue-rgb);
 
-	--bs-secondary: var(--lavender-mist);
-	--bs-secondary-rgb: var(--lavender-mist-rgb);
+	// --bs-secondary: var(--lavender-mist);
+	// --bs-secondary-rgb: var(--lavender-mist-rgb);
+	--bs-secondary: var(--deep-ocean-blue);
+	--bs-secondary-rgb: var(--deep-ocean-blue-rgb);
 
-	--bs-light: var(--polar-mist);
-	--bs-light-rgb: var(--polar-mist-rgb);
+	// --bs-light: var(--polar-mist);
+	// --bs-light-rgb: var(--polar-mist-rgb);
+	// Light on deep-space-blue: pastel-sky-blue (soft), lavender-mist (softer purple), polar-mist (brightest)
+	--bs-light: var(--lavender-mist);
+	--bs-light-rgb: var(--lavender-mist-rgb);
 
-	--bs-dark: var(--deep-space-blue);
-	--bs-dark-rgb: var(--deep-space-blue-rgb);
+	// Slightly lighter than body bg so alert-dark is visible (same as element-bg)
+	--bs-dark: var(--nightfall-blue);
+	--bs-dark-rgb: var(--nightfall-blue-rgb);
 
 	--bs-link-color: var(--soft-sky-blue);
 	--bs-link-color-rgb: var(--soft-sky-blue-rgb);
@@ -39,10 +45,13 @@
 	--bs-input-bg-color-rgb: var(--midnight-blue);
 
 	--bs-element-bg-color: var(--nightfall-blue);
-	--bs-element-bg-color-rgb: var(--nightfall-blue);
+	--bs-element-bg-color-rgb: var(--nightfall-blue-rgb);
 
 	--bs-alert-info-color: var(--deep-space-blue);
 	--bs-alert-info-color-rgb: var(--deep-space-blue-rgb);
+
+	--bs-alert-light-color: var(--deep-space-blue);
+	--bs-alert-light-color-rgb: var(--deep-space-blue-rgb);
 
 	/* Non bootstrap color variables */
 

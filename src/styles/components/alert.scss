@@ -44,6 +44,11 @@
 
 		&light {
 			background-color: rgba(var(--bs-light-rgb));
+			color: rgba(var(--bs-alert-light-color-rgb));
+			> .btn-close {
+				// This will align color of close btn with text color
+				filter: unset;
+			}
 		}
 
 		&dark {
