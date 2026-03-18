@@ -21,8 +21,8 @@ export default function InvitationScreen(props) {
 	const navigate = useNavigate();
 	const SeaCatAuthAPI = props.app.axiosCreate('seacat-auth');
 
-	// Validate email input
-	const emailValidation = (e) => {
+	// Handle email input change
+	const handleEmailChange = (e) => {
 		e.preventDefault();
 		setEmailValue(e.target.value);
 	}
@@ -113,7 +113,7 @@ export default function InvitationScreen(props) {
 		<Container fluid>
 			<Row className='justify-content-center pt-5'>
 				<Col md='4'>
-					<Form onSubmit={(e) => {sendInvitation(e)}}>
+					<Form onSubmit={sendInvitation}>
 						<Card className='invite-card'>
 							<CardHeader className='card-header-flex'>
 								<div className='flex-fill'>
@@ -142,7 +142,7 @@ export default function InvitationScreen(props) {
 										autoComplete='email'
 										autoFocus={true}
 										value={emailValue}
-										onChange={(e) => {emailValidation(e)}}
+										onChange={handleEmailChange}
 									/>
 								</InputGroup>
 							</CardBody>
