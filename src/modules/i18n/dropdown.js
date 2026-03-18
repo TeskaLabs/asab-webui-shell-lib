@@ -22,6 +22,8 @@ export default function LanguageDropdown(props) {
 		});
 	}
 
+	const FLAG_STYLE = {width: '32px'};
+
 	const { dispatch } = useAppStore();
 
 	useEffect(() => {
@@ -45,7 +47,7 @@ export default function LanguageDropdown(props) {
 					if (language == 'cimode') return null;
 					return (
 						<DropdownItem key={language} title={language} onClick={() => {changeLanguage(language)}}>
-							<LanguageFlag language={language} className="pe-2" style={{width: '32px'}}/>
+							<LanguageFlag language={language} className="pe-2" style={FLAG_STYLE}/>
 							{t('i18n|language|'+language)}
 						</DropdownItem>
 					);
@@ -56,6 +58,6 @@ export default function LanguageDropdown(props) {
 	);
 }
 
-function LanguageFlag({language, className, style}) {
+const LanguageFlag = React.memo(function LanguageFlag({language, className, style}) {
 	return (<img className={className} src={`media/locale/${language}.svg`} style={style}/>)
-}
+});
