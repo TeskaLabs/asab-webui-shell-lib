@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ResultCard, useAppSelector } from 'asab_webui_components';
+import { ResultCard, useAppSelector, CopyableInput } from 'asab_webui_components';
 import { useNavigate } from 'react-router';
 
 import {
 	Container, Row, Col,
-	Button, Form, FormText,
+	Button, Form,
 	Card, CardBody, CardHeader, CardFooter,
 	InputGroup, InputGroupText, Input, Label
 } from 'reactstrap';
@@ -15,33 +15,11 @@ import { FlowbiteIllustration } from 'asab_webui_components';
 // Component that handles user invitation
 export default function InvitationScreen(props) {
 	const [emailValue, setEmailValue] = useState('');
-	const [isInvitationSuccessful, setIsInvitationSuccessful] = useState(undefined);
-	const [registrationUrl, setRegistrationUrl] = useState(undefined);
-	const [urlCopied, setUrlCopied] = useState(undefined);
+	const [responseData, setResponseData] = useState(undefined);
 	const tenant = useAppSelector(state => state.tenant?.current);
 	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const SeaCatAuthAPI = props.app.axiosCreate('seacat-auth');
-
-	// Copy registration URL if there is any
-	const copyRegistrationUrl = () => {
-		if (!registrationUrl) {
-			console.error('No registration URL to copy.');
-			return
-		}
-
-		navigator.clipboard.writeText(registrationUrl)
-			.then(() => {
-				setUrlCopied(true);
-				let timeoutId = setTimeout(() => setUrlCopied(false), 3000);
-				return () => {
-					clearTimeout(timeoutId);
-				};
-			})
-			.catch((error) => {
-				console.error('Failed to copy registration URL: ', error);
-			});
-	};
 
 	// Validate email input
 	const emailValidation = (e) => {
@@ -57,161 +35,138 @@ export default function InvitationScreen(props) {
 		};
 		try {
 			let response = await SeaCatAuthAPI.post(`/account/${tenant}/invite`, body)
-			if (response?.data?.result !== 'OK') {
-				throw new Error('Invitation has not been sent');
-			}
-			setIsInvitationSuccessful(true);
+			setResponseData(response?.data);
 			setEmailValue('');
-			if (response?.data?.registration_url) {
-				setRegistrationUrl(response?.data?.registration_url);
-			} else {
-				setRegistrationUrl(undefined);
-			}
 		} catch(e) {
-			setIsInvitationSuccessful(false);
-			if (e?.response?.data?.registration_url) {
-				setRegistrationUrl(e?.response?.data?.registration_url);
+			if (e?.response?.data) {
+				setResponseData(e?.response?.data);
 			} else {
-				setRegistrationUrl(undefined);
+				props.app.addAlertFromException(e, t('InvitationScreen|Failed to create invitation'));
 			}
 		}
 	}
 
-	// Component that displays the registration URL with a copy button
-	const CopyableRegistrationUrl = ({ registrationUrl }) => (
-		<>
-			<FormText>
-				{t('InvitationScreen|If you want to invite the user manually, message them the registration URL below:')}
-			</FormText>
-			<InputGroup className='mt-2 mb-3'>
-				<Input 
-					readOnly
-					value={registrationUrl}
-				/>
-				<Button
-					outline
-					color='primary'
-					className='text-nowrap'
-					onClick={copyRegistrationUrl}
-				>
-					<i
-						className={urlCopied ? 'bi bi-clipboard-check pe-2' : 'bi bi-clipboard pe-2'}
-						title={t('InvitationScreen|Copy to clipboard')}
-					/>
-					{urlCopied
-						? t('InvitationScreen|Copied!')
-						: t('InvitationScreen|Copy URL')
+	if (responseData) {
+		const emailSent = responseData.email_sent?.result === 'OK';
+		const emailError = responseData.email_sent?.error;
+		const registrationUrl = responseData.registration_url;
+		
+		if (responseData.result === 'OK') {
+			return (
+				<ResultCard status={emailSent ? 'success' : 'warning'}>
+					<h5 className='mb-3'>{t('InvitationScreen|Invitation was created successfully')}</h5>
+					{emailSent
+						? <p>{t('InvitationScreen|The user will receive an email with registration link.')}</p>
+						: <p>{t(
+							'InvitationScreen|However, it was not possible to send the invitation to the user via email ({{reason}}).',
+							{ reason: t(emailError) },
+						)}</p>
 					}
-				</Button>
-			</InputGroup>
-		</>
-	);
+					{registrationUrl
+						&& <>
+							{emailSent
+								? <p>{t('InvitationScreen|You can also share the link manually:')}</p>
+								: <p>{t('InvitationScreen|You can share the link manually:')}</p>
+							}
+							<div>
+								<CopyableInput
+									className='mt-2 mb-3'
+									value={registrationUrl}
+								/>
+							</div>
+						</>
+					}
+					<div className='mt-2'>
+						<Button
+							onClick={() => navigate('/auth/credentials')}
+							color='primary'
+							size='lg'
+						>
+							{t('General|Continue')}
+						</Button>
+					</div>
+				</ResultCard>
+			);
+		}
 
-	// Display for successful invitation
-	const SuccessfulInvitationCardBody = () => (
-		<>
-			<h6>{t('InvitationScreen|Invitation was sent successfully')}</h6>
-			{registrationUrl && <CopyableRegistrationUrl
-				registrationUrl={registrationUrl}
-			/>}
-			<div className='mt-2'>
-				<Button
-					onClick={() => navigate('/auth/credentials')}
-					color='primary'
-					size='lg'
-				>
-					{t('General|Continue')}
-				</Button>
-			</div>
-		</>
-	);
-
-	// Display for unsuccessful invitation
-	const UnsuccessfulInvitationCardBody = () => (
-		<>
-			<h6>{t('InvitationScreen|Invitation was not sent')}</h6>
-			{registrationUrl
-				? <CopyableRegistrationUrl
-					registrationUrl={registrationUrl}
-				/>
-				: <FormText>{t('InvitationScreen|The user could not be invited')}</FormText>
-			}
-			<div className='mt-2'>
-				<Button
-					onClick={() => setIsInvitationSuccessful(undefined)}
-					color='primary'
-					size='lg'
-				>
-					{t('General|Back')}
-				</Button>
-			</div>
-		</>
-	);
+		const responseError = responseData.error;
+		return (
+			<ResultCard status='danger'>
+				<h5>{t('InvitationScreen|Invitation request failed')}</h5>
+				{responseError
+					&& <p>{t(responseError)}</p>
+				}
+				<div className='mt-2'>
+					<Button
+						onClick={() => setResponseData(undefined)}
+						color='primary'
+						size='lg'
+					>
+						{t('General|Back')}
+					</Button>
+				</div>
+			</ResultCard>
+		);
+	}
 
 	return (
-		<Container fluid className={(isInvitationSuccessful == undefined) ? '' : 'h-100'}>
-			{(isInvitationSuccessful != undefined) ? (
-				<ResultCard status={isInvitationSuccessful ? 'success' : 'danger'}>
-					{isInvitationSuccessful ? <SuccessfulInvitationCardBody/> : <UnsuccessfulInvitationCardBody/>}
-				</ResultCard>
-			) : (
-				<Row className='justify-content-center pt-5'>
-					<Col md='4'>
-						<Form onSubmit={(e) => {sendInvitation(e)}}>
-							<Card className='invite-card'>
-								<CardHeader className='card-header-flex'>
-									<div className='flex-fill'>
-										<h3>
-											<i className='bi bi-person-plus pe-2' />
-											{t('InvitationScreen|Invite other user')}
-										</h3>
-									</div>
-								</CardHeader>
-								<CardBody>
-									<div className="w-50 mx-auto">
-										<FlowbiteIllustration
-											name='invite'
-											className='pb-3'
-											title={t('InvitationScreen|Invite other user')}
-										/>
-									</div>
-									<Label>{t('InvitationScreen|Enter the user\'s email address')}</Label>
-									<InputGroup>
-										<InputGroupText>
-											<i className='bi bi-envelope-at' />
-										</InputGroupText>
-										<Input
-											name='email'
-											type='email'
-											autoComplete='email'
-											autoFocus={true}
-											value={emailValue}
-											onChange={(e) => {emailValidation(e)}}
-										/>
-									</InputGroup>
-								</CardBody>
-								<CardFooter className='card-footer-flex'>
-									<Button
-										outline
-										color='primary'
-										type='button'
-										onClick={() => navigate(-1)}
-									>
-										{t('General|Cancel')}
-									</Button>
-									<div className='flex-fill'>&nbsp;</div>
-									<Button
-										color='primary'
-										disabled={emailValue === ''} // Disable button if input is empty
-									>
-										{t('InvitationScreen|Invite')}
-									</Button>
-								</CardFooter>
-							</Card>
-						</Form>
-					</Col>
-				</Row>
-			)}
+		<Container fluid>
+			<Row className='justify-content-center pt-5'>
+				<Col md='4'>
+					<Form onSubmit={(e) => {sendInvitation(e)}}>
+						<Card className='invite-card'>
+							<CardHeader className='card-header-flex'>
+								<div className='flex-fill'>
+									<h3>
+										<i className='bi bi-person-plus pe-2' />
+										{t('InvitationScreen|Invite other user')}
+									</h3>
+								</div>
+							</CardHeader>
+							<CardBody>
+								<div className="w-50 mx-auto">
+									<FlowbiteIllustration
+										name='invite'
+										className='pb-3'
+										title={t('InvitationScreen|Invite other user')}
+									/>
+								</div>
+								<Label>{t('InvitationScreen|Enter the user\'s email address')}</Label>
+								<InputGroup>
+									<InputGroupText>
+										<i className='bi bi-envelope-at' />
+									</InputGroupText>
+									<Input
+										name='email'
+										type='email'
+										autoComplete='email'
+										autoFocus={true}
+										value={emailValue}
+										onChange={(e) => {emailValidation(e)}}
+									/>
+								</InputGroup>
+							</CardBody>
+							<CardFooter className='card-footer-flex'>
+								<Button
+									outline
+									color='primary'
+									type='button'
+									onClick={() => navigate(-1)}
+								>
+									{t('General|Cancel')}
+								</Button>
+								<div className='flex-fill'>&nbsp;</div>
+								<Button
+									color='primary'
+									disabled={emailValue === ''} // Disable button if input is empty
+								>
+									{t('InvitationScreen|Invite')}
+								</Button>
+							</CardFooter>
+						</Card>
+					</Form>
+				</Col>
+			</Row>
 		</Container>
 	);
 }
