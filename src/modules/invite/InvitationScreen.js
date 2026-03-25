@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ResultCard, useAppSelector, CopyableInput } from 'asab_webui_components';
 import { useNavigate } from 'react-router';
 
 import {
@@ -10,7 +9,8 @@ import {
 	InputGroup, InputGroupText, Input, Label
 } from 'reactstrap';
 
-import { FlowbiteIllustration } from 'asab_webui_components';
+import { ResultCard, useAppSelector, CopyableInput, FlowbiteIllustration } from 'asab_webui_components';
+import { isAuthorized } from 'asab_webui_components/seacat-auth';
 
 // Component that handles user invitation
 export default function InvitationScreen(props) {
@@ -20,6 +20,7 @@ export default function InvitationScreen(props) {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const SeaCatAuthAPI = props.app.axiosCreate('seacat-auth');
+	const canAccessCredentialsDetail = isAuthorized(['seacat:credentials:access'], props.app);
 
 	// Handle email input change
 	const handleEmailChange = (e) => {
@@ -50,6 +51,7 @@ export default function InvitationScreen(props) {
 		const emailSent = responseData.email_sent?.result === 'OK';
 		const emailError = responseData.email_sent?.error;
 		const registrationUrl = responseData.registration_url;
+		const credentialsId = responseData.credentials_id;
 		
 		if (responseData.result === 'OK') {
 			return (
@@ -77,13 +79,22 @@ export default function InvitationScreen(props) {
 						</>
 					}
 					<div className='mt-2'>
-						<Button
-							onClick={() => navigate('/auth/credentials')}
-							color='primary'
-							size='lg'
-						>
-							{t('General|Continue')}
-						</Button>
+						{(canAccessCredentialsDetail && credentialsId)
+							? <Button
+								onClick={() => navigate(`/auth/credentials/${credentialsId}`)}
+								color='primary'
+								size='lg'
+							>
+								{t('InvitationScreen|Continue to credentials detail')}
+							</Button>
+							: <Button
+								onClick={() => navigate('/')}
+								color='primary'
+								size='lg'
+							>
+								{t('General|Continue')}
+							</Button>
+						}
 					</div>
 				</ResultCard>
 			);
