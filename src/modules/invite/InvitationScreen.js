@@ -24,7 +24,6 @@ export default function InvitationScreen(props) {
 
 	// Handle email input change
 	const handleEmailChange = (e) => {
-		e.preventDefault();
 		setEmailValue(e.target.value);
 	}
 
