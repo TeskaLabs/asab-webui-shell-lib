@@ -11,15 +11,6 @@
 	--bs-secondary: var(--lavender-mist);
 	--bs-secondary-rgb: var(--lavender-mist-rgb);
 
-	// TODO: http://gitlab.teskalabs.int/team/indigo/-/issues/1995#note_133333
-	// we might use '--bs-secondary-color' and '--bs-secondary-bg' propably?
-
-	--bs-text-primary: var(--pastel-sky-blue);
-	--bs-text-primary-rgb: var(--pastel-sky-blue-rgb);
-
-	--bs-text-secondary: var(--deep-space-blue);
-	--bs-text-secondary-rgb: var(--deep-space-blue-rgb);
-
 	--bs-light: var(--polar-mist);
 	--bs-light-rgb: var(--polar-mist-rgb);
 
@@ -30,7 +21,7 @@
 	--bs-link-color-rgb: var(--soft-sky-blue-rgb);
 
 	--bs-link-hover-color: var(--pastel-sky-blue);
-	--bs-link-hover-color-rgb: var(--pastel-sky-blue-rgb);
+	--bs-link-hover-color-rgb: var(--pastel-sky-rgb);
 
 	--bs-code-color: var(--tropical-rainforest);
 	--bs-code-color-rgb: var(--tropical-rainforest-rgb);
@@ -45,10 +36,10 @@
 	--bs-border-color-rgb: var(--deep-ocean-blue-rgb);
 
 	--bs-input-bg-color: var(--midnight-blue);
-	--bs-input-bg-color-rgb: var(--midnight-blue-rgb);
+	--bs-input-bg-color-rgb: var(--midnight-blue);
 
 	--bs-element-bg-color: var(--nightfall-blue);
-	--bs-element-bg-color-rgb: var(--nightfall-blue-rgb);
+	--bs-element-bg-color-rgb: var(--nightfall-blue);
 
 	--bs-alert-info-color: var(--deep-space-blue);
 	--bs-alert-info-color-rgb: var(--deep-space-blue-rgb);
