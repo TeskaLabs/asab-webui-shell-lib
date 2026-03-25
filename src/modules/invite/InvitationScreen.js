@@ -48,73 +48,73 @@ export default function InvitationScreen(props) {
 	}
 
 	if (responseData) {
-		const emailSent = responseData.email_sent?.result === 'OK';
-		const emailError = responseData.email_sent?.error;
-		const registrationUrl = responseData.registration_url;
-		const credentialsId = responseData.credentials_id;
-		
-		if (responseData.result === 'OK') {
+		if (responseData.result !== 'OK') {
+			const responseError = responseData.error;
 			return (
-				<ResultCard status={emailSent ? 'success' : 'warning'}>
-					<h5 className='mb-3'>{t('InvitationScreen|Invitation was created successfully')}</h5>
-					{emailSent
-						? <p>{t('InvitationScreen|The user will receive an email with registration link.')}</p>
-						: <p>{t(
-							'InvitationScreen|However, it was not possible to send the invitation to the user via email ({{reason}}).',
-							{ reason: t(emailError) },
-						)}</p>
-					}
-					{registrationUrl
-						&& <>
-							{emailSent
-								? <p>{t('InvitationScreen|You can also share the link manually:')}</p>
-								: <p>{t('InvitationScreen|You can share the link manually:')}</p>
-							}
-							<div>
-								<CopyableInput
-									className='mt-2 mb-3'
-									value={registrationUrl}
-								/>
-							</div>
-						</>
+				<ResultCard status='danger'>
+					<h5>{t('InvitationScreen|Invitation request failed')}</h5>
+					{responseError
+						&& <p>{t(responseError)}</p>
 					}
 					<div className='mt-2'>
-						{(canAccessCredentialsDetail && credentialsId)
-							? <Button
-								onClick={() => navigate(`/auth/credentials/${credentialsId}`)}
-								color='primary'
-								size='lg'
-							>
-								{t('InvitationScreen|Continue to credentials detail')}
-							</Button>
-							: <Button
-								onClick={() => navigate('/')}
-								color='primary'
-								size='lg'
-							>
-								{t('General|Continue')}
-							</Button>
-						}
+						<Button
+							onClick={() => setResponseData(undefined)}
+							color='primary'
+							size='lg'
+						>
+							{t('General|Back')}
+						</Button>
 					</div>
 				</ResultCard>
 			);
 		}
 
-		const responseError = responseData.error;
+		const emailSent = responseData.email_sent?.result === 'OK';
+		const emailError = responseData.email_sent?.error;
+		const registrationUrl = responseData.registration_url;
+		const credentialsId = responseData.credentials_id;
+		
 		return (
-			<ResultCard status='danger'>
-				<h5>{t('InvitationScreen|Invitation request failed')}</h5>
-				{responseError
-					&& <p>{t(responseError)}</p>
+			<ResultCard status={emailSent ? 'success' : 'warning'}>
+				<h5 className='mb-3'>{t('InvitationScreen|Invitation was created successfully')}</h5>
+				{emailSent
+					? <p>{t('InvitationScreen|The user will receive an email with registration link.')}</p>
+					: <p>{t(
+						'InvitationScreen|However, it was not possible to send the invitation to the user via email ({{reason}}).',
+						{ reason: t(emailError) },
+					)}</p>
+				}
+				{registrationUrl
+					&& <>
+						{emailSent
+							? <p>{t('InvitationScreen|You can also share the link manually:')}</p>
+							: <p>{t('InvitationScreen|You can share the link manually:')}</p>
+						}
+						<div>
+							<CopyableInput
+								className='mt-2 mb-3'
+								value={registrationUrl}
+							/>
+						</div>
+					</>
 				}
 				<div className='mt-2'>
-					<Button
-						onClick={() => setResponseData(undefined)}
-						color='primary'
-						size='lg'
-					>
-						{t('General|Back')}
-					</Button>
+					{(canAccessCredentialsDetail && credentialsId)
+						? <Button
+							onClick={() => navigate(`/auth/credentials/${credentialsId}`)}
+							color='primary'
+							size='lg'
+						>
+							{t('InvitationScreen|Continue to credentials detail')}
+						</Button>
+						: <Button
+							onClick={() => navigate('/')}
+							color='primary'
+							size='lg'
+						>
+							{t('General|Continue')}
+						</Button>
+					}
 				</div>
 			</ResultCard>
 		);
