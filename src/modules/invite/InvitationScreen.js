@@ -34,15 +34,15 @@ export default function InvitationScreen(props) {
 			email: emailValue
 		};
 		try {
-			let response = await SeaCatAuthAPI.post(`/account/${tenant}/invite`, body)
+			const response = await SeaCatAuthAPI.post(`/account/${tenant}/invite`, body)
 			setResponseData(response?.data);
 			setEmailValue('');
 		} catch(e) {
 			if (e?.response?.data) {
 				setResponseData(e?.response?.data);
-			} else {
-				props.app.addAlertFromException(e, t('InvitationScreen|Failed to create invitation'));
+				return;
 			}
+			props.app.addAlertFromException(e, t('InvitationScreen|Failed to create invitation'));
 		}
 	}
 
