@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
+import { useNavigate, Link } from 'react-router';
 
 import {
 	Container, Row, Col,
@@ -101,16 +101,17 @@ export default function InvitationScreen(props) {
 						</div>
 					</>
 				}
-				<div className='mt-2'>
-					{(canAccessCredentialsDetail && credentialsId)
-						? <Button
-							onClick={() => navigate(`/auth/credentials/${credentialsId}`)}
-							color='primary'
-							size='lg'
+				{(canAccessCredentialsDetail && credentialsId)
+					&& <div className='mt-2 mb-3'>
+						<Link
+							to={`/auth/credentials/${credentialsId}`}
 						>
-							{t('InvitationScreen|Continue to credentials detail')}
-						</Button>
-						: <Button
+							{t('InvitationScreen|Go to credentials detail')}
+						</Link>
+					</div>
+				}
+				<div className='mt-2'>
+					<Button
 						onClick={() => navigate('/')}
 						color='primary'
 						size='lg'
