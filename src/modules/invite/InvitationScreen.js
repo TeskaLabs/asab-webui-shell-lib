@@ -16,6 +16,7 @@ import { isAuthorized } from 'asab_webui_components/seacat-auth';
 export default function InvitationScreen(props) {
 	const [emailValue, setEmailValue] = useState('');
 	const [responseData, setResponseData] = useState(undefined);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 	const tenant = useAppSelector(state => state.tenant?.current);
 	const { t } = useTranslation();
 	const navigate = useNavigate();
@@ -30,6 +31,7 @@ export default function InvitationScreen(props) {
 	// Send invitation to the specified email
 	const sendInvitation = async (e) => {
 		e.preventDefault();
+		setIsSubmitting(true);
 		const body = {
 			email: emailValue
 		};
@@ -37,7 +39,9 @@ export default function InvitationScreen(props) {
 			const response = await SeaCatAuthAPI.post(`/account/${tenant}/invite`, body)
 			setResponseData(response?.data);
 			setEmailValue('');
+			setIsSubmitting(false);
 		} catch(e) {
+			setIsSubmitting(false);
 			if (e?.response?.data) {
 				setResponseData(e?.response?.data);
 				return;
@@ -107,13 +111,12 @@ export default function InvitationScreen(props) {
 							{t('InvitationScreen|Continue to credentials detail')}
 						</Button>
 						: <Button
-							onClick={() => navigate('/')}
-							color='primary'
-							size='lg'
-						>
-							{t('General|Continue')}
-						</Button>
-					}
+						onClick={() => navigate('/')}
+						color='primary'
+						size='lg'
+					>
+						{t('General|Continue')}
+					</Button>
 				</div>
 			</ResultCard>
 		);
@@ -168,7 +171,7 @@ export default function InvitationScreen(props) {
 								<div className='flex-fill'>&nbsp;</div>
 								<Button
 									color='primary'
-									disabled={emailValue === ''} // Disable button if input is empty
+									disabled={emailValue === '' || isSubmitting} // Disable button if input is empty or request is in flight
 								>
 									{t('InvitationScreen|Invite')}
 								</Button>
