@@ -122,7 +122,7 @@ export default function InvitationScreen(props) {
 				}
 				<div className='mt-2'>
 					<Button
-						onClick={() => navigate('/')}
+						onClick={() => navigate(-1)}
 						color='primary'
 						size='lg'
 					>
