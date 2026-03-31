@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, Link } from 'react-router';
+import { useNavigate, Link, useLocation } from 'react-router';
 
 import {
 	Container, Row, Col,
@@ -22,6 +22,16 @@ export default function InvitationScreen(props) {
 	const navigate = useNavigate();
 	const SeaCatAuthAPI = props.app.axiosCreate('seacat-auth');
 	const canAccessCredentialsDetail = isAuthorized(['seacat:credentials:access'], props.app);
+	const location = useLocation();
+
+	useEffect(() => {
+		if (location?.state?.clearInvitation === true) {
+			// Clear the invitation data to show the form again
+			setResponseData(undefined);
+			setEmailValue('');
+			navigate('.', { replace: true, state: {} });
+		}
+	}, [location?.state?.clearInvitation]);
 
 	// Handle email input change
 	const handleEmailChange = (e) => {
