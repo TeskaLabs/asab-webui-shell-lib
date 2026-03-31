@@ -41,6 +41,7 @@ export default function InvitationScreen(props) {
 	// Send invitation to the specified email
 	const sendInvitation = async (e) => {
 		e.preventDefault();
+		if (isSubmitting) return;
 		setIsSubmitting(true);
 		const body = {
 			email: emailValue
@@ -49,14 +50,14 @@ export default function InvitationScreen(props) {
 			const response = await SeaCatAuthAPI.post(`/account/${tenant}/invite`, body)
 			setResponseData(response?.data);
 			setEmailValue('');
-			setIsSubmitting(false);
 		} catch(e) {
-			setIsSubmitting(false);
 			if (e?.response?.data) {
 				setResponseData(e?.response?.data);
 				return;
 			}
 			props.app.addAlertFromException(e, t('InvitationScreen|Failed to create invitation'));
+		} finally {
+			setIsSubmitting(false);
 		}
 	}
 
