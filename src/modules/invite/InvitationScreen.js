@@ -83,7 +83,7 @@ export default function InvitationScreen(props) {
 		}
 
 		const emailSent = responseData.email_sent?.result === 'OK';
-		const emailError = responseData.email_sent?.error;
+		const emailError = responseData.email_sent?.error || 'InvitationScreen|Unknown error';
 		const registrationUrl = responseData.registration_url;
 		const credentialsId = responseData.credentials_id;
 		
