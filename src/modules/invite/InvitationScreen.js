@@ -26,10 +26,10 @@ export default function InvitationScreen(props) {
 
 	useEffect(() => {
 		if (location?.state?.clearInvitation === true) {
-			// Clear the invitation data to show the form again
+			// Clear the invitation data and reload the page without the parameter to ensure showing an empty form again
 			setResponseData(undefined);
 			setEmailValue('');
-			navigate('.', { replace: true, state: {} });
+			navigate(location.pathname, { replace: true, state: {} });
 		}
 	}, [location?.state?.clearInvitation]);
 
