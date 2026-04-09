@@ -25,12 +25,13 @@ export default function InvitationScreen(props) {
 	const location = useLocation();
 
 	useEffect(() => {
-		if (location?.state?.clearInvitation === true) {
-			// Clear the invitation data and reload the page without the parameter to ensure showing an empty form again
-			setResponseData(undefined);
-			setEmailValue('');
-			navigate(location.pathname, { replace: true, state: {} });
+		if (location?.state?.clearInvitation !== true) {
+			return;
 		}
+		// Clear the invitation data and reload the page without the parameter to ensure showing an empty form again
+		setResponseData(undefined);
+		setEmailValue('');
+		navigate(location.pathname, { replace: true, state: {} });
 	}, [location?.state?.clearInvitation]);
 
 	// Handle email input change
