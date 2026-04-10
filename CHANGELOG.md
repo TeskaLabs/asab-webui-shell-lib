@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.3.12
+
+- Improve invitation UX (#61)
+
 ## 27.3.11
 
 - Temporaly pin the `axios` version within range of `1.8.4` to `1.14.0` included (#62)
