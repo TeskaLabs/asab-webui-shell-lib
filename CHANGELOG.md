@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.3.14
+
+- Fix print layout for dashboard grid items containing Recharts charts (#63)
+
 ## 27.3.13
 
 - Improve invitation UX (#61)

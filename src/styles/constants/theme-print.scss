@@ -193,20 +193,12 @@
 						display: block !important; /*avoid widgets breaking on transition between pages*/
 						margin: 0 auto 20px;
 						position: static !important;
-
-						height: initial !important; /* Alternatively, set "height: initial !important;" */
 						width: initial !important; /* Alternatively, set "width: initial !important;" */
-
 						break-inside: avoid;
 						page-break-inside: avoid; /*avoid widgets breaking on transition between pages*/
 					}
-				}
-				.recharts-responsive-container {
-					.recharts-wrapper {
-						width: 100% !important;
-						.recharts-surface, .recharts-legend-wrapper {
-							width: 100% !important;
-						}
+					.react-grid-item:not(:has(.recharts-responsive-container)) {
+						height: initial !important;
 					}
 				}
 			}
