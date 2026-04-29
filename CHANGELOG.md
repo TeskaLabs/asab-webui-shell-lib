@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.3.15
+
+- Unpin the `axios` version to `^1.15.0` (#64)
+
 ## 27.3.14
 
 - Fix print layout for dashboard grid items containing Recharts charts (#63)
