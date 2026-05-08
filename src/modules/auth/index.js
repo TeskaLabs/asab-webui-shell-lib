@@ -316,21 +316,37 @@ export default class AuthModule extends Module {
 	}
 
 	async updateUserInfo() {
-		let response;
-		try {
-			response = await this.Api.userinfo(this.OAuthTokens.access_token);
-		}
-		catch (err) {
-			console.error("Failed to update user info", err);
-			this.UserInfo = null;
-			if (this.App.AppStore) {
-				this.App.AppStore.dispatch?.({ type: types.AUTH_USERINFO, payload: this.UserInfo });
+		const internal = this.OAuthTokens.internal || false;
+
+		if (!internal) {
+			let response;
+			try {
+				response = await this.Api.userinfo(this.OAuthTokens.access_token);
 			}
-			return false;
+			catch (err) {
+				console.error("Failed to update user info", err);
+				this.UserInfo = null;
+				if (this.App.AppStore) {
+					this.App.AppStore.dispatch?.({ type: types.AUTH_USERINFO, payload: this.UserInfo });
+				}
+				return false;
+			}
+			this.UserInfo = response.data;
+			this.SessionExpiration = response.data?.exp;	
+		} else {
+			// TODO: We need to load the userinfo from the SeaCat Auth private API
+			this.UserInfo = {  // Inject mocked UserInfo object, this means the application will NOT require user authorization (remove 'disabled' to enable)
+				"username": "johndev",
+				"email": "dev@dev.de",
+				"phone": "123456789",
+				"resources": {"plus": ["authz:superuser", "bitswan:discover:access"]},
+				"roles": ["plus/Admin"],
+				"sub": "devdb:dev:1abc2def3456",
+				"tenants": ["plus"]
+			};
+			this.SessionExpiration = 1000000000;	
 		}
 
-		this.UserInfo = response.data;
-		this.SessionExpiration = response.data?.exp;
 		if (this.App.AppStore) {
 			this.App.AppStore.dispatch?.({ type: types.AUTH_USERINFO, payload: this.UserInfo });
 		}
