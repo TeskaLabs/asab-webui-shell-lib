@@ -16,7 +16,6 @@ export default class Router extends Component {
 		/* Example route:
 			{
 				path: '/some/path', // Url path
-				end: true, // Whether path must be matched exactly (legacy; ignored in data router)
 				name: 'Some Name', // Route name
 				component: ReactComponent, // Component to be rendered
 				resource: some:resource, // Resource of the component | *optional
