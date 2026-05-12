@@ -1,44 +1,11 @@
 import React, { useEffect } from 'react';
-import { Route, Routes } from 'react-router';
 import { useAppStore, useAppSelector } from 'asab_webui_components';
 
 import { SET_HELP_PATH } from '../../actions';
-import RouteErrorHandler from '../RouteErrorHandler';
-// TODO: properly isolate authorization screen from the Application (should be injected when needed and only when AuthModule is enabled)
 import UnauthorizedAccessScreen from '../../screens/UnauthorizedAccessScreen';
-import InvalidRouteScreen from "../../screens/InvalidRouteScreen";
 
 
-export default function ApplicationRouter(props) {
-	const routes = useAppSelector(state => state.router?.routes);
-	return(
-		<Routes>
-			{routes && routes.map((route, idx) => {
-				return route.component ? (
-					<Route
-						key={idx}
-						path={`${route.path}`}
-						end={route.end}
-						name={route.name}
-						element={(
-							<RouteErrorHandler>
-								<RouteRenderer app={props.app} route={route} routeComponent={<route.component app={props.app} {...route.props} />} />
-							</RouteErrorHandler>
-						)}
-					/>
-				) : (null)
-			})}
-			<Route
-				path="*"
-				element={<InvalidRouteScreen />}
-				// Handle all undefined routes (404)
-			/>
-		</Routes>
-	)
-}
-
-
-function RouteRenderer(props) {
+export default function RouteRenderer(props) {
 	const resources = useAppSelector((state) => state.auth?.resources ? state.auth.resources : []);
 	const { dispatch } = useAppStore();
 	const defaultHelp = props.app.Config.get("help");

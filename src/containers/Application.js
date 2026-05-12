@@ -1,5 +1,6 @@
 import React, { Component, Suspense } from 'react';
 import Axios from 'axios';
+import { Outlet } from 'react-router';
 
 import { Module, PubSubProvider, ErrorHandler, AppStoreProvider, createAppStore } from "asab_webui_components";
 
@@ -17,7 +18,6 @@ import alertsReducer from './Alerts/reducer';
 import sidebarReducer from './Sidebar/reducer';
 import headerReducer from './Header/reducer';
 import navigationReducer from './Navigation/reducer';
-import routerReducer from './Router/reducer';
 import fullscreenModeReducer from './FullscreenMode/reducer';
 import advancedModeReducer from './AdvancedMode/reducer';
 
@@ -30,7 +30,6 @@ import TitleService from "../services/TitleService";
 import HelpService from "./Header/Help/HelpService";
 
 import AccessDeniedCard from '../modules/tenant/access/AccessDeniedCard';
-import ApplicationRouter from './Router/ApplicationRouter';
 
 import SuspenseScreen from '../screens/SuspenseScreen';
 
@@ -60,7 +59,6 @@ class Application extends Component {
 		this.ReduxService.addReducer("header", headerReducer);
 		this.ReduxService.addReducer("sidebar", sidebarReducer);
 		this.ReduxService.addReducer("navigation", navigationReducer);
-		this.ReduxService.addReducer("router", routerReducer);
 
 		this.Router = new Router(this);
 		this.Navigation = new Navigation(this);
@@ -793,7 +791,7 @@ class Application extends Component {
 				<Header app={this} />
 				<main id="app-main">
 					<Suspense fallback={<SuspenseScreen app={this} />} /*The suspense that captures lazy loading of the federated apps*/>
-						<ApplicationRouter app={this} />
+						<Outlet />
 					</Suspense>
 				</main>
 				<Sidepanel app={this} />

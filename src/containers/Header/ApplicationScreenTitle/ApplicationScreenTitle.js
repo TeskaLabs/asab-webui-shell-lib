@@ -16,14 +16,20 @@ import './ApplicationScreenTitle.scss';
 		hasHeaderTitle: false,
 	}
 
-	root.render(
-		<HashRouter>
-			<Application
-				configdefaults={ConfigDefaults} 
-				modules={modules}
-			/>
-		</HashRouter>
-	);
+	const router = createHashRouter([
+		{
+			id: 'root',
+			path: '/',
+			element: <Application configdefaults={ConfigDefaults} modules={modules} />,
+			children: [
+				{ path: '*', element: <InvalidRouteScreen /> },
+			],
+		},
+	]);
+
+	setRouterInstance(router);
+
+	root.render(<RouterProvider router={router} />);
 */
 
 const ApplicationScreenTitle = (props) => {

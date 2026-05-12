@@ -1,25 +1,17 @@
 import React from 'react';
-import { useAppSelector } from 'asab_webui_components';
-import { useMatch } from 'react-router';
+import { useMatches } from 'react-router';
 
 import ApplicationScreenTitle from './ApplicationScreenTitle';
 
 const ApplicationTitleRouter = (props) => {
-	const routes = useAppSelector(state => state.router?.routes || []);
-	const filteredRoutes = filterRoutesByMatch(routes);
+	const matches = useMatches();
+	const routes = matches
+		.filter(match => match.handle && match.handle.name)
+		.map(match => ({ name: match.handle.name, path: match.pathname }));
 
 	return (
-		<ApplicationScreenTitle app={props.app} routes={filteredRoutes} />
+		<ApplicationScreenTitle app={props.app} routes={routes} />
 	)
 }
 
 export default ApplicationTitleRouter;
-
-function filterRoutesByMatch(routes) {
-	return routes.filter(route => {
-		const match = useMatch({
-			path: `${route.path}`
-		});
-		return match;
-	});
-}
