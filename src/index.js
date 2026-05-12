@@ -1,6 +1,8 @@
 import './styles/index.scss';
 
 export { default as Application } from './containers/Application';
+export { default as InvalidRouteScreen } from './screens/InvalidRouteScreen';
+export { setRouterInstance } from './containers/Router/registry';
 export { getBrandImage } from './components/branding/BrandImage';
 export { default as I18nModule } from './modules/i18n';
 export { default as TenantModule } from './modules/tenant';

@@ -21,14 +21,20 @@ import { SidebarItemRenderer } from './SidebarItemRenderer';
 		hasSidebar: false,
 	}
 
-	root.render(
-		<HashRouter>
-			<Application
-				configdefaults={ConfigDefaults} 
-				modules={modules}
-			/>
-		</HashRouter>
-	);
+	const router = createHashRouter([
+		{
+			id: 'root',
+			path: '/',
+			element: <Application configdefaults={ConfigDefaults} modules={modules} />,
+			children: [
+				{ path: '*', element: <InvalidRouteScreen /> },
+			],
+		},
+	]);
+
+	setRouterInstance(router);
+
+	root.render(<RouterProvider router={router} />);
 */
 
 export default function Sidebar (props) {

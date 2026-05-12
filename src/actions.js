@@ -16,7 +16,6 @@ export const CHANGE_CONFIG = "asab/changeConfig";
 export const COLLAPSE_SIDEBAR = "asab/collapseSidebar";
 
 export const SET_NAVIGATION_ITEMS = "asab/setNavigationItems";
-export const SET_ROUTES = "asab/setRoutes";
 
 export const SET_HEADER_NAVIGATION_ITEMS = "asab/setHeaderNavigationItems";
 
