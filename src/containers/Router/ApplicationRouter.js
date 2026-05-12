@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { createHashRouter, RouterProvider } from 'react-router';
+import React, { useEffect } from 'react';
+import { Route, Routes } from 'react-router';
 import { useAppStore, useAppSelector } from 'asab_webui_components';
 
 import { SET_HELP_PATH } from '../../actions';
@@ -11,45 +11,30 @@ import InvalidRouteScreen from "../../screens/InvalidRouteScreen";
 
 export default function ApplicationRouter(props) {
 	const routes = useAppSelector(state => state.router?.routes);
-	const [router, setRouter] = useState(null);
-
-	useEffect(() => {
-		if (!routes || routes.length === 0) {
-			return;
-		}
-
-		const routeObjects = routes.map(route => {
-			return {
-				path: route.path,
-				handle: {
-					name: route.name,
-					help: route.help,
-					resource: route.resource
-				},
-				element: (
-					<RouteErrorHandler>
-						<RouteRenderer app={props.app} route={route} routeComponent={<route.component app={props.app} {...route.props} />} />
-					</RouteErrorHandler>
-				)
-			};
-
-		});
-
-		// Catch all undefined routes (404)
-		routeObjects.push({
-			path: '*',
-			element: <InvalidRouteScreen />
-		});
-
-		const newRouter = createHashRouter(routeObjects);
-		setRouter(newRouter);
-	}, [routes, props.app]);
-
-	if (!router) {
-		return null;
-	}
-
-	return <RouterProvider router={router} />;
+	return(
+		<Routes>
+			{routes && routes.map((route, idx) => {
+				return route.component ? (
+					<Route
+						key={idx}
+						path={`${route.path}`}
+						end={route.end}
+						name={route.name}
+						element={(
+							<RouteErrorHandler>
+								<RouteRenderer app={props.app} route={route} routeComponent={<route.component app={props.app} {...route.props} />} />
+							</RouteErrorHandler>
+						)}
+					/>
+				) : (null)
+			})}
+			<Route
+				path="*"
+				element={<InvalidRouteScreen />}
+				// Handle all undefined routes (404)
+			/>
+		</Routes>
+	)
 }
 
 
@@ -64,7 +49,7 @@ function RouteRenderer(props) {
 			type: SET_HELP_PATH,
 			helpPath: props.route.help ? props.route.help : defaultHelp
 		});
-	}, [props.route.help, defaultHelp, dispatch]);
+	}, [props.route.help]);
 
 	// Route component renders the approriate screen based on the route
 	if (props.route.resource) {

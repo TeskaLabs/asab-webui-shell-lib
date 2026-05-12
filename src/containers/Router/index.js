@@ -7,8 +7,6 @@ export default class Router extends Component {
 		super(app);
 		this.Routes = [];
 		this.App = app;
-		// Debounce timer for batching route updates
-		this._dispatchTimeout = null;
 	}
 
 	addRoute(route) {
@@ -23,18 +21,8 @@ export default class Router extends Component {
 			}
 		*/
 		this.Routes.push(route);
-
-		// Debounce the dispatch to batch multiple route additions during init
-		// This prevents creating multiple routers when modules register routes
-		if (this._dispatchTimeout) {
-			clearTimeout(this._dispatchTimeout);
+		if (this.App.AppStore) {
+			this.App.AppStore.dispatch?.({ type: SET_ROUTES, routes: this.Routes });
 		}
-
-		this._dispatchTimeout = setTimeout(() => {
-			this._dispatchTimeout = null;
-			if (this.App.AppStore) {
-				this.App.AppStore.dispatch?.({ type: SET_ROUTES, routes: [...this.Routes] });
-			}
-		}, 0);
 	}
 }
