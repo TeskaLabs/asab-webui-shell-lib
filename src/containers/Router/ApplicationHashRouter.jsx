@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { createHashRouter, RouterProvider } from 'react-router';
 
 /*
@@ -24,12 +24,19 @@ import { createHashRouter, RouterProvider } from 'react-router';
 
 export default function ApplicationHashRouter({ children }) {
 
-	const router = createHashRouter([
-		{
-			path: '*', // Allowing all routes here is OK since routing itself is handled by the ApplicationRouter
-			element: children
-		}
-	]);
+	/*
+		Using ref to avoid re-creation of the router for every component instance.
+		In dev mode it can cause multiple route renders (in strict mode).
+	*/
+	const routerRef = useRef(null);
+	if (routerRef.current === null) {
+		routerRef.current = createHashRouter([
+			{
+				path: '*', // All routes are handled by ApplicationRouter inside Application
+				element: children
+			}
+		]);
+	}
 
-	return <RouterProvider router={router} />;
+	return <RouterProvider router={routerRef.current} />;
 }
