@@ -32,7 +32,7 @@ export default function ApplicationHashRouter({ children }) {
 	if (routerRef.current === null) {
 		routerRef.current = createHashRouter([
 			{
-				path: '*', // All routes are handled by ApplicationRouter inside Application
+				path: '*', // Allowing all routes here is OK since routing itself is handled by the ApplicationRouter
 				element: children
 			}
 		]);
