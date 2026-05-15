@@ -180,6 +180,11 @@
 					position: unset !important;
 					transform: unset !important;
 					text-align: initial;
+					break-inside: avoid;
+					page-break-inside: avoid; /*avoid widgets breaking on transition between pages*/
+				}
+				.react-grid-item:not(:has(.recharts-responsive-container)) {
+					height: initial !important; /* Allow table widgets to expand and show all content */
 				}
 			}
 		}
