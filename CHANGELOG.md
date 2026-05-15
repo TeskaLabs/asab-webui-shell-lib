@@ -3,6 +3,7 @@
 ## 27.4.0
 
 - Create a reusable Application Hash router component (#68)
+- Update Report printing styles for widgets with scroll (#68)
 
 ## 27.3.15
 
