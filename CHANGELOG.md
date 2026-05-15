@@ -1,5 +1,10 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.4.0
+
+- Create a reusable Application Hash router component (#68)
+- Update Report printing styles for widgets with scroll (#68)
+
 ## 27.3.15
 
 - Unpin the `axios` version to `^1.15.0` (#64)
