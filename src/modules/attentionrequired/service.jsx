@@ -16,7 +16,7 @@ export default class AttentionRequiredService extends Service {
 
 	// Start beacon websocket connection on initialization
 	initialize() {
-		// this.connectBeaconWebSocket();
+		this.connectBeaconWebSocket();
 	}
 
 	// Method for connection to beacon websocket
