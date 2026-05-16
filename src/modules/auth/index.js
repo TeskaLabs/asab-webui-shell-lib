@@ -344,7 +344,7 @@ export default class AuthModule extends Module {
 				"sub": "devdb:dev:1abc2def3456",
 				"tenants": ["plus"]
 			};
-			this.SessionExpiration = 1000000000;	
+			this.SessionExpiration = Date.now() + 1000000000;	
 		}
 
 		if (this.App.AppStore) {
