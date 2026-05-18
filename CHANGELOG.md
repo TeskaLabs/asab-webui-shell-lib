@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.4.1
+
+- Add animation className `animation-glow-pulse` (#69)
+
 ## 27.4.0
 
 - Create a reusable Application Hash router component (#68)
