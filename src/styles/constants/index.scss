@@ -73,26 +73,25 @@
 	cursor: pointer;
 }
 
+/*
+	Attention pulse animation used to highlight interactive CTA elements
+	(e.g., Discover/Explore links and Alerts Detail screen actions).
+	Temporarily changes background, glow, and text color
+*/
 .animation-glow-pulse {
-	animation: glowing-light 1500ms infinite;
+	animation: attention-glow-pulse 1500ms infinite;
 }
 
-@keyframes glowing-light {
-	0% {
+@keyframes attention-glow-pulse {
+	0%, 100% {
 		background-color: var(--bs-primary);
 		box-shadow: 0 0 3px var(--bs-primary);
-		color: var(--white);
+		color: var(--white)
 	}
 
 	50% {
 		background-color: var(--bs-card-bg);
 		box-shadow: 0 0 10px var(--bs-card-bg);
-		color: var(--white);
-	}
-
-	100% {
-		background-color: var(--bs-primary);
-		box-shadow: 0 0 3px var(--bs-primary);
-		color: var(--white);
+		color: var(--royal-blue);
 	}
 }
