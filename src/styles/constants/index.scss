@@ -2,6 +2,7 @@
 @use './theme-light.scss';
 @use './theme-dark.scss';
 @use './theme-print.scss';
+@use './animations.scss';
 
 // Universal styling goes here
 // It means fonts, borders but no colors
@@ -71,27 +72,4 @@
 
 .cursor-pointer {
 	cursor: pointer;
-}
-
-/*
-	Attention pulse animation used to highlight interactive CTA elements
-	(e.g., Discover/Explore links and Alerts Detail screen actions).
-	Temporarily changes background, glow, and text color
-*/
-.animation-glow-pulse-primary {
-	animation: glow-pulse-primary 1500ms infinite;
-}
-
-@keyframes glow-pulse-primary {
-	0%, 100% {
-		background-color: var(--bs-primary);
-		box-shadow: 0 0 3px var(--bs-primary);
-		color: var(--white)
-	}
-
-	50% {
-		background-color: var(--bs-card-bg);
-		box-shadow: 0 0 10px var(--bs-card-bg);
-		color: var(--bs-primary);
-	}
 }
