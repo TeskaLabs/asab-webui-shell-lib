@@ -1,11 +1,8 @@
-/*
-	Attention pulse animation used to highlight interactive CTA elements.
-	Temporarily changes background, glow, and text color
-*/
 .animation-glow-pulse-primary {
 	animation: glow-pulse-primary 1500ms infinite;
 }
 
+// Changes background, glow, and text color
 @keyframes glow-pulse-primary {
 	0%, 100% {
 		background-color: var(--bs-primary);
