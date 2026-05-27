@@ -561,8 +561,8 @@ class Application extends Component {
 			this.setFullScreenMode('on');
 		}
 
-		// CTRL+Q (Windows) or CTRL+1 (Linux) enables the advanced mode
-		if ((event.ctrlKey && event.code === 'KeyQ') || (event.code === 'Digit1' && event.ctrlKey)) {
+		// CTRL+M (Chrome, Firefox and Safari on Windows, Linux and MacOS)
+		if ((event.ctrlKey && event.code === 'KeyM')) {
 			this.setAdvancedMode(0);
 		}
 
