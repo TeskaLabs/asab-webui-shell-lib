@@ -523,7 +523,6 @@ class Application extends Component {
 		this.setState((prevState) => ({
 			printReadyIndicators: prevState.printReadyIndicators + 1,
 		}));
-		console.log('print-ready', document.body.getAttribute('print-ready'), 'push');
 	}
 
 	popPrintReadyIndicator() {
@@ -536,7 +535,6 @@ class Application extends Component {
 				printReadyIndicators: Math.max(nextValue, 0),
 			};
 		});
-		console.log('print-ready', document.body.getAttribute('print-ready'), 'pop');
 	}
 
 	registerService(service) {
@@ -593,13 +591,11 @@ class Application extends Component {
 				if (this.state.printReadyIndicators === 0) {
 					document.body.setAttribute('print-ready', 'true');
 					this._printReadyTimeout = null;
-					console.log('print-ready', document.body.getAttribute('print-ready'), 'set true');
 				}
 			}, 1500); // Add 1500ms delay to ensure that the print-ready attribute is set after the last print-ready indicator is popped
 		} else {
 			this._clearPrintReadyTimeout();
 			document.body.setAttribute('print-ready', 'false');
-			console.log('print-ready', document.body.getAttribute('print-ready'), 'set false');
 		}
 	}
 
@@ -615,7 +611,6 @@ class Application extends Component {
 
 		this._clearPrintReadyTimeout();
 		document.body.removeAttribute('print-ready');
-		console.log('print-ready', document.body.getAttribute('print-ready'), 'unmount removed');
 	}
 
 	_clearPrintReadyTimeout() {
@@ -652,7 +647,6 @@ class Application extends Component {
 		if (this.SplashscreenRequestors.size == 0) {
 			let splashscreen = document.getElementById('app-splashscreen'); // See public/index.html
 			splashscreen?.classList.add("d-none");
-			console.log('print-ready', document.body.getAttribute('print-ready'), 'splash last removed, pop');
 			// Decrement print-ready indicator value if no splash screen requestors are present
 			this.popPrintReadyIndicator();
 		}

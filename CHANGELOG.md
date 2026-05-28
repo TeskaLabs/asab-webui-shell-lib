@@ -1,8 +1,12 @@
 # CHANGELOG for ASAB WebUI Shell
 
-## 27.4.2
+## 27.4.3
 
 - Fixed inconsistent usage of colors in button and alert components (#71)
+
+## 27.4.2
+
+- Remove print-ready state console logs (#70)
 
 ## 27.4.1
 
