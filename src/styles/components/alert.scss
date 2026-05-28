@@ -18,6 +18,7 @@
 		}
 
 		&secondary {
+			color: rgba(var(--black-rgb));
 			background-color: rgba(var(--bs-secondary-rgb));
 		}
 
@@ -43,11 +44,12 @@
 		}
 
 		&light {
+			color: rgba(var(--black-rgb));
 			background-color: rgba(var(--bs-light-rgb));
 		}
 
 		&dark {
-			background-color: rgba(var(--bs-dark-rgb));
+			background-color: rgba(var(--charcoal-rgb));
 		}
 	}
 }
