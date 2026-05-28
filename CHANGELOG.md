@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.4.2
+
+- Fixed inconsistent usage of colors in button and alert components (#70)
+
 ## 27.4.1
 
 - Add animation className `animation-glow-pulse` (#69)
