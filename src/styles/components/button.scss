@@ -51,7 +51,7 @@
 .btn-outline- {
 
 	&primary {
-	--bs-btn-color: var(--royal-blue);
+		--bs-btn-color: var(--royal-blue);
 		&:active {
 			--bs-btn-active-bg: var(--royal-blue);
 		}
@@ -73,7 +73,7 @@
 
 	.btn-outline-{
 		&primary {
-		--bs-btn-color: var(--soft-sky-blue);
+			--bs-btn-color: var(--soft-sky-blue);
 			&:active {
 			--bs-btn-active-bg: var(--soft-sky-blue);
 			}
