@@ -2,7 +2,7 @@
 
 ## 27.4.2
 
-- Fixed inconsistent usage of colors in button and alert components (#70)
+- Fixed inconsistent usage of colors in button and alert components (#71)
 
 ## 27.4.1
 
