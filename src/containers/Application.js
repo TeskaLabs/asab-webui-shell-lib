@@ -561,8 +561,12 @@ class Application extends Component {
 			this.setFullScreenMode('on');
 		}
 
+		// TODO: Remove CTRL+Q and CTRL+1 by May of 2027
+		// CTRL+SHIFT+U (Chrome, Firefox and Safari on Windows, Linux and MacOS)
 		// CTRL+Q (Windows) or CTRL+1 (Linux) enables the advanced mode
-		if ((event.ctrlKey && event.code === 'KeyQ') || (event.code === 'Digit1' && event.ctrlKey)) {
+		if ((event.ctrlKey && event.code === 'KeyQ') ||
+			(event.code === 'Digit1' && event.ctrlKey) ||
+			(event.ctrlKey && event.shiftKey && event.code === 'KeyU')) {
 			this.setAdvancedMode(0);
 		}
 
@@ -730,9 +734,9 @@ class Application extends Component {
 			enabled: enabled
 		});
 		if (enabled) {
-			this.addAlert('warning', "ASABApplicationContainer|Advanced mode enabled", 1, true);
+			this.addAlert('warning', "ASABApplicationContainer|Advanced mode enabled", 2, true);
 		} else {
-			this.addAlert('success', "ASABApplicationContainer|Advanced mode disabled", 1, true);
+			this.addAlert('success', "ASABApplicationContainer|Advanced mode disabled", 2, true);
 		}
 	}
 
