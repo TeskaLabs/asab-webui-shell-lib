@@ -81,13 +81,7 @@ export class SeaCatAuthApi {
 	}
 
 	userinfo(access_token, internal = false) {
-
-		let userinfoPath = '/userinfo';
-		let api = this.OidcAPI;
-		if (internal) {
-			api = this.SeaCatAuthAPI;
-			userinfoPath = '/openidconnect/userinfo';
-		}
+		// 'internal' is a flag to indicate that the userinfo is requested from the internal API (SeaCat Auth API)
 
 		let headers = {};
 		// Add access bearer token to the Authorization headers
@@ -95,7 +89,11 @@ export class SeaCatAuthApi {
 			headers.Authorization = 'Bearer ' + access_token;
 		}
 
-		return api.get(userinfoPath, {headers: headers});
+		if (internal) {
+			return this.SeaCatAuthAPI.get('/openidconnect/userinfo', {headers: headers});
+		} else {
+			return this.OidcAPI.get('/userinfo', {headers: headers});
+		}
 	}
 
 	token_authorization_code(authorization_code, redirect_uri) {
