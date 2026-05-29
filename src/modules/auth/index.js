@@ -19,6 +19,14 @@ export default class AuthModule extends Module {
 
 		if (typeof OAUTH_TOKENS !== 'undefined') {
 			// Read OAuth tokens from webpack.dev.js settings ... this is development mode only
+			// Example from webpack.dev.js:
+			// new webpack.DefinePlugin({
+			//  ....
+			// 	'OAUTH_TOKENS': JSON.stringify({
+			// 		"internal": true,
+			// 		"access_token": "eyJh...SbVaw"
+			// 	})
+			// }),
 			this.OAuthTokens = OAUTH_TOKENS;
 		} else {
 			// Read OAuth tokens from session storage
