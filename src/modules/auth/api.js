@@ -80,15 +80,22 @@ export class SeaCatAuthApi {
 		);
 	}
 
-	userinfo(access_token) {
+	userinfo(access_token, internal = false) {
+
 		let userinfoPath = '/userinfo';
+		let api = this.OidcAPI;
+		if (internal) {
+			api = this.SeaCatAuthAPI;
+			userinfoPath = '/openidconnect/userinfo';
+		}
+
 		let headers = {};
 		// Add access bearer token to the Authorization headers
 		if (access_token != null) {
 			headers.Authorization = 'Bearer ' + access_token;
 		}
 
-		return this.OidcAPI.get(userinfoPath, {headers: headers});
+		return api.get(userinfoPath, {headers: headers});
 	}
 
 	token_authorization_code(authorization_code, redirect_uri) {

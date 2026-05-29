@@ -17,7 +17,14 @@ export default class AuthModule extends Module {
 	constructor(app, name) {
 		super(app, "AuthModule");
 
-		this.OAuthTokens = JSON.parse(sessionStorage.getItem('SeaCatOAuth2Tokens'));
+		if (typeof OAUTH_TOKENS !== 'undefined') {
+			// Read OAuth tokens from webpack.dev.js settings ... this is development mode only
+			this.OAuthTokens = OAUTH_TOKENS;
+		} else {
+			// Read OAuth tokens from session storage
+			this.OAuthTokens = JSON.parse(sessionStorage.getItem('SeaCatOAuth2Tokens'));
+		}
+
 		this.UserInfo = null;
 		this.Api = new SeaCatAuthApi(app);
 		this.RedirectURL = window.location.href;
@@ -334,17 +341,25 @@ export default class AuthModule extends Module {
 			this.UserInfo = response.data;
 			this.SessionExpiration = response.data?.exp;	
 		} else {
-			// TODO: We need to load the userinfo from the SeaCat Auth private API
-			this.UserInfo = {  // Inject mocked UserInfo object, this means the application will NOT require user authorization (remove 'disabled' to enable)
-				"username": "johndev",
-				"email": "dev@dev.de",
-				"phone": "123456789",
-				"resources": {"plus": ["authz:superuser", "bitswan:discover:access"]},
-				"roles": ["plus/Admin"],
-				"sub": "devdb:dev:1abc2def3456",
-				"tenants": ["plus"]
-			};
-			this.SessionExpiration = Date.now() + 1000000000;	
+			let response;
+			try {
+				response = await this.Api.userinfo(this.OAuthTokens.access_token, internal);
+			}
+			catch (err) {
+				console.error("Failed to update user info", err);
+				this.UserInfo = null;
+				if (this.App.AppStore) {
+					this.App.AppStore.dispatch?.({ type: types.AUTH_USERINFO, payload: this.UserInfo });
+				}
+				return false;
+			}
+			this.UserInfo = response.data;
+			
+			// TODO: This must not be needed - it is a workaround for global ID Tokens (i.e. for API keys)
+			this.UserInfo['tenants'] = ['plus'];
+			this.UserInfo['resources']['plus'] = ['authz:superuser', 'bitswan:discover:access'];
+			
+			this.SessionExpiration = response.data?.exp;
 		}
 
 		if (this.App.AppStore) {
