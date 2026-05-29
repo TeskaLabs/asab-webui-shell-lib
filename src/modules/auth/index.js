@@ -354,11 +354,27 @@ export default class AuthModule extends Module {
 				return false;
 			}
 			this.UserInfo = response.data;
-			
-			// TODO: This must not be needed - it is a workaround for global ID Tokens (i.e. for API keys)
-			this.UserInfo['tenants'] = ['plus'];
-			this.UserInfo['resources']['plus'] = ['authz:superuser', 'bitswan:discover:access'];
-			
+
+			// If the resource is `{'*': [....]}` then it is a global resources token (i.e. for API keys)
+			const resources = response.data.resources;
+			const isGlobalResources = resources != null
+				&& typeof resources === 'object'
+				&& !Array.isArray(resources)
+				&& Object.keys(resources).length === 1
+				&& Array.isArray(resources['*']);
+
+			if (isGlobalResources) {
+				const tenant = this._extractTenantFromUrl(); 
+				if (tenant) {
+					// Monkey patch the userinfo to add the tenant and resources
+					this.UserInfo['tenants'] = [tenant];
+					this.UserInfo['resources'][tenant] = resources['*'];
+				} else {
+					console.error("Tenant not found in URL - if the global resources token is used, the tenant must be specified in the URL");
+					return false;
+				}
+			}
+
 			this.SessionExpiration = response.data?.exp;
 		}
 
@@ -533,6 +549,13 @@ export default class AuthModule extends Module {
 			clearInterval(this.sessionValidationInterval);
 			this.sessionValidationInterval = null;
 		}
+	}
+
+	_extractTenantFromUrl() {
+		const search = window.location.search;
+		const params = new URLSearchParams(search);
+		let tenant = params.get('tenant');
+		return tenant;
 	}
 
 }
