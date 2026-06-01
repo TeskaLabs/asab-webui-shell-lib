@@ -113,7 +113,7 @@ export default class TenantService extends Service {
 		let currentTenant = state?.tenant?.current;
 		// If current tenant is not in Application store yet, get it from the URL params
 		if (!currentTenant) {
-			currentTenant = this._extractTenantFromUrl();
+			currentTenant = _extractTenantFromUrl();
 		}
 		return currentTenant;
 	}

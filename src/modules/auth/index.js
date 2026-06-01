@@ -380,6 +380,9 @@ export default class AuthModule extends Module {
 					this.UserInfo['resources'][tenant] = resources['*'];
 				} else {
 					console.error("Tenant not found in URL - if the global resources token is used, the tenant must be specified in the URL");
+					this.UserInfo = null;
+					this.SessionExpiration = null;
+					this.App?.AppStore?.dispatch?.({ type: types.AUTH_USERINFO, payload: null });
 					return false;
 				}
 			}
