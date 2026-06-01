@@ -7,6 +7,7 @@ import { types } from './actions';
 import { SET_NAVIGATION_ITEMS } from '../../actions';
 import { SeaCatAuthApi } from './api';
 import { locationReplace } from '../../components/locationReplace';
+import { extractTenantFromUrl } from '../../utils/extractTenantFromUrl';
 
 // TODO: Use SessionExpirationAlert only after proper fix of the component
 import { SessionExpirationAlert }from './components/SessionExpirationAlert';
@@ -372,7 +373,7 @@ export default class AuthModule extends Module {
 				&& Array.isArray(resources['*']);
 
 			if (isGlobalResources) {
-				const tenant = this._extractTenantFromUrl(); 
+				const tenant = extractTenantFromUrl(); 
 				if (tenant) {
 					// Monkey patch the userinfo to add the tenant and resources
 					this.UserInfo['tenants'] = [tenant];
@@ -557,13 +558,6 @@ export default class AuthModule extends Module {
 			clearInterval(this.sessionValidationInterval);
 			this.sessionValidationInterval = null;
 		}
-	}
-
-	_extractTenantFromUrl() {
-		const search = window.location.search;
-		const params = new URLSearchParams(search);
-		let tenant = params.get('tenant');
-		return tenant;
 	}
 
 }

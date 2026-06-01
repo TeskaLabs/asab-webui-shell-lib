@@ -1,6 +1,7 @@
 import { Service } from 'asab_webui_components';
 import { types } from './actions';
 import { locationReplace } from '../../components/locationReplace';
+import { extractTenantFromUrl } from '../../utils/extractTenantFromUrl';
 
 export default class TenantService extends Service {
 
@@ -30,7 +31,7 @@ export default class TenantService extends Service {
 	*/
 	async setTenants(availableTenants, authorizedTenant = undefined) {
 		// Extract the current tenant from URL params
-		var tenantFromUrl = this._extractTenantFromUrl();
+		var tenantFromUrl = extractTenantFromUrl();
 
 		/* If tenant has not been provided in access URL, insert the authorized tenant 
 		or the first available tenant into the URL and reload the application */
@@ -115,13 +116,5 @@ export default class TenantService extends Service {
 			currentTenant = this._extractTenantFromUrl();
 		}
 		return currentTenant;
-	}
-
-	// Extract tenant from URL params
-	_extractTenantFromUrl() {
-		const search = window.location.search;
-		const params = new URLSearchParams(search);
-		let tenant = params.get('tenant');
-		return tenant;
 	}
 }
