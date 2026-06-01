@@ -1,5 +1,62 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.4.4
+
+- Change advanced mode shortcut to CTRL+SHIFT+U, leave the alert visible for longer time (#72)
+
+## 27.4.3
+
+- Fixed inconsistent usage of colors in button and alert components (#71)
+
+## 27.4.2
+
+- Remove print-ready state console logs (#70)
+
+## 27.4.1
+
+- Add animation className `animation-glow-pulse` (#69)
+
+## 27.4.0
+
+- Create a reusable Application Hash router component (#68)
+- Update Report printing styles for widgets with scroll (#68)
+
+## 27.3.15
+
+- Unpin the `axios` version to `^1.15.0` (#64)
+
+## 27.3.14
+
+- Fix print layout for dashboard grid items containing Recharts charts (#63)
+
+## 27.3.13
+
+- Improve invitation UX (#61)
+
+## 27.3.11
+
+- Temporaly pin the `axios` version within range of `1.8.4` to `1.14.0` included (#62)
+
+## 27.3.10
+
+- Fix on BigInt serialization with JSON.stringify (#58)
+
+## 27.3.9
+
+- Refactor BigInt JSON parsing method for BigInt values that it can handle also array of BigInt numbers. (#57)
+
+## 27.3.8
+
+- Safely unescape common characters in dynamic value translation of i18n module. (#55)
+
+## 27.3.6
+
+- Add custom styling for the browser's find-in-page (Ctrl/Cmd+F) functionality (highlights matches, currently supported by Chrome). (#53)
+
+## 27.3.5
+
+- Add console.log for print-ready state to determine issues with printing reports (#54)
+
 ## 27.3.4
 
 - Implement `jsonParseWithBigInt` method for handle bigint in the axios and websocket requests (#48)

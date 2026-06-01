@@ -3,7 +3,7 @@ import Axios from 'axios';
 import i18n from "i18next";
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next } from "react-i18next";
-
+import { escapeHtmlMinimal } from './escapeHtmlMinimal.jsx';
 export default class I18nService extends Service {
 
 	constructor(app, name="I18nService") {
@@ -37,6 +37,13 @@ export default class I18nService extends Service {
 
 		// Set default key separator
 		config.keySeparator = "|";
+
+		// Keep escaping on
+		config.interpolation = {
+			...(config.interpolation || {}),
+			escapeValue: true,
+			escape: escapeHtmlMinimal,
+		};
 
 		this.Sources.push(async (language, namespace) => {
 			// This will load locales from the shell application `public/locales` folder

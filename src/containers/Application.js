@@ -3,6 +3,7 @@ import Axios from 'axios';
 
 import { Module, PubSubProvider, ErrorHandler, AppStoreProvider, createAppStore } from "asab_webui_components";
 
+import { jsonParseWithBigInt as _jsonParseWithBigInt } from '../utils/jsonParseWithBigInt';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import Toast from './Toast/ToastContainer.jsx';
@@ -77,6 +78,20 @@ class Application extends Component {
 		// The application can provide a list of keys that should be automatically parsed as BigInt, when received from the server in Axios call
 		// This is important to preserve 64bit numbers from the server such as IP addresses, timestamps etc.
 		this.JSONParseBigInt = new Set(props?.bigint);
+
+		/*
+			Prevent JSON.stringify from throwing on BigInt values (including inside React's
+			own dev-mode error handling). BigInt has no native JSON representation so it is
+			serialized as a decimal string.
+		*/
+		if (typeof BigInt !== "undefined" && typeof BigInt.prototype.toJSON !== "function") {
+			Object.defineProperty(BigInt.prototype, "toJSON", {
+				value() { return this.toString(); },
+				enumerable: false,
+				configurable: true,
+				writable: true,
+			});
+		}
 
 		this._handleKeyUp = this._handleKeyUp.bind(this);
 		// Clear print-ready timeout handler
@@ -269,37 +284,8 @@ class Application extends Component {
 	 * - Only explicitly configured keys are converted to BigInt
 	 */
 	jsonParseWithBigInt(source) {
-		// If the input is not a string, return it immediately (no parsing needed)
-		if (typeof source !== 'string') {
-			return source;
-		}
-
-		// Save reference to 'this' for accessing instance properties
-		const that = this;
-
-		// Fast path: if no BigInt keys are configured, parse the JSON normally
-		if (!that.JSONParseBigInt || (that.JSONParseBigInt.size === 0)) {
-			return JSON.parse(source);
-		}
-
-		// Parse the JSON string with a custom reviver function to handle BigInt
-		return JSON.parse(
-			source,
-			(key, value, context) => {
-				try {
-					// Convert numeric values to BigInt only for explicitly configured keys
-					if (that.JSONParseBigInt.has(key) && (typeof value === 'number') && (context?.source !== undefined)) {
-						// Convert the numeric value to a BigInt to avoid precision loss
-						return BigInt(context.source);
-					}
-				} catch (e) {
-					console.error("Error converting to BigInt:", e, "key:", key, "value:", value);
-				}
-
-				// For all other keys/values, return the value as-is
-				return value;
-			}
-		);
+		// Use the internal function to parse the JSON with BigInt
+		return _jsonParseWithBigInt(source, this.JSONParseBigInt);
 	}
 
 	/*
@@ -575,8 +561,12 @@ class Application extends Component {
 			this.setFullScreenMode('on');
 		}
 
+		// TODO: Remove CTRL+Q and CTRL+1 by May of 2027
+		// CTRL+SHIFT+U (Chrome, Firefox and Safari on Windows, Linux and MacOS)
 		// CTRL+Q (Windows) or CTRL+1 (Linux) enables the advanced mode
-		if ((event.ctrlKey && event.code === 'KeyQ') || (event.code === 'Digit1' && event.ctrlKey)) {
+		if ((event.ctrlKey && event.code === 'KeyQ') ||
+			(event.code === 'Digit1' && event.ctrlKey) ||
+			(event.ctrlKey && event.shiftKey && event.code === 'KeyU')) {
 			this.setAdvancedMode(0);
 		}
 
@@ -744,9 +734,9 @@ class Application extends Component {
 			enabled: enabled
 		});
 		if (enabled) {
-			this.addAlert('warning', "ASABApplicationContainer|Advanced mode enabled", 1, true);
+			this.addAlert('warning', "ASABApplicationContainer|Advanced mode enabled", 2, true);
 		} else {
-			this.addAlert('success', "ASABApplicationContainer|Advanced mode disabled", 1, true);
+			this.addAlert('success', "ASABApplicationContainer|Advanced mode disabled", 2, true);
 		}
 	}
 

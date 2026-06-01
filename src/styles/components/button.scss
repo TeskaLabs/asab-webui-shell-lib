@@ -16,7 +16,7 @@
 	//this will enable pointer events, so the 'title' attribute is shown on hover
 	pointer-events: auto;
 	cursor: default;
-	
+
 	&:hover {
 		background-color: unset;
 		filter: unset;
@@ -32,7 +32,7 @@
 		//this will enable pointer events, so the 'title' attribute is shown on hover
 		pointer-events: auto;
 		cursor: default;
-		
+
 		&:hover {
 			filter: unset;
 		}
@@ -48,10 +48,21 @@
 	--bs-btn-bg: var(--royal-blue);
 }
 
-.btn-outline-primary{
-	--bs-btn-color: var(--royal-blue);
-	&:active {
-		--bs-btn-active-bg: var(--royal-blue);
+.btn-outline- {
+
+	&primary {
+		--bs-btn-color: var(--royal-blue);
+		&:active {
+			--bs-btn-active-bg: var(--royal-blue);
+		}
+	}
+
+	&light {
+		--bs-btn-disabled-color: var(--slate-smoke);
+		--bs-btn-color: var(--slate-smoke);
+		&:active {
+			--bs-btn-active-bg: var(--slate-smoke);
+		}
 	}
 }
 
@@ -60,10 +71,26 @@
 		--bs-btn-bg: var(--soft-sky-blue);
 	}
 
-	.btn-outline-primary {
-		--bs-btn-color: var(--soft-sky-blue);
-		&:active {
-		--bs-btn-active-bg: var(--soft-sky-blue);
+	.btn-outline-{
+		&primary {
+			--bs-btn-color: var(--soft-sky-blue);
+			&:active {
+			--bs-btn-active-bg: var(--soft-sky-blue);
+			}
+		}
+		&light {
+			--bs-btn-disabled-color: var(--slate-smoke);
+			--bs-btn-color: var(--slate-smoke);
+			&:active {
+				--bs-btn-active-bg: var(--slate-smoke);
+			}
+		}
+		&dark {
+			--bs-btn-disabled-color: var(--slate-smoke);
+			--bs-btn-color: var(--polar-mist);
+			&:active {
+				--bs-btn-active-bg: var(--polar-mist);
+			}
 		}
 	}
 
@@ -74,14 +101,14 @@
 
 .btn-primary {
 	&:hover {
-		filter: brightness(80%);    
+		filter: brightness(80%);
 	}
 }
 
 .btn-outline- {
 	&primary:hover {
 		background-color: rgba(var(--bs-primary-rgb), 0.75);
-	} 
+	}
 
 	&secondary:hover {
 		background-color: rgba(var(--bs-secondary-rgb), 0.75);

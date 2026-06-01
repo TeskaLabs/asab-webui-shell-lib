@@ -68,7 +68,7 @@ export function AuthHeaderDropdown(props) {
 				{displayInvite && (
 					<>
 						<DropdownItem divider />
-						<DropdownItem tag={Link} to='/auth/invite'>
+						<DropdownItem tag={Link} to='/auth/invite' state={{ clearInvitation: true }}>
 							{t('AuthHeader|Invite other users')}
 						</DropdownItem>
 						<DropdownItem divider />
