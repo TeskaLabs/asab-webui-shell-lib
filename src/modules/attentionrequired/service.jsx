@@ -31,8 +31,6 @@ export default class AttentionRequiredService extends Service {
 			return;
 		}
 
-		return;  // Disabled for development purposes
-
 		const BeaconServiceClient = this.App.createWebSocket('asab-remote-control', `/beacon/${currentTenant}/ws`);
 		this.beaconWebSocket = BeaconServiceClient;
 
