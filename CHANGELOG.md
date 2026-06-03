@@ -1,8 +1,12 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.4.5
+
+- Change translation import from i18n locales (#73)
+
 ## 27.4.4
 
-- Change translation import from i18n locales (#72)
+- Change advanced mode shortcut to CTRL+SHIFT+U, leave the alert visible for longer time (#72)
 
 ## 27.4.3
 
