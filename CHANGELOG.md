@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.4.4
+
+- Change translation import from i18n locales (#72)
+
 ## 27.4.3
 
 - Fixed inconsistent usage of colors in button and alert components (#71)
