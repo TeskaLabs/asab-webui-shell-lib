@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.5.0
+
+- Implement an internal authentication support (#67)
+
 ## 27.4.4
 
 - Change advanced mode shortcut to CTRL+SHIFT+U, leave the alert visible for longer time (#72)
