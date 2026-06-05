@@ -28,7 +28,7 @@ export default function SuspenseScreen(props) {
 							<img
 								className="suspense-img"
 								src={brandImage?.full}
-								alt={t('General|Loading')}
+								alt="Loading..."
 							/>
 						:
 							<h2 className="text-center text-primary">{t('General|Loading')}</h2>
