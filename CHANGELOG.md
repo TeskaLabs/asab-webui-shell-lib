@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.4.6
+
+- Switch beacon WebSocket connection target from `asab-remote-control` to `asab-lighthouse`. (#74)
+
 ## 27.4.5
 
 - Change translation import from i18n locales (#73)
