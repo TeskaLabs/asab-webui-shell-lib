@@ -4,6 +4,9 @@
 
 - Implement an internal authentication support (#67)
 
+## 27.4.5
+- Change translation import from i18n locales (#73)
+
 ## 27.4.4
 
 - Change advanced mode shortcut to CTRL+SHIFT+U, leave the alert visible for longer time (#72)
