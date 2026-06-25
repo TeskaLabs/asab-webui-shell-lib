@@ -7,6 +7,7 @@ import { types } from './actions';
 import { SET_NAVIGATION_ITEMS } from '../../actions';
 import { SeaCatAuthApi } from './api';
 import { locationReplace } from '../../components/locationReplace';
+import { extractTenantFromUrl } from '../../utils/extractTenantFromUrl';
 
 // TODO: Use SessionExpirationAlert only after proper fix of the component
 import { SessionExpirationAlert }from './components/SessionExpirationAlert';
@@ -17,7 +18,22 @@ export default class AuthModule extends Module {
 	constructor(app, name) {
 		super(app, "AuthModule");
 
-		this.OAuthTokens = JSON.parse(sessionStorage.getItem('SeaCatOAuth2Tokens'));
+		if (typeof OAUTH_TOKENS !== 'undefined') {
+			// Read OAuth tokens from webpack.dev.js settings ... this is development mode only
+			// Example from webpack.dev.js:
+			// new webpack.DefinePlugin({
+			//  ....
+			// 	'OAUTH_TOKENS': JSON.stringify({
+			// 		"internal": true,
+			// 		"access_token": "eyJh...SbVaw"
+			// 	})
+			// }),
+			this.OAuthTokens = OAUTH_TOKENS;
+		} else {
+			// Read OAuth tokens from session storage
+			this.OAuthTokens = JSON.parse(sessionStorage.getItem('SeaCatOAuth2Tokens'));
+		}
+
 		this.UserInfo = null;
 		this.Api = new SeaCatAuthApi(app);
 		this.RedirectURL = window.location.href;
@@ -316,21 +332,64 @@ export default class AuthModule extends Module {
 	}
 
 	async updateUserInfo() {
-		let response;
-		try {
-			response = await this.Api.userinfo(this.OAuthTokens.access_token);
-		}
-		catch (err) {
-			console.error("Failed to update user info", err);
-			this.UserInfo = null;
-			if (this.App.AppStore) {
-				this.App.AppStore.dispatch?.({ type: types.AUTH_USERINFO, payload: this.UserInfo });
+		const internal = this.OAuthTokens.internal || false;
+
+		if (!internal) {
+			let response;
+			try {
+				response = await this.Api.userinfo(this.OAuthTokens.access_token);
 			}
-			return false;
+			catch (err) {
+				console.error("Failed to update user info", err);
+				this.UserInfo = null;
+				if (this.App.AppStore) {
+					this.App.AppStore.dispatch?.({ type: types.AUTH_USERINFO, payload: this.UserInfo });
+				}
+				return false;
+			}
+			this.UserInfo = response.data;
+			this.SessionExpiration = response.data?.exp;	
+		} else {
+			let response;
+			try {
+				response = await this.Api.userinfo(this.OAuthTokens.access_token, internal);
+			}
+			catch (err) {
+				console.error("Failed to update user info", err);
+				this.UserInfo = null;
+				if (this.App.AppStore) {
+					this.App.AppStore.dispatch?.({ type: types.AUTH_USERINFO, payload: this.UserInfo });
+				}
+				return false;
+			}
+			this.UserInfo = response.data;
+
+			// If the resource is `{'*': [....]}` then it is a global resources token (i.e. for API keys)
+			const resources = response.data.resources;
+			const isGlobalResources = resources != null
+				&& typeof resources === 'object'
+				&& !Array.isArray(resources)
+				&& Object.keys(resources).length === 1
+				&& Array.isArray(resources['*']);
+
+			if (isGlobalResources) {
+				const tenant = extractTenantFromUrl(); 
+				if (tenant) {
+					// Monkey patch the userinfo to add the tenant and resources
+					this.UserInfo['tenants'] = [tenant];
+					this.UserInfo['resources'][tenant] = resources['*'];
+				} else {
+					console.error("Tenant not found in URL - if the global resources token is used, the tenant must be specified in the URL");
+					this.UserInfo = null;
+					this.SessionExpiration = null;
+					this.App?.AppStore?.dispatch?.({ type: types.AUTH_USERINFO, payload: null });
+					return false;
+				}
+			}
+
+			this.SessionExpiration = response.data?.exp;
 		}
 
-		this.UserInfo = response.data;
-		this.SessionExpiration = response.data?.exp;
 		if (this.App.AppStore) {
 			this.App.AppStore.dispatch?.({ type: types.AUTH_USERINFO, payload: this.UserInfo });
 		}

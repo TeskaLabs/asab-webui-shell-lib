@@ -1,7 +1,10 @@
 # CHANGELOG for ASAB WebUI Shell
 
-## 27.4.5
+## 27.5.0
 
+- Implement an internal authentication support (#67)
+
+## 27.4.5
 - Change translation import from i18n locales (#73)
 
 ## 27.4.4
