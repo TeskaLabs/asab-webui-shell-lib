@@ -20,7 +20,7 @@ export const SidebarItem = ({
 	const [isActive, setActive] = useState(false);
 	const lowercasedItemName = item?.name?.toLowerCase();
 	// Attention requred flag
-	const itemBeacon = beacon ? beacon[`beacon.${lowercasedItemName}`] : {};
+	const itemBeacon = beacon?.[`beacon.${lowercasedItemName}`];
 
 	useEffect(() => {
 		// TODO: refactor the handling of active and open states, since it does not behave as expected in some cases
