@@ -90,8 +90,6 @@ export class SeaCatAuthApi {
 			headers.Authorization = 'Bearer ' + access_token;
 		}
 
-
-		console.log("userinfo", access_token, internal);
 		if (internal) {
 			return this.SeaCatAuthAPI.get('/openidconnect/userinfo', {headers: headers});
 		} else {

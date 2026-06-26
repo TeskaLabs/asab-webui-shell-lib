@@ -95,25 +95,7 @@
 		.card {
 			box-shadow: none !important;
 			border: 0 !important;
-			.card-header {
-				background-color: var(--white);
-				&.print-card-header {
-					min-height: auto;
-					.flex-fill {
-						height: auto;
-					}
-				}
 
-				i:not(.text-warning) {
-					display: none !important;
-				}
-				h3 {
-					font-size: 32px !important;
-				}
-			}
-			.card-body {
-				color: inherit !important;
-			}
 			.card-footer, .card-footer-flex, .input-group {
 				display: none !important;
 			}
@@ -164,7 +146,6 @@
 				display: contents !important;
 			}
 		}
-
 
 		.reports-container {
 			margin-top: 0 !important; /* Remove margin-top to prevent blank first page */

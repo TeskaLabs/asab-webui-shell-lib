@@ -29,11 +29,9 @@ export default class AuthModule extends Module {
 			// 	})
 			// }),
 			this.OAuthTokens = OAUTH_TOKENS;
-			console.log("OAuthTokens from OAUTH_TOKENS  (development mode!)", this.OAuthTokens);
 		} else {
 			// Read OAuth tokens from session storage
 			this.OAuthTokens = JSON.parse(sessionStorage.getItem('SeaCatOAuth2Tokens'));
-			console.log("OAuthTokens from session storage", this.OAuthTokens);
 		}
 
 		this.UserInfo = null;
@@ -335,7 +333,6 @@ export default class AuthModule extends Module {
 
 	async updateUserInfo() {
 		const internal = this.OAuthTokens.internal || false;
-		console.log("updateUserInfo", this.OAuthTokens, internal);
 
 		if (!internal) {
 			let response;
