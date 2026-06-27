@@ -147,47 +147,6 @@
 			}
 		}
 
-		.reports-container {
-			margin-top: 0 !important; /* Remove margin-top to prevent blank first page */
-			padding-top: 0 !important; /* Remove padding to prevent blank first page */
-			padding-bottom: 0 !important; /* Remove bottom padding to prevent blank spaces at the endof the sheet */
-			margin-bottom: 0 !important; /* Remove bottom margin to prevent blank spaces at the endof the sheet */
-			.react-grid-layout {
-				height: unset !important;
-				display: table;
-				text-align: center;
-				.react-grid-item {
-					display: inline-block;
-					position: unset !important;
-					transform: unset !important;
-					text-align: initial;
-					break-inside: avoid;
-				}
-				.react-grid-item:not(:has(.recharts-responsive-container)) {
-					height: initial !important; /* Allow table widgets to expand and show all content */
-				}
-			}
-		}
-
-		.dashboard-container {
-			&.display-print {
-				.react-grid-layout {
-					position: static !important;
-					height: initial !important;
-					.react-grid-item {
-						display: block !important; /*avoid widgets breaking on transition between pages*/
-						margin: 0 auto 20px;
-						position: static !important;
-						width: initial !important; /* Alternatively, set "width: initial !important;" */
-						break-inside: avoid;
-						page-break-inside: avoid; /*avoid widgets breaking on transition between pages*/
-					}
-					.react-grid-item:not(:has(.recharts-responsive-container)) {
-						height: initial !important;
-					}
-				}
-			}
-		}
 	}
 
 }
