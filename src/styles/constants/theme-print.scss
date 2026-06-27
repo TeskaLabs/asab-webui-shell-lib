@@ -1,10 +1,11 @@
 @page print-portrait {
 	size: A4 portrait;
+	margin: 10mm;
 }
 
 @page print-landscape {
 	size: A4 landscape;
-	margin: 2cm 1cm 1.5cm;
+	margin: 10mm;
 }
 
 @media print {
@@ -79,7 +80,8 @@
 		--table-row-hover-bg-color-rgb: var(--soft-gray-rgb);
 
 		&.print-portrait {
-			width: 900px;
+			width: 1200px;
+			// background-color: blue !important; // Switch to blue for debugging
 		}
 
 		#app {
