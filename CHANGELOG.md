@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.5.2
+
+- Refactor media print styling for asab-pyppeteer (#76)
+
 ## 27.5.1
 
 - Fix issue in beacons rendering in Sidebar subitems when the Sidebar was collapsed (#75)
