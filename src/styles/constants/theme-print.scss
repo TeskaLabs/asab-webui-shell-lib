@@ -1,10 +1,11 @@
 @page print-portrait {
-	size: A4 portrait;
+	size: a4 portrait;
+	margin: 10mm;
 }
 
 @page print-landscape {
-	size: A4 landscape;
-	margin: 2cm 1cm 1.5cm;
+	size: a4 landscape;
+	margin: 10mm;
 }
 
 @media print {
@@ -79,7 +80,7 @@
 		--table-row-hover-bg-color-rgb: var(--soft-gray-rgb);
 
 		&.print-portrait {
-			width: 900px;
+			width: 1200px;
 		}
 
 		#app {
@@ -95,25 +96,7 @@
 		.card {
 			box-shadow: none !important;
 			border: 0 !important;
-			.card-header {
-				background-color: var(--white);
-				&.print-card-header {
-					min-height: auto;
-					.flex-fill {
-						height: auto;
-					}
-				}
 
-				i:not(.text-warning) {
-					display: none !important;
-				}
-				h3 {
-					font-size: 32px !important;
-				}
-			}
-			.card-body {
-				color: inherit !important;
-			}
 			.card-footer, .card-footer-flex, .input-group {
 				display: none !important;
 			}
@@ -165,48 +148,25 @@
 			}
 		}
 
+		// Taken from here: https://github.com/react-grid-layout/react-grid-layout/issues/589
 
-		.reports-container {
-			margin-top: 0 !important; /* Remove margin-top to prevent blank first page */
-			padding-top: 0 !important; /* Remove padding to prevent blank first page */
-			padding-bottom: 0 !important; /* Remove bottom padding to prevent blank spaces at the endof the sheet */
-			margin-bottom: 0 !important; /* Remove bottom margin to prevent blank spaces at the endof the sheet */
-			.react-grid-layout {
-				height: unset !important;
-				display: table;
-				text-align: center;
-				.react-grid-item {
-					display: inline-block;
-					position: unset !important;
-					transform: unset !important;
-					text-align: initial;
-					break-inside: avoid;
-				}
-				.react-grid-item:not(:has(.recharts-responsive-container)) {
-					height: initial !important; /* Allow table widgets to expand and show all content */
-				}
+		.react-grid-item {
+			position: unset !important;
+			transform: unset !important;
+			margin: 10px;
+			display: inline-block;
+	
+			> div {
+				page-break-inside: avoid;
+				break-inside: avoid;
 			}
 		}
-
-		.dashboard-container {
-			&.display-print {
-				.react-grid-layout {
-					position: static !important;
-					height: initial !important;
-					.react-grid-item {
-						display: block !important; /*avoid widgets breaking on transition between pages*/
-						margin: 0 auto 20px;
-						position: static !important;
-						width: initial !important; /* Alternatively, set "width: initial !important;" */
-						break-inside: avoid;
-						page-break-inside: avoid; /*avoid widgets breaking on transition between pages*/
-					}
-					.react-grid-item:not(:has(.recharts-responsive-container)) {
-						height: initial !important;
-					}
-				}
-			}
+	
+		.react-grid-layout {
+			height: unset !important;
+			display: table;
 		}
+	
 	}
 
 }
