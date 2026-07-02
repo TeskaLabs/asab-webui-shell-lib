@@ -394,10 +394,17 @@ export default class AuthModule extends Module {
 			this.App.AppStore.dispatch?.({ type: types.AUTH_USERINFO, payload: this.UserInfo });
 		}
 
-		/** Check for TenantService and pass tenants list obtained from userinfo */
-		let availableTenants = this.UserInfo.tenants;
+		// Check for TenantService and pass tenants list obtained from userinfo resources
+		let availableTenants = Object.keys(this.UserInfo.resources ?? {}).filter(tenant => tenant !== '*');
+		if (this.UserInfo?.tenants == null) {
+			// This is a monkey patch to add the tenants list to the userinfo if missing
+			this.UserInfo['tenants'] = availableTenants;
+		}
 		if (this.App.Services.TenantService) {
-			await this.App.Services.TenantService.setTenants(availableTenants, this._getAuthorizedTenant(this.UserInfo));
+			await this.App.Services.TenantService.setTenants(
+				availableTenants,
+				this._getAuthorizedTenant(this.UserInfo)  // Get the authorized tenant
+			);
 		}
 
 		return true;
