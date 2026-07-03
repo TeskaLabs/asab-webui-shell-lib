@@ -6,7 +6,6 @@ export class SeaCatAuthApi {
 	/*
 	SeaCat Auth Open ID Connect / OAuth2.0
 
-
 	From config.js:
 
 	module.exports = {
@@ -15,6 +14,15 @@ export class SeaCatAuthApi {
 			API_PATH: 'api',
 			SERVICES: {openidconnect: 'openidconnect'},
 			...
+
+	To change a Client ID, set the SEACATAUTH environment variable in the webpack.common.js file:
+		const { DefinePlugin } = require('webpack');
+		...
+		new DefinePlugin({
+			'SEACATAUTH': JSON.stringify({
+				client_id: "my-app-webui"
+			})
+		})
 	*/
 
 	constructor(app) {
@@ -23,9 +31,15 @@ export class SeaCatAuthApi {
 		const scope = this.App.Config.get('seacat.auth.scope');
 		this.Scope = scope ? scope : "openid tenant userinfo:* batman";
 		
-		this.ClientId = "asab-webui-auth";
+		if (typeof SEACATAUTH !== 'undefined') {
+			this.ClientId = SEACATAUTH?.client_id || "asab-webui-auth";
+		} else {
+			this.ClientId = "asab-webui-auth";
+		}
 		this.SeaCatAuthAPI = this.App.axiosCreate('seacat-auth');
 		this.OidcAPI = this.App.axiosCreate('openidconnect');
+
+		console.log('OpenID Connect Client ID: ', this.ClientId);
 	}
 
 	// This method will cause a navigation from the app to the OAuth2 login screen
