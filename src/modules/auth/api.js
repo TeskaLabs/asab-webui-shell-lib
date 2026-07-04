@@ -8,7 +8,7 @@ export class SeaCatAuthApi {
 
 	From webpack.common.js:
 
-	To change a Client ID, set the SEACATAUTH environment variable in the webpack.common.js file:
+	To change a Client ID, set the seacat.auth.client_id configuration variable in the webpack.common.js file:
 		const { DefinePlugin } = require('webpack');
 		...
 		new DefinePlugin({
