@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.5.3
+
+- Fix on userinfo with no tenants list + ability to specify custom Open ID Connect Client ID (#77)
+
 ## 27.5.2
 
 - Refactor media print styling for asab-pyppeteer (#76)
