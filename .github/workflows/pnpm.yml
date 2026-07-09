@@ -23,14 +23,13 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Set up Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version: ${{ matrix.node-version }}
         registry-url: "https://registry.npmjs.org/"
-        always-auth: true
 
     - name: Update npm
       run: npm install -g npm@latest
