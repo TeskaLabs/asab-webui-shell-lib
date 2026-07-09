@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.5.4
+
+- Fix workflow (#79)
+
 ## 27.5.3
 
 - Fix on userinfo with no tenants list + ability to specify custom Open ID Connect Client ID (#77)
