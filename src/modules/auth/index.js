@@ -322,6 +322,10 @@ export default class AuthModule extends Module {
 		if (this.UserInfo !== null) {
 			resources = this.UserInfo.resources ? this.UserInfo.resources[currentTenant] : [];
 			tenants = this.UserInfo.tenants ? this.UserInfo.tenants : [];
+			if (tenants == null || tenants.length === 0) {
+				// Fallback to tenant from resources if tenants list is not available
+				tenants = Object.keys(this.UserInfo.resources ?? {}).filter(tenant => tenant !== '*');
+			}
 		}
 		let valid = tenants ? tenants.indexOf(currentTenant) !== -1 : false;
 		// If user is superuser, then tenant access is granted
@@ -394,10 +398,21 @@ export default class AuthModule extends Module {
 			this.App.AppStore.dispatch?.({ type: types.AUTH_USERINFO, payload: this.UserInfo });
 		}
 
-		/** Check for TenantService and pass tenants list obtained from userinfo */
+		// Check for TenantService and pass tenants list obtained from userinfo resources
 		let availableTenants = this.UserInfo.tenants;
+		if (availableTenants == null || availableTenants.length === 0) {
+			// Fallback to tenant from resources if tenants list is not available
+			availableTenants = Object.keys(this.UserInfo.resources ?? {}).filter(tenant => tenant !== '*');
+		}
+		if (this.UserInfo?.tenants == null) {
+			// This is a monkey patch to add the tenants list to the userinfo if missing
+			this.UserInfo['tenants'] = availableTenants;
+		}
 		if (this.App.Services.TenantService) {
-			await this.App.Services.TenantService.setTenants(availableTenants, this._getAuthorizedTenant(this.UserInfo));
+			await this.App.Services.TenantService.setTenants(
+				availableTenants,
+				this._getAuthorizedTenant(this.UserInfo)  // Get the authorized tenant
+			);
 		}
 
 		return true;
