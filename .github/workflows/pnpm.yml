@@ -31,9 +31,6 @@ jobs:
         node-version: ${{ matrix.node-version }}
         registry-url: "https://registry.npmjs.org/"
 
-    - name: Update npm
-      run: npm install -g npm@latest
-
     - name: Install pnpm
       run: npm install -g pnpm
 
