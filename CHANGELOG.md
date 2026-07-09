@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.5.5
+
+- Update version on npm repo
+
 ## 27.5.4
 
 - Fix workflow (#79)
