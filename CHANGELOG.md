@@ -3,6 +3,7 @@
 ## 27.5.3
 
 - Fix on userinfo with no tenants list + ability to specify custom Open ID Connect Client ID (#77)
+- Update deprecated node version in github workflow (#78)
 
 ## 27.5.2
 
