@@ -6,24 +6,29 @@ export class SeaCatAuthApi {
 	/*
 	SeaCat Auth Open ID Connect / OAuth2.0
 
+	From webpack.common.js:
 
-	From config.js:
-
-	module.exports = {
-		app: {
-			BASE_URL: 'http://localhost:3000',
-			API_PATH: 'api',
-			SERVICES: {openidconnect: 'openidconnect'},
-			...
+	To change a Client ID, set the seacat.auth.client_id configuration variable in the webpack.common.js file:
+		const { DefinePlugin } = require('webpack');
+		...
+		new DefinePlugin({
+			'LOCAL_CONFIG': JSON.stringify({
+				"seacat.auth.scope": "openid tenant userinfo:*",
+				"seacat.auth.client_id": "llm-microlink-webui",
+			}),
+		})
 	*/
 
 	constructor(app) {
 		this.App = app;
 
-		const scope = this.App.Config.get('seacat.auth.scope');
-		this.Scope = scope ? scope : "openid tenant userinfo:* batman";
+		this.Scope = this.App.Config.get('seacat.auth.scope') || "openid tenant userinfo:* batman";
+
+		this.ClientId = this.App.Config.get('seacat.auth.client_id') || "asab-webui-auth";
+
+		// The console log is intentionally left here so that we can see the Client ID in the console
+		console.log('OpenID Connect Client ID:', this.ClientId);
 		
-		this.ClientId = "asab-webui-auth";
 		this.SeaCatAuthAPI = this.App.axiosCreate('seacat-auth');
 		this.OidcAPI = this.App.axiosCreate('openidconnect');
 	}
@@ -80,15 +85,21 @@ export class SeaCatAuthApi {
 		);
 	}
 
-	userinfo(access_token) {
-		let userinfoPath = '/userinfo';
+	userinfo(access_token, internal = false) {
+		// 'internal' is a flag to indicate that the userinfo is requested from the internal API (SeaCat Auth API)
+		// instead of the public OpenID Connect API - that is used for the web app that runs inside of the cluser (asab-pyppeteer)
+
 		let headers = {};
 		// Add access bearer token to the Authorization headers
 		if (access_token != null) {
 			headers.Authorization = 'Bearer ' + access_token;
 		}
 
-		return this.OidcAPI.get(userinfoPath, {headers: headers});
+		if (internal) {
+			return this.SeaCatAuthAPI.get('/openidconnect/userinfo', {headers: headers});
+		} else {
+			return this.OidcAPI.get('/userinfo', {headers: headers});
+		}
 	}
 
 	token_authorization_code(authorization_code, redirect_uri) {

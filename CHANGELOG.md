@@ -1,8 +1,33 @@
 # CHANGELOG for ASAB WebUI Shell
 
-## 27.4.6
+## 27.5.6
 
 - Switch beacon WebSocket connection target from `asab-remote-control` to `asab-lighthouse`. (#74)
+
+## 27.5.5
+
+- Update version on npm repo
+
+## 27.5.4
+
+- Fix workflow (#79)
+
+## 27.5.3
+
+- Fix on userinfo with no tenants list + ability to specify custom Open ID Connect Client ID (#77)
+- Update deprecated node version in github workflow (#78)
+
+## 27.5.2
+
+- Refactor media print styling for asab-pyppeteer (#76)
+
+## 27.5.1
+
+- Fix issue in beacons rendering in Sidebar subitems when the Sidebar was collapsed (#75)
+
+## 27.5.0
+
+- Implement an internal authentication support (#67)
 
 ## 27.4.5
 

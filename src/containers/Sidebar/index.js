@@ -81,7 +81,7 @@ export default function Sidebar (props) {
 	return (
 		<>
 		{windowWidth <= 768 ? (
-			<>
+			<div id="app-sidebar">
 				<div onClick={toggleSidebarModal}>
 					<i className="bi ms-2 bi-list text-primary fs-1"></i>
 				</div>
@@ -96,7 +96,7 @@ export default function Sidebar (props) {
 						/>
 					</div>
 				</Modal>
-			</>
+			</div>
 		) : (
 			<div className="h-100" id="app-sidebar">
 				<SidebarItemRenderer
