@@ -19,7 +19,6 @@ import headerReducer from './Header/reducer';
 import navigationReducer from './Navigation/reducer';
 import routerReducer from './Router/reducer';
 import fullscreenModeReducer from './FullscreenMode/reducer';
-import advancedModeReducer from './AdvancedMode/reducer';
 
 import ReduxService from '../services/ReduxService';
 import ConfigService from '../config/ConfigService';
@@ -36,7 +35,7 @@ import SuspenseScreen from '../screens/SuspenseScreen';
 
 import './Application.scss';
 
-import { ADD_ALERT, SET_ADVANCED_MODE, SET_FULLSCREEN_MODE, SET_CONNECTIVITY_STATUS } from '../actions';
+import { ADD_ALERT, SET_FULLSCREEN_MODE, SET_CONNECTIVITY_STATUS } from '../actions';
 
 class Application extends Component {
 
@@ -55,7 +54,6 @@ class Application extends Component {
 
 		// Register reducers which are not part of any app service
 		this.ReduxService.addReducer("alerts", alertsReducer);
-		this.ReduxService.addReducer("advmode", advancedModeReducer);
 		this.ReduxService.addReducer("fullscreenmode", fullscreenModeReducer);
 		this.ReduxService.addReducer("header", headerReducer);
 		this.ReduxService.addReducer("sidebar", sidebarReducer);
@@ -561,15 +559,6 @@ class Application extends Component {
 			this.setFullScreenMode('on');
 		}
 
-		// TODO: Remove CTRL+Q and CTRL+1 by May of 2027
-		// CTRL+SHIFT+U (Chrome, Firefox and Safari on Windows, Linux and MacOS)
-		// CTRL+Q (Windows) or CTRL+1 (Linux) enables the advanced mode
-		if ((event.ctrlKey && event.code === 'KeyQ') ||
-			(event.code === 'Digit1' && event.ctrlKey) ||
-			(event.ctrlKey && event.shiftKey && event.code === 'KeyU')) {
-			this.setAdvancedMode(0);
-		}
-
 	}
 
 	componentDidMount() {
@@ -723,22 +712,6 @@ class Application extends Component {
 		});
 	}
 
-
-	setAdvancedMode(enabled) {
-		if (enabled === 0) {
-			const state = this.AppStore.getState();
-			enabled = !state?.advmode?.enabled;
-		}
-		this.AppStore.dispatch?.({
-			type: SET_ADVANCED_MODE,
-			enabled: enabled
-		});
-		if (enabled) {
-			this.addAlert('warning', "ASABApplicationContainer|Advanced mode enabled", 2, true);
-		} else {
-			this.addAlert('success', "ASABApplicationContainer|Advanced mode disabled", 2, true);
-		}
-	}
 
 	/*
 		This method toggles the full-screen mode of the application container.

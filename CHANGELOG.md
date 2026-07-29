@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.6.0
+
+- Remove advanced mode and Advanced Card component (#80)
+
 ## 27.5.5
 
 - Update version on npm repo
