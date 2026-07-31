@@ -32,6 +32,7 @@ import AccessDeniedCard from '../modules/tenant/access/AccessDeniedCard';
 import ApplicationRouter from './Router/ApplicationRouter';
 
 import SuspenseScreen from '../screens/SuspenseScreen';
+import { OfflineIndication } from '../modules/attentionrequired/components/OfflineIndication.jsx';
 
 import './Application.scss';
 
@@ -95,6 +96,7 @@ class Application extends Component {
 		// Clear print-ready timeout handler
 		this._clearPrintReadyTimeout = this._clearPrintReadyTimeout.bind(this);
 		this._printReadyTimeout = null;
+		this._offlineIndicationTimeout = null;
 
 		this.state = {
 			networking: 0, // If more than zero, some networking activity is happening
@@ -682,6 +684,10 @@ class Application extends Component {
 	*/
 	addAlertFromException(exception, message, expire = 30, shouldBeTranslated = false, component = null) {
 		console.error(exception); // Log the whole exception in the browser
+		// Indicate gateway timeout if the response status is 504 and if so, then dont continue with the alert and display the offline indication
+		if (exception?.response?.status === 504 && this._indicateGatewayTimeout()) {
+			return;
+		}
 		let exceptionMessage = <span>{message}</span>;
 		/*
 			If the exception has an error_dict in the response data (error in the new format),
@@ -712,6 +718,38 @@ class Application extends Component {
 		});
 	}
 
+
+	/*
+		Show OfflineIndication in the header for a limited time
+		Each subsequent 504 resets the timer so the badge stays visible while gateway timeouts keep occurring
+		Returns true when the indication was shown, false when HeaderService is unavailable
+	*/
+	_indicateGatewayTimeout(durationMs = 30000) {
+		const headerService = this.locateService('HeaderService');
+		if (!headerService) {
+			return false;
+		}
+
+		const isVisible = headerService.Items.some(item => item.component === OfflineIndication);
+		if (!isVisible) {
+			headerService.addComponent({
+				component: OfflineIndication,
+				componentProps: {
+					title: 'General|Full or partial loss of connectivity to a server',
+				},
+				order: 100,
+			});
+		}
+
+		if (this._offlineIndicationTimeout) {
+			clearTimeout(this._offlineIndicationTimeout);
+		}
+		this._offlineIndicationTimeout = setTimeout(() => {
+			headerService.removeComponent(OfflineIndication);
+			this._offlineIndicationTimeout = null;
+		}, durationMs);
+		return true;
+	}
 
 	/*
 		This method toggles the full-screen mode of the application container.
