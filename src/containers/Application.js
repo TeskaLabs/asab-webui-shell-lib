@@ -38,6 +38,18 @@ import './Application.scss';
 
 import { ADD_ALERT, SET_FULLSCREEN_MODE, SET_CONNECTIVITY_STATUS } from '../actions';
 
+/*
+	Status-specific alerts shown instead of the generic exception alert
+	Extend for other response statuses
+*/
+const STATUS_ALERTS = {
+	413: {
+		level: 'warning',
+		message: 'General|The file is too large to upload. Please choose a smaller file and try again.',
+	},
+	// TODO: add more response statuses
+};
+
 class Application extends Component {
 
 	constructor(props) {
@@ -688,6 +700,20 @@ class Application extends Component {
 		if (exception?.response?.status === 504 && this._indicateGatewayTimeout()) {
 			return;
 		}
+		// Handle specific response statuses and set the appropriate level and message
+		const statusAlert = STATUS_ALERTS[exception?.response?.status];
+		if (statusAlert) {
+			this.AppStore.dispatch?.({
+				type: ADD_ALERT,
+				level: statusAlert.level,
+				message: statusAlert.message,
+				expire: expire,
+				shouldBeTranslated: true,
+				component: component,
+			});
+			return;
+		}
+
 		let exceptionMessage = <span>{message}</span>;
 		/*
 			If the exception has an error_dict in the response data (error in the new format),
