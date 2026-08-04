@@ -1,6 +1,6 @@
 # CHANGELOG for ASAB WebUI Shell
 
-## 27.6.1
+## 27.7.0
 
 - Switch beacon WebSocket connection target from `asab-remote-control` to `asab-lighthouse`. (#74)
 
