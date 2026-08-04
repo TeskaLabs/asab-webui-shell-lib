@@ -235,7 +235,6 @@ export default class AuthModule extends Module {
 
 		/** Check for TenantService and pass tenants list obtained from userinfo */
 		let availableTenants = mockParams.tenants;
-		console.log("[AuthModule] Calling setTenants, availableTenants:", JSON.stringify(availableTenants), "authorizedTenant:", this._getAuthorizedTenant(this.UserInfo));
 		if (this.App.Services.TenantService) {
 			await this.App.Services.TenantService.setTenants(availableTenants, this._getAuthorizedTenant(mockParams));
 		}
@@ -338,7 +337,6 @@ export default class AuthModule extends Module {
 
 	async updateUserInfo() {
 		const internal = this.OAuthTokens.internal || false;
-		console.log("[AuthModule] updateUserInfo() called, internal:", internal, "URL:", window.location.href);
 
 		if (!internal) {
 			let response;
