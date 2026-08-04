@@ -377,16 +377,9 @@ export default class AuthModule extends Module {
 				&& !Array.isArray(resources)
 				&& Object.keys(resources).length === 1
 				&& Array.isArray(resources['*']);
-			console.log("[AuthModule] isGlobalResources:", isGlobalResources, "resources:", JSON.stringify(resources));
-			console.log("[AuthModule] isGlobalResources:", isGlobalResources, "resources:", JSON.stringify(resources));
-				&& typeof resources === 'object'
-				&& !Array.isArray(resources)
-				&& Object.keys(resources).length === 1
-				&& Array.isArray(resources['*']);
 
 			if (isGlobalResources) {
 				const tenant = extractTenantFromUrl();
-				console.log("[AuthModule] extractTenantFromUrl() returned:", tenant, "search:", window.location.search); 
 				if (tenant) {
 					// Monkey patch the userinfo to add the tenant and resources
 					this.UserInfo['tenants'] = [tenant];
@@ -405,12 +398,7 @@ export default class AuthModule extends Module {
 						}
 					}
 
-					console.log("[AuthModule] fallbackTenant:", fallbackTenant);
 					if (fallbackTenant) {
-						console.warn(
-							"[AuthModule] Tenant not in URL (stripped by router). " +
-							"Falling back to tenant from store/claims: " + fallbackTenant
-						);
 						this.UserInfo['tenants'] = [fallbackTenant];
 						this.UserInfo['resources'][fallbackTenant] = resources['*'];
 					} else {
@@ -440,7 +428,6 @@ export default class AuthModule extends Module {
 			// This is a monkey patch to add the tenants list to the userinfo if missing
 			this.UserInfo['tenants'] = availableTenants;
 		}
-		console.log("[AuthModule] Calling setTenants, availableTenants:", JSON.stringify(availableTenants), "authorizedTenant:", this._getAuthorizedTenant(this.UserInfo));
 		if (this.App.Services.TenantService) {
 			await this.App.Services.TenantService.setTenants(
 				availableTenants,
