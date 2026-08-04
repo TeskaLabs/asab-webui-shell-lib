@@ -235,6 +235,7 @@ export default class AuthModule extends Module {
 
 		/** Check for TenantService and pass tenants list obtained from userinfo */
 		let availableTenants = mockParams.tenants;
+		console.log("[AuthModule] Calling setTenants, availableTenants:", JSON.stringify(availableTenants), "authorizedTenant:", this._getAuthorizedTenant(this.UserInfo));
 		if (this.App.Services.TenantService) {
 			await this.App.Services.TenantService.setTenants(availableTenants, this._getAuthorizedTenant(mockParams));
 		}
@@ -337,6 +338,7 @@ export default class AuthModule extends Module {
 
 	async updateUserInfo() {
 		const internal = this.OAuthTokens.internal || false;
+		console.log("[AuthModule] updateUserInfo() called, internal:", internal, "URL:", window.location.href);
 
 		if (!internal) {
 			let response;
@@ -352,7 +354,7 @@ export default class AuthModule extends Module {
 				return false;
 			}
 			this.UserInfo = response.data;
-			this.SessionExpiration = response.data?.exp;	
+			this.SessionExpiration = response.data?.exp;
 		} else {
 			let response;
 			try {
@@ -375,19 +377,49 @@ export default class AuthModule extends Module {
 				&& !Array.isArray(resources)
 				&& Object.keys(resources).length === 1
 				&& Array.isArray(resources['*']);
+			console.log("[AuthModule] isGlobalResources:", isGlobalResources, "resources:", JSON.stringify(resources));
+			console.log("[AuthModule] isGlobalResources:", isGlobalResources, "resources:", JSON.stringify(resources));
+				&& typeof resources === 'object'
+				&& !Array.isArray(resources)
+				&& Object.keys(resources).length === 1
+				&& Array.isArray(resources['*']);
 
 			if (isGlobalResources) {
-				const tenant = extractTenantFromUrl(); 
+				const tenant = extractTenantFromUrl();
+				console.log("[AuthModule] extractTenantFromUrl() returned:", tenant, "search:", window.location.search); 
 				if (tenant) {
 					// Monkey patch the userinfo to add the tenant and resources
 					this.UserInfo['tenants'] = [tenant];
 					this.UserInfo['resources'][tenant] = resources['*'];
 				} else {
-					console.error("Tenant not found in URL - if the global resources token is used, the tenant must be specified in the URL");
-					this.UserInfo = null;
-					this.SessionExpiration = null;
-					this.App?.AppStore?.dispatch?.({ type: types.AUTH_USERINFO, payload: null });
-					return false;
+					// FALLBACK: Tenant not in URL (stripped by router after first init).
+					// Try to get tenant from TenantService (Redux store) or from resources claims.
+					let fallbackTenant = null;
+					if (this.App.Services.TenantService) {
+						fallbackTenant = this.App.Services.TenantService.getCurrentTenant();
+					}
+					if (!fallbackTenant) {
+						const tenantKeys = Object.keys(resources).filter(t => t !== '*');
+						if (tenantKeys.length > 0) {
+							fallbackTenant = tenantKeys[0];
+						}
+					}
+
+					console.log("[AuthModule] fallbackTenant:", fallbackTenant);
+					if (fallbackTenant) {
+						console.warn(
+							"[AuthModule] Tenant not in URL (stripped by router). " +
+							"Falling back to tenant from store/claims: " + fallbackTenant
+						);
+						this.UserInfo['tenants'] = [fallbackTenant];
+						this.UserInfo['resources'][fallbackTenant] = resources['*'];
+					} else {
+						console.error("Tenant not found in URL - if the global resources token is used, the tenant must be specified in the URL");
+						this.UserInfo = null;
+						this.SessionExpiration = null;
+						this.App?.AppStore?.dispatch?.({ type: types.AUTH_USERINFO, payload: null });
+						return false;
+					}
 				}
 			}
 
@@ -408,6 +440,7 @@ export default class AuthModule extends Module {
 			// This is a monkey patch to add the tenants list to the userinfo if missing
 			this.UserInfo['tenants'] = availableTenants;
 		}
+		console.log("[AuthModule] Calling setTenants, availableTenants:", JSON.stringify(availableTenants), "authorizedTenant:", this._getAuthorizedTenant(this.UserInfo));
 		if (this.App.Services.TenantService) {
 			await this.App.Services.TenantService.setTenants(
 				availableTenants,

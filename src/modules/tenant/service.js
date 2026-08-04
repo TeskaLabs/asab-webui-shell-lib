@@ -30,12 +30,15 @@ export default class TenantService extends Service {
 		and dispatches that information into the application store
 	*/
 	async setTenants(availableTenants, authorizedTenant = undefined) {
+		console.log("[TenantService] setTenants() called, availableTenants:", JSON.stringify(availableTenants), "authorizedTenant:", authorizedTenant, "URL:", window.location.href);
 		// Extract the current tenant from URL params
 		var tenantFromUrl = extractTenantFromUrl();
+		console.log("[TenantService] extractTenantFromUrl() returned:", tenantFromUrl);
 
 		/* If tenant has not been provided in access URL, insert the authorized tenant 
 		or the first available tenant into the URL and reload the application */
 		if (tenantFromUrl == null) {
+			console.log("[TenantService] tenantFromUrl is null, checking authorizedTenant/availableTenants");
 			if (authorizedTenant) {
 				await locationReplace(`${window.location.pathname}?tenant=${authorizedTenant}${window.location.hash}`);
 				return;
@@ -47,6 +50,8 @@ export default class TenantService extends Service {
 
 		// In case the list of available tenants is empty or undefined, remove the tenant parameter from URL
 		if ((!availableTenants) || (availableTenants.length == 0)) {
+			console.log("[TenantService] availableTenants is empty, stripping tenant from URL");
+			console.log("[TenantService] Calling locationReplace with:", window.location.pathname + window.location.hash);
 			await locationReplace(window.location.pathname + window.location.hash);
 			return;
 		}
