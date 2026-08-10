@@ -4,6 +4,7 @@ import Axios from 'axios';
 import { Module, PubSubProvider, ErrorHandler, AppStoreProvider, createAppStore } from "asab_webui_components";
 
 import { jsonParseWithBigInt as _jsonParseWithBigInt } from '../utils/jsonParseWithBigInt';
+import { STATUS_ALERTS } from '../utils/statusAlerts.jsx';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import Toast from './Toast/ToastContainer.jsx';
@@ -38,17 +39,6 @@ import './Application.scss';
 
 import { ADD_ALERT, SET_FULLSCREEN_MODE, SET_CONNECTIVITY_STATUS } from '../actions';
 
-/*
-	Status-specific alerts shown instead of the generic exception alert
-	Extend for other response statuses
-*/
-const STATUS_ALERTS = {
-	413: {
-		level: 'warning',
-		message: 'General|The file is too large to upload. Please choose a smaller file and try again.',
-	},
-	// TODO: add more response statuses
-};
 
 class Application extends Component {
 
