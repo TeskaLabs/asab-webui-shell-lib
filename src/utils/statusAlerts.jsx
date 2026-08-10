@@ -11,7 +11,7 @@ export const STATUS_ALERTS = {
 	},
 	413: {
 		level: 'warning',
-		message: 'General|The file is too large to upload. Please choose a smaller file and try again.',
+		message: 'General|The request is too large for the server to process. If you are uploading a file, please choose a smaller one.',
 	},
 	414: {
 		level: 'warning',
