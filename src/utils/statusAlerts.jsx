@@ -13,7 +13,7 @@ export const STATUS_ALERTS = {
 	},
 	414: {
 		level: 'warning',
-		message: 'General|The request is too long for the server to process. Try simplifying your query or clearing filters. If the problem continues, contact your administrator.',
+		message: 'General|The request exceeds the server limit. Please contact your administrator.',
 	},
 	429: {
 		level: 'warning',
