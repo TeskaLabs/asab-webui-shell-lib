@@ -1,6 +1,8 @@
 /*
-	Status-specific alerts shown instead of the generic exception alert
-	Extend for other response statuses
+	Status-specific alerts shown instead of the generic exception alert.
+	This is a extension to the addAlertFromException function in the Application.js file.
+	
+	The 504 error is handled directly in the Application.js file, since it does not render an alert at all.
 */
 export const STATUS_ALERTS = {
 	408: {
