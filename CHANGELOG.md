@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.7.0
+
+- Switch beacon WebSocket connection target from `asab-remote-control` to `asab-lighthouse`. (#74)
+
 ## 27.6.0
 
 - Remove advanced mode and Advanced Card component (#80)
