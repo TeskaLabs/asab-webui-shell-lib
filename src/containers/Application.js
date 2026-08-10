@@ -39,7 +39,6 @@ import './Application.scss';
 
 import { ADD_ALERT, SET_FULLSCREEN_MODE, SET_CONNECTIVITY_STATUS } from '../actions';
 
-
 class Application extends Component {
 
 	constructor(props) {
