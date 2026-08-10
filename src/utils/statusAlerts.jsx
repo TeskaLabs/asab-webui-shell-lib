@@ -37,5 +37,5 @@ export const STATUS_ALERTS = {
 		level: 'danger',
 		message: 'General|The server does not have enough storage to complete this request. Please try again later or contact your administrator.',
 	},
-	// TODO: add more response statuses
+	// TODO: add more response statuses if needed
 };
