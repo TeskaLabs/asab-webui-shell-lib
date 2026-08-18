@@ -604,6 +604,7 @@ class Application extends Component {
 			this._unsubscribeConnectivity = null;
 		}
 
+		this._clearOfflineIndicationTimeout();
 
 		this._clearPrintReadyTimeout();
 		document.body.removeAttribute('print-ready');
@@ -613,6 +614,13 @@ class Application extends Component {
 		if (this._printReadyTimeout !== null) {
 			clearTimeout(this._printReadyTimeout);
 			this._printReadyTimeout = null;
+		}
+	}
+
+	_clearOfflineIndicationTimeout() {
+		if (this._offlineIndicationTimeout !== null) {
+			clearTimeout(this._offlineIndicationTimeout);
+			this._offlineIndicationTimeout = null;
 		}
 	}
 
@@ -760,9 +768,7 @@ class Application extends Component {
 			});
 		}
 
-		if (this._offlineIndicationTimeout) {
-			clearTimeout(this._offlineIndicationTimeout);
-		}
+		this._clearOfflineIndicationTimeout();
 		this._offlineIndicationTimeout = setTimeout(() => {
 			headerService.removeComponent(OfflineIndication);
 			this._offlineIndicationTimeout = null;
