@@ -4,6 +4,7 @@ import Axios from 'axios';
 import { Module, PubSubProvider, ErrorHandler, AppStoreProvider, createAppStore } from "asab_webui_components";
 
 import { jsonParseWithBigInt as _jsonParseWithBigInt } from '../utils/jsonParseWithBigInt';
+import { STATUS_ALERTS } from '../utils/statusAlerts.jsx';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import Toast from './Toast/ToastContainer.jsx';
@@ -32,6 +33,7 @@ import AccessDeniedCard from '../modules/tenant/access/AccessDeniedCard';
 import ApplicationRouter from './Router/ApplicationRouter';
 
 import SuspenseScreen from '../screens/SuspenseScreen';
+import { OfflineIndication } from '../modules/attentionrequired/components/OfflineIndication.jsx';
 
 import './Application.scss';
 
@@ -95,6 +97,7 @@ class Application extends Component {
 		// Clear print-ready timeout handler
 		this._clearPrintReadyTimeout = this._clearPrintReadyTimeout.bind(this);
 		this._printReadyTimeout = null;
+		this._offlineIndicationTimeout = null;
 
 		this.state = {
 			networking: 0, // If more than zero, some networking activity is happening
@@ -601,6 +604,7 @@ class Application extends Component {
 			this._unsubscribeConnectivity = null;
 		}
 
+		this._clearOfflineIndicationTimeout();
 
 		this._clearPrintReadyTimeout();
 		document.body.removeAttribute('print-ready');
@@ -610,6 +614,13 @@ class Application extends Component {
 		if (this._printReadyTimeout !== null) {
 			clearTimeout(this._printReadyTimeout);
 			this._printReadyTimeout = null;
+		}
+	}
+
+	_clearOfflineIndicationTimeout() {
+		if (this._offlineIndicationTimeout !== null) {
+			clearTimeout(this._offlineIndicationTimeout);
+			this._offlineIndicationTimeout = null;
 		}
 	}
 
@@ -682,6 +693,28 @@ class Application extends Component {
 	*/
 	addAlertFromException(exception, message, expire = 30, shouldBeTranslated = false, component = null) {
 		console.error(exception); // Log the whole exception in the browser
+
+		const exceptionStatus = exception?.response?.status;
+		// Indicate gateway timeout if the response status is 502, 503 or 504 and if so, then dont continue with the alert and display the offline indication
+		if ((exceptionStatus === 502
+			|| exceptionStatus === 503
+			|| exceptionStatus === 504) && this._indicateGatewayTimeout()) {
+			return;
+		}
+		// Handle specific response statuses and set the appropriate level and message
+		const statusAlert = STATUS_ALERTS[exceptionStatus];
+		if (statusAlert) {
+			this.AppStore.dispatch?.({
+				type: ADD_ALERT,
+				level: statusAlert.level,
+				message: statusAlert.message,
+				expire: expire,
+				shouldBeTranslated: true,
+				component: component,
+			});
+			return;
+		}
+
 		let exceptionMessage = <span>{message}</span>;
 		/*
 			If the exception has an error_dict in the response data (error in the new format),
@@ -712,6 +745,36 @@ class Application extends Component {
 		});
 	}
 
+
+	/*
+		Show OfflineIndication in the header for a limited time
+		Each subsequent 504 resets the timer so the badge stays visible while gateway timeouts keep occurring
+		Returns true when the indication was shown, false when HeaderService is unavailable
+	*/
+	_indicateGatewayTimeout(durationMs = 30000) {
+		const headerService = this.locateService('HeaderService');
+		if (!headerService) {
+			return false;
+		}
+
+		const isVisible = headerService.Items.some(item => item.component === OfflineIndication);
+		if (!isVisible) {
+			headerService.addComponent({
+				component: OfflineIndication,
+				componentProps: {
+					title: 'General|Full or partial loss of connectivity to a server',
+				},
+				order: 100,
+			});
+		}
+
+		this._clearOfflineIndicationTimeout();
+		this._offlineIndicationTimeout = setTimeout(() => {
+			headerService.removeComponent(OfflineIndication);
+			this._offlineIndicationTimeout = null;
+		}, durationMs);
+		return true;
+	}
 
 	/*
 		This method toggles the full-screen mode of the application container.
