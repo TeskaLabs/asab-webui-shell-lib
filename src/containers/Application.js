@@ -685,12 +685,16 @@ class Application extends Component {
 	*/
 	addAlertFromException(exception, message, expire = 30, shouldBeTranslated = false, component = null) {
 		console.error(exception); // Log the whole exception in the browser
-		// Indicate gateway timeout if the response status is 504 and if so, then dont continue with the alert and display the offline indication
-		if (exception?.response?.status === 504 && this._indicateGatewayTimeout()) {
+
+		const exceptionStatus = exception?.response?.status;
+		// Indicate gateway timeout if the response status is 502, 503 or 504 and if so, then dont continue with the alert and display the offline indication
+		if ((exceptionStatus === 502
+			|| exceptionStatus === 503
+			|| exceptionStatus === 504) && this._indicateGatewayTimeout()) {
 			return;
 		}
 		// Handle specific response statuses and set the appropriate level and message
-		const statusAlert = STATUS_ALERTS[exception?.response?.status];
+		const statusAlert = STATUS_ALERTS[exceptionStatus];
 		if (statusAlert) {
 			this.AppStore.dispatch?.({
 				type: ADD_ALERT,
