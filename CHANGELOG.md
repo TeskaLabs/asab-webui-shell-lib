@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.7.1
+
+- Handle generic error status codes on global level via `addAlertFromException` utility (#81)
+
 ## 27.7.0
 
 - Switch beacon WebSocket connection target from `asab-remote-control` to `asab-lighthouse`. (#74)
