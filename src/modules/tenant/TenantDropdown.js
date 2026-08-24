@@ -25,11 +25,11 @@ export default function TenantDropdown() {
 	};
 
 	const filteredTenants = useMemo(() => {
-		if (!searchInput) return tenants;
+		if (!hasSearch || !searchInput) return tenants;
 
 		const inputLower = searchInput.toLowerCase();
 		return tenants.filter(tenant => String(tenant).toLowerCase().includes(inputLower));
-	}, [tenants, searchInput]);
+	}, [tenants, searchInput, hasSearch]);
 
 	return (
 		<Dropdown isOpen={isOpen} toggle={toggle} direction="down" title={t('General|Tenant')}>
