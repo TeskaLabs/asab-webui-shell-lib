@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.7.3
+
+- Implement filtering for Tenant dropdown when there is `>= 10` tenants in the dropdown (#84)
+
 ## 27.7.2
 
 - Change default `Reactstrap` tooltip bg-color to better match LMIO theme colors (#83)
