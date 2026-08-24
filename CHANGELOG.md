@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.7.2
+
+- Change default `Reactstrap` tooltip bg-color to better match LMIO theme colors (#83)
+
 ## 27.7.1
 
 - Handle generic error status codes on global level via `addAlertFromException` utility (#81)
