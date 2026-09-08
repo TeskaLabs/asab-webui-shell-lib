@@ -130,6 +130,8 @@ export default class AuthModule extends Module {
 
 				// Add interceptor with Bearer token in the Header into axios calls
 				this.App.addAxiosInterceptor(this.authInterceptor());
+				// Add response error interceptor to handle 401 Unauthorized globally
+				this.App.addAxiosResponseErrorInterceptor(this.unauthorizedInterceptor());
 				// Add webSocket interceptor with Bearer token into websocket calls
 				this.App.addWebSocketInterceptor(this.webSocketAuthInterceptor());
 
@@ -188,6 +190,32 @@ export default class AuthModule extends Module {
 			return config;
 		}
 		return interceptor;
+	}
+
+	// Handle 401 Unauthorized responses from the server
+	unauthorizedInterceptor() {
+		let handling = false; // Guard against multiple simultaneous 401s
+		return async (error) => {
+			if (error?.response?.status !== 401) return;
+
+			// Ignore 401s from auth endpoints themselves to avoid loops
+			const requestBaseURL = error?.config?.baseURL || '';
+			const oidcURL = this.App.getServiceURL('openidconnect') || '';
+			const seacatAuthURL = this.App.getServiceURL('seacat-auth') || '';
+			if (requestBaseURL.startsWith(oidcURL) || requestBaseURL.startsWith(seacatAuthURL)) {
+				return;
+			}
+
+			if (!handling) {
+				handling = true;
+				await this._refreshTokens();
+				const isUserInfoUpdated = await this.updateUserInfo();
+				if (!isUserInfoUpdated) {
+					this._triggerSessionExpired();
+				}
+				handling = false;
+			}
+		};
 	}
 
 	webSocketAuthInterceptor() {
@@ -467,6 +495,27 @@ export default class AuthModule extends Module {
 		}
 	}
 
+	// Trigger session expiration UI: show alert, disable UI, stop validation loop
+	_triggerSessionExpired() {
+		clearTimeout(this.sessionValidationInterval);
+		this.sessionValidationInterval = null;
+		this.App.addAlert("info", "ASABAuthModule|Your session has expired.", 3600 * 1000, true, (alert) => <SessionExpirationAlert alert={alert} />);
+		if (this.App.AppStore) {
+			this.App.AppStore.dispatch?.({ type: types.AUTH_SESSION_EXPIRATION, sessionExpired: true });
+
+			// Disable UI elements
+			[...document.querySelectorAll('#app-sidebar .nav-link, [class^="btn"]:not(.alert-button), [class*=" btn"]:not(.alert-button), .btn-group a, .page-item, input, select')].forEach(i => {
+				i.classList.add("disabled");
+				i.setAttribute("disabled", "");
+			});
+
+			// Reload on navigation actions
+			window.addEventListener("popstate", () => {
+				window.location.reload();
+			});
+		}
+	}
+
 	// Loop validating session expiration
 	async _startSessionExpirationValidation() {
 		if (!this.SessionExpiration) {
@@ -540,24 +589,7 @@ export default class AuthModule extends Module {
 				const isUserInfoUpdated = await this.updateUserInfo();
 				if (!isUserInfoUpdated) {
 					// Stop further checks
-					clearTimeout(this.sessionValidationInterval);
-					this.sessionValidationInterval = null;
-					this.App.addAlert("info", "ASABAuthModule|Your session has expired.", 3600 * 1000, true, (alert) => <SessionExpirationAlert alert={alert} />);
-					// Disable UI elements
-					if (this.App.AppStore) {
-						this.App.AppStore.dispatch?.({ type: types.AUTH_SESSION_EXPIRATION, sessionExpired: true });
-
-						// Disable UI elements
-						[...document.querySelectorAll('#app-sidebar .nav-link, [class^="btn"]:not(.alert-button), [class*=" btn"]:not(.alert-button), .btn-group a, .page-item, input, select')].forEach(i => {
-							i.classList.add("disabled");
-							i.setAttribute("disabled", "");
-						});
-
-						// Reload on navigation actions
-						window.addEventListener("popstate", () => {
-							window.location.reload();
-						});
-					}
+					this._triggerSessionExpired();
 					return;
 				}
 			}

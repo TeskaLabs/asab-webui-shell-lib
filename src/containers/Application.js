@@ -67,6 +67,7 @@ class Application extends Component {
 
 		this.SplashscreenRequestors = new Set(); // If not empty, the splash screen will be rendered
 		this.AxiosInterceptors = new Set();
+		this.AxiosResponseErrorInterceptors = new Set(); // Interceptors for handling error responses from the server (e.g 401)
 		this.WebSocketInterceptors = new Set();
 
 		this.HeaderService = new HeaderService(this, "HeaderService");
@@ -390,6 +391,11 @@ class Application extends Component {
 				}
 			}
 
+			// Call registered response error interceptors (e.g. for 401 handling)
+			for (let interceptor of that.AxiosResponseErrorInterceptors.keys()) {
+				interceptor(error);
+			}
+
 			return Promise.reject(error);
 		});
 
@@ -431,6 +437,13 @@ class Application extends Component {
 		this.AxiosInterceptors.delete(interceptor);
 	}
 
+	addAxiosResponseErrorInterceptor(interceptor) {
+		this.AxiosResponseErrorInterceptors.add(interceptor);
+	}
+
+	removeAxiosResponseErrorInterceptor(interceptor) {
+		this.AxiosResponseErrorInterceptors.delete(interceptor);
+	}
 
 	addWebSocketInterceptor(interceptor) {
 		this.WebSocketInterceptors.add(interceptor);
