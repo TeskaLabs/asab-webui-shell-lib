@@ -376,7 +376,7 @@ class Application extends Component {
 			}
 			// If the request was satisfied (application/json and presence of BigInt) return the modified object. If not, we return unchanged object
 			return response;
-		}, function (error) {
+		}, async function (error) {
 			if (!error.config?._networkingIndicatorOff) {
 				that.popNetworkingIndicator();
 			}
@@ -393,7 +393,11 @@ class Application extends Component {
 
 			// Call registered response error interceptors (e.g. for 401 handling)
 			for (let interceptor of that.AxiosResponseErrorInterceptors.keys()) {
-				interceptor(error);
+				try {
+					await interceptor(error);
+				} catch (interceptorError) {
+					console.error("Error in AxiosResponseErrorInterceptors", interceptorError);
+				}
 			}
 
 			return Promise.reject(error);

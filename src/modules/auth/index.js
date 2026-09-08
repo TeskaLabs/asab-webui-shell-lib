@@ -44,6 +44,7 @@ export default class AuthModule extends Module {
 
 		this.SessionExpiration = null; // Session expiration as defined in user info
 		this.sessionValidationInterval = null; // Initialize session validation interval
+		this._sessionExpired = false; // Guard which ensures _triggerSessionExpired() runs at most once
 
 		// Access control screen
 		app.Router.addRoute({
@@ -198,22 +199,28 @@ export default class AuthModule extends Module {
 		return async (error) => {
 			if (error?.response?.status !== 401) return;
 
+			// If session expired, do not continue
+			if (this._sessionExpired) return;
+
 			// Ignore 401s from auth endpoints themselves to avoid loops
-			const requestBaseURL = error?.config?.baseURL || '';
-			const oidcURL = this.App.getServiceURL('openidconnect') || '';
-			const seacatAuthURL = this.App.getServiceURL('seacat-auth') || '';
-			if (requestBaseURL.startsWith(oidcURL) || requestBaseURL.startsWith(seacatAuthURL)) {
+			const requestBaseURL = error?.config?.baseURL;
+			const oidcURL = this.App.getServiceURL('openidconnect');
+			const seacatAuthURL = this.App.getServiceURL('seacat-auth');
+			if (requestBaseURL && (requestBaseURL === oidcURL || requestBaseURL === seacatAuthURL)) {
 				return;
 			}
 
 			if (!handling) {
 				handling = true;
-				await this._refreshTokens();
-				const isUserInfoUpdated = await this.updateUserInfo();
-				if (!isUserInfoUpdated) {
-					this._triggerSessionExpired();
+				try {
+					await this._refreshTokens();
+					const isUserInfoUpdated = await this.updateUserInfo();
+					if (!isUserInfoUpdated) {
+						this._triggerSessionExpired();
+					}
+				} finally {
+					handling = false;
 				}
-				handling = false;
 			}
 		};
 	}
@@ -497,6 +504,9 @@ export default class AuthModule extends Module {
 
 	// Trigger session expiration UI: show alert, disable UI, stop validation loop
 	_triggerSessionExpired() {
+		if (this._sessionExpired) return;
+		this._sessionExpired = true;
+
 		clearTimeout(this.sessionValidationInterval);
 		this.sessionValidationInterval = null;
 		this.App.addAlert("info", "ASABAuthModule|Your session has expired.", 3600 * 1000, true, (alert) => <SessionExpirationAlert alert={alert} />);
@@ -605,7 +615,7 @@ export default class AuthModule extends Module {
 	// Stop looping on session expiration validation
 	_stopSessionExpirationValidation() {
 		if (this.sessionValidationInterval) {
-			clearInterval(this.sessionValidationInterval);
+			clearTimeout(this.sessionValidationInterval);
 			this.sessionValidationInterval = null;
 		}
 	}
