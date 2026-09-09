@@ -217,7 +217,9 @@ export default class AuthModule extends Module {
 			// For seacat-auth, only ignore the internal /openidconnect/* sub-path (used by the internal userinfo call)
 			if (requestBaseURL && (
 				requestBaseURL === oidcURL ||
-				(requestBaseURL === seacatAuthURL && requestPath?.startsWith('/openidconnect'))
+				(requestBaseURL === seacatAuthURL && (
+					requestPath === '/openidconnect' || requestPath?.startsWith('/openidconnect/')
+				))
 			)) {
 				return;
 			}
