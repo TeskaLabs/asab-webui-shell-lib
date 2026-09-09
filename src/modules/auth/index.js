@@ -204,9 +204,15 @@ export default class AuthModule extends Module {
 
 			// Ignore 401s from auth endpoints themselves to avoid loops
 			const requestBaseURL = error?.config?.baseURL;
+			const requestPath = error?.config?.url;
 			const oidcURL = this.App.getServiceURL('openidconnect');
 			const seacatAuthURL = this.App.getServiceURL('seacat-auth');
-			if (requestBaseURL && (requestBaseURL === oidcURL || requestBaseURL === seacatAuthURL)) {
+			// Ignore 401 requests from the oidc service (token/userinfo endpoints) to avoid refresh loops
+			// For seacat-auth, only ignore the internal /openidconnect/* sub-path (used by the internal userinfo call)
+			if (requestBaseURL && (
+				requestBaseURL === oidcURL ||
+				(requestBaseURL === seacatAuthURL && requestPath?.startsWith('/openidconnect'))
+			)) {
 				return;
 			}
 
