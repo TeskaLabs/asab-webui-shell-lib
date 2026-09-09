@@ -499,7 +499,7 @@ export default class AuthModule extends Module {
 		sessionStorage.setItem('SeaCatLoginAttempts', String(this._loginAttempts));
 
 		if (this._loginAttempts > MAX_LOGIN_ATTEMPTS) {
-			console.error(`AuthModule: Login redirect loop detected! ${MAX_LOGIN_ATTEMPTS} consecutive login redirects occurred! Please validate the authentication configuration.`);
+			console.error(`AuthModule: Login redirect loop detected! ${this._loginAttempts} consecutive login redirects occurred! Please validate the authentication configuration.`);
 			return;
 		}
 
