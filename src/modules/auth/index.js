@@ -46,6 +46,10 @@ export default class AuthModule extends Module {
 		this.sessionValidationInterval = null; // Initialize session validation interval
 		this._sessionExpired = false; // Guard which ensures _triggerSessionExpired() runs at most once
 
+		// Login-loop protection counts consecutive login redirects and resets on auth success
+		const _n = parseInt(sessionStorage.getItem('SeaCatLoginAttempts') || '0', 10);
+		this._loginAttempts = Number.isFinite(_n) ? _n : 0;
+
 		// Access control screen
 		app.Router.addRoute({
 			path: '/auth/access-control',
@@ -124,8 +128,8 @@ export default class AuthModule extends Module {
 				if (!result) {
 					// User info not found - go to login
 					sessionStorage.removeItem('SeaCatOAuth2Tokens');
-					let force_login_prompt = true;
-					await this.Api.login(this.RedirectURL, force_login_prompt);
+					let force_login_prompt = false;
+					await this._attemptLogin(this.RedirectURL, force_login_prompt);
 					return;
 				}
 
@@ -144,7 +148,7 @@ export default class AuthModule extends Module {
 					if (!tenantAuthorized) {
 						// If tenant not authorized, redirect to Access denied card
 						let force_login_prompt = false;
-						await this.Api.login(this.RedirectURL, force_login_prompt);
+						await this._attemptLogin(this.RedirectURL, force_login_prompt);
 						return;
 					}
 				}
@@ -161,7 +165,7 @@ export default class AuthModule extends Module {
 					*/
 					if (resources == undefined) {
 						let force_login_prompt = false;
-						await this.Api.login(this.RedirectURL, force_login_prompt);
+						await this._attemptLogin(this.RedirectURL, force_login_prompt);
 						return;
 					}
 
@@ -175,13 +179,15 @@ export default class AuthModule extends Module {
 			}
 
 			if ((this.UserInfo == null) && (this.MustAuthenticate)) {
-				// TODO: force_login_prompt = true to break authentication failure loop
 				let force_login_prompt = false;
-				await this.Api.login(this.RedirectURL, force_login_prompt);
+				await this._attemptLogin(this.RedirectURL, force_login_prompt);
 				return;
 			}
 		}
 
+		// Authorization completed successfully so reset the login-loop counter
+		this._loginAttempts = 0;
+		sessionStorage.removeItem('SeaCatLoginAttempts');
 		this.App.removeSplashScreenRequestor(this);
 	}
 
@@ -285,6 +291,10 @@ export default class AuthModule extends Module {
 		this.App.addSplashScreenRequestor(this);
 
 		this._stopSessionExpirationValidation(); // Stop session validation and clear the timeout
+
+		// Clear login-loop counter so a fresh login after logout starts from 0
+		this._loginAttempts = 0;
+		sessionStorage.removeItem('SeaCatLoginAttempts');
 
 		sessionStorage.removeItem('SeaCatOAuth2Tokens');
 		const promise = this.Api.logout(this.OAuthTokens['access_token'])
@@ -471,6 +481,29 @@ export default class AuthModule extends Module {
 			console.error("Failed to update token", err);
 			return false;
 		}
+	}
+
+	/*
+		Login-loop protection wrapper around Api.login()
+
+		Each call increments SeaCatLoginAttempts in sessionStorage. After more than
+		MAX_LOGIN_ATTEMPTS consecutive redirects without a successful auth, further
+		redirects are suppressed.
+
+		The counter is cleared when initialize() completes successfully.
+	*/
+	async _attemptLogin(redirectURL, force_login_prompt = false) {
+		const MAX_LOGIN_ATTEMPTS = 20;
+
+		this._loginAttempts += 1;
+		sessionStorage.setItem('SeaCatLoginAttempts', String(this._loginAttempts));
+
+		if (this._loginAttempts > MAX_LOGIN_ATTEMPTS) {
+			console.error(`AuthModule: Login redirect loop detected! ${MAX_LOGIN_ATTEMPTS} consecutive login redirects occurred! Please validate the authentication configuration.`);
+			return;
+		}
+
+		await this.Api.login(redirectURL, force_login_prompt);
 	}
 
 	// Method for refreshing OAuth tokens
