@@ -88,6 +88,21 @@ export default class AuthModule extends Module {
 				return;
 			}
 
+			/*
+				Duplicated tabs clone sessionStorage and SeaCatAuthTabActive is set
+				while the tab is live and cleared on pagehide (refresh/close).
+				If the flag (SeaCatAuthTabActive) is still present at startup,
+				then its evaluated as a clone and it drops tokens and re-authenticate.
+				Skipping the evaluation during the OAuth `code` redirect
+			*/
+			if (authorization_code === null && this.OAuthTokens != null && sessionStorage.getItem('SeaCatAuthTabActive')) {
+				this.OAuthTokens = null;
+				sessionStorage.removeItem('SeaCatOAuth2Tokens');
+				sessionStorage.removeItem('SeaCatAuthTabActive');
+				await this._attemptLogin(this.RedirectURL, false);
+				return;
+			}
+
 			if (authorization_code !== null) {
 				await this._exchangeCodeForTokens(authorization_code);
 				// Remove 'code' from a query string
@@ -128,10 +143,14 @@ export default class AuthModule extends Module {
 				if (!result) {
 					// User info not found - go to login
 					sessionStorage.removeItem('SeaCatOAuth2Tokens');
+					sessionStorage.removeItem('SeaCatAuthTabActive');
 					let force_login_prompt = false;
 					await this._attemptLogin(this.RedirectURL, force_login_prompt);
 					return;
 				}
+
+				// Mark current tab as holding an active auth session
+				this._markAuthTabActive();
 
 				// Add interceptor with Bearer token in the Header into axios calls
 				this.App.addAxiosInterceptor(this.authInterceptor());
@@ -299,6 +318,7 @@ export default class AuthModule extends Module {
 		sessionStorage.removeItem('SeaCatLoginAttempts');
 
 		sessionStorage.removeItem('SeaCatOAuth2Tokens');
+		sessionStorage.removeItem('SeaCatAuthTabActive');
 		const promise = this.Api.logout(this.OAuthTokens['access_token'])
 		if (promise == null) {
 			window.location.reload();
@@ -477,12 +497,30 @@ export default class AuthModule extends Module {
 			const response = await this.Api.token_authorization_code(authorization_code, this.RedirectURL);
 			this.OAuthTokens = response.data;
 			sessionStorage.setItem('SeaCatOAuth2Tokens', JSON.stringify(response.data));
+			this._markAuthTabActive();
 			return true;
 		}
 		catch (err) {
 			console.error("Failed to update token", err);
 			return false;
 		}
+	}
+
+	/*
+		Mark current tab as holding an active auth session
+		Cleared on pagehide (refresh/close) so the next load keeps tokens
+		A duplicated tab inherits the uncleared flag >> it is detected as a clone
+	*/
+	_markAuthTabActive() {
+		sessionStorage.setItem('SeaCatAuthTabActive', '1'); // 1 stands for true (active)
+		// _authTabUnloadBound is a inner guard which prevents multiple event listeners from being added
+		if (this._authTabUnloadBound) return;
+		this._authTabUnloadBound = true;
+		window.addEventListener('pagehide', (e) => {
+			if (!e.persisted) {
+				sessionStorage.removeItem('SeaCatAuthTabActive');
+			}
+		});
 	}
 
 	/*
