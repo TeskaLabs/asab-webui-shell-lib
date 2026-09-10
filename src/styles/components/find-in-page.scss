@@ -1,0 +1,26 @@
+/*
+	Custom styling for the browser's find-in-page (Ctrl/Cmd+F) functionality (highlights matches).
+	These pseudo-elements are experimental and not supported by all browsers yet. They will silently fail in most browsers.
+	(Fully supported by Chrome and Edge as of 02/2026)
+	Browser support: https://caniuse.com/mdn-css_selectors_search-text
+	https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/::search-text
+*/
+
+@supports selector(::search-text) {
+	[data-bs-theme=dark]:root::search-text {
+		color: var(--black);
+		background-color: rgba(var(--light-honey-rgb), 0.9);
+	}
+
+	[data-bs-theme=light]:root::search-text {
+		color: var(--fiery-sunset);
+		background-color: rgba(var(--bright-orange-rgb), 0.25);
+	}
+
+	// current selected is same in both themes
+	:root::search-text:current {
+		color: var(--white);
+		background-color: rgba(var(--bright-orange-rgb), 0.9);
+		text-decoration: underline;
+	}
+}

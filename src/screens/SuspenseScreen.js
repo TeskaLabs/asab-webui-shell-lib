@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import {useTranslation} from "react-i18next";
 import { Spinner, useAppSelector } from 'asab_webui_components';
 
 import {
@@ -12,6 +13,7 @@ import './SuspenseScreen.scss';
 export default function SuspenseScreen(props) {
 	const [ brandImage, setBrandImage ] = useState(undefined);
 	const theme = useAppSelector(state => state.theme);
+	const {t} = useTranslation();
 
 	useEffect(() => {
 		setBrandImage(getBrandImage(props, theme));
@@ -26,10 +28,10 @@ export default function SuspenseScreen(props) {
 							<img
 								className="suspense-img"
 								src={brandImage?.full}
-								alt="Loading..."
+								alt="Loading"
 							/>
 						:
-							<h2 className="text-center text-primary">Loading...</h2>
+							<h2 className="text-center text-primary">{t('General|Loading')}</h2>
 						}
 					</Row>
 					<Spinner />

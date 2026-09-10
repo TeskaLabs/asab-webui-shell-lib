@@ -1,0 +1,18 @@
+.animation-glow-pulse-primary {
+	animation: glow-pulse-primary 1500ms infinite;
+}
+
+// Changes background, glow, and text color
+@keyframes glow-pulse-primary {
+	0%, 100% {
+		background-color: var(--bs-primary);
+		box-shadow: 0 0 3px var(--bs-primary);
+		color: var(--white)
+	}
+
+	50% {
+		background-color: var(--bs-card-bg);
+		box-shadow: 0 0 10px var(--bs-card-bg);
+		color: var(--bs-primary);
+	}
+}

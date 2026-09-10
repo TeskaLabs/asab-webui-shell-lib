@@ -1,8 +1,114 @@
 # CHANGELOG for ASAB WebUI Shell
 
-## 27.3.5
+## 27.7.4
 
 - Move Create tenant from the Header to the Tenants dropdown menu (#46)
+
+## 27.7.3
+
+- Implement filtering for Tenant dropdown when there is `>= 10` tenants in the dropdown (#84)
+
+## 27.7.2
+
+- Change default `Reactstrap` tooltip bg-color to better match LMIO theme colors (#83)
+
+## 27.7.1
+
+- Handle generic error status codes on global level via `addAlertFromException` utility (#81)
+
+## 27.7.0
+
+- Switch beacon WebSocket connection target from `asab-remote-control` to `asab-lighthouse`. (#74)
+
+## 27.6.0
+
+- Remove advanced mode and Advanced Card component (#80)
+
+## 27.5.5
+
+- Update version on npm repo
+
+## 27.5.4
+
+- Fix workflow (#79)
+
+## 27.5.3
+
+- Fix on userinfo with no tenants list + ability to specify custom Open ID Connect Client ID (#77)
+- Update deprecated node version in github workflow (#78)
+
+## 27.5.2
+
+- Refactor media print styling for asab-pyppeteer (#76)
+
+## 27.5.1
+
+- Fix issue in beacons rendering in Sidebar subitems when the Sidebar was collapsed (#75)
+
+## 27.5.0
+
+- Implement an internal authentication support (#67)
+
+## 27.4.5
+
+- Change translation import from i18n locales (#73)
+
+## 27.4.4
+
+- Change advanced mode shortcut to CTRL+SHIFT+U, leave the alert visible for longer time (#72)
+
+## 27.4.3
+
+- Fixed inconsistent usage of colors in button and alert components (#71)
+
+## 27.4.2
+
+- Remove print-ready state console logs (#70)
+
+## 27.4.1
+
+- Add animation className `animation-glow-pulse` (#69)
+
+## 27.4.0
+
+- Create a reusable Application Hash router component (#68)
+- Update Report printing styles for widgets with scroll (#68)
+
+## 27.3.15
+
+- Unpin the `axios` version to `^1.15.0` (#64)
+
+## 27.3.14
+
+- Fix print layout for dashboard grid items containing Recharts charts (#63)
+
+## 27.3.13
+
+- Improve invitation UX (#61)
+
+## 27.3.11
+
+- Temporaly pin the `axios` version within range of `1.8.4` to `1.14.0` included (#62)
+
+## 27.3.10
+
+- Fix on BigInt serialization with JSON.stringify (#58)
+
+## 27.3.9
+
+- Refactor BigInt JSON parsing method for BigInt values that it can handle also array of BigInt numbers. (#57)
+
+## 27.3.8
+
+- Safely unescape common characters in dynamic value translation of i18n module. (#55)
+
+## 27.3.6
+
+- Add custom styling for the browser's find-in-page (Ctrl/Cmd+F) functionality (highlights matches, currently supported by Chrome). (#53)
+
+## 27.3.5
+
+- Add console.log for print-ready state to determine issues with printing reports (#54)
 
 ## 27.3.4
 
