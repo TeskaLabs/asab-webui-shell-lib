@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.7.4
+
+- Move Create tenant from the Header to the Tenants dropdown menu (#46)
+
 ## 27.7.3
 
 - Implement filtering for Tenant dropdown when there is `>= 10` tenants in the dropdown (#84)
