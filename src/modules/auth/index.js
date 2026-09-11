@@ -533,7 +533,7 @@ export default class AuthModule extends Module {
 		The counter is cleared when initialize() completes successfully.
 	*/
 	async _attemptLogin(redirectURL, force_login_prompt = false) {
-		const MAX_LOGIN_ATTEMPTS = 20;
+		const MAX_LOGIN_ATTEMPTS = 10;
 
 		this._loginAttempts += 1;
 		sessionStorage.setItem('SeaCatLoginAttempts', String(this._loginAttempts));
