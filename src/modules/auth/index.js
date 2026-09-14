@@ -45,6 +45,7 @@ export default class AuthModule extends Module {
 		this.SessionExpiration = null; // Session expiration as defined in user info
 		this.sessionValidationInterval = null; // Initialize session validation interval
 		this._sessionExpired = false; // Guard which ensures _triggerSessionExpired() runs at most once
+		this._unsubscribeLifecycle = null; // Unsubscribe function for the Application.lifecycle! subscription (set by _markAuthPageActive)
 
 		// Login-loop protection counts consecutive login redirects and resets on auth success
 		const _n = parseInt(sessionStorage.getItem('SeaCatLoginAttempts') || '0', 10);
@@ -516,11 +517,11 @@ export default class AuthModule extends Module {
 	*/
 	_markAuthPageActive() {
 		sessionStorage.setItem('SeaCatAuthTabActive', '1'); // 1 stands for true (active)
-		// _authTabUnloadBound is a inner guard which prevents multiple event listeners from being added
-		if (this._authTabUnloadBound) return;
-		this._authTabUnloadBound = true;
-		window.addEventListener('pagehide', (e) => {
-			if (!e.persisted) {
+		// Subscribe just once, it is not intentional to trigger pagehide twice
+		if (this._unsubscribeLifecycle) return;
+		// Subscribe to the pagehide event
+		this._unsubscribeLifecycle = this.App.PubSub.subscribe('Application.lifecycle!', ({ type, persisted }) => {
+			if (type === 'pagehide' && !persisted) {
 				sessionStorage.removeItem('SeaCatAuthTabActive');
 			}
 		});
@@ -592,6 +593,13 @@ export default class AuthModule extends Module {
 
 		clearTimeout(this.sessionValidationInterval);
 		this.sessionValidationInterval = null;
+
+		// Remove the SeaCatAuthTabActive flag and unsubscribe from the pagehide subscription
+		sessionStorage.removeItem('SeaCatAuthTabActive');
+		if (this._unsubscribeLifecycle) {
+			this._unsubscribeLifecycle();
+			this._unsubscribeLifecycle = null;
+		}
 		this.App.addAlert("info", "ASABAuthModule|Your session has expired.", 3600 * 1000, true, (alert) => <SessionExpirationAlert alert={alert} />);
 		if (this.App.AppStore) {
 			this.App.AppStore.dispatch?.({ type: types.AUTH_SESSION_EXPIRATION, sessionExpired: true });

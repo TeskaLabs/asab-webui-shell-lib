@@ -5,6 +5,7 @@ import { Module, PubSubProvider, ErrorHandler, AppStoreProvider, createAppStore 
 
 import { jsonParseWithBigInt as _jsonParseWithBigInt } from '../utils/jsonParseWithBigInt';
 import { STATUS_ALERTS } from '../utils/statusAlerts.jsx';
+import { subscribePageHide } from '../utils/pageLifecycle';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import Toast from './Toast/ToastContainer.jsx';
@@ -110,6 +111,7 @@ class Application extends Component {
 		// Subscribe and unsubscribe handlers for connectivity detection
 		this._initConnectivitySubscription = this._initConnectivitySubscription.bind(this);
 		this._unsubscribeConnectivity = null;
+		this._unsubscribePageHide = null;
 
 		this.ConfigService.addDefaults(props.configdefaults);
 
@@ -587,6 +589,8 @@ class Application extends Component {
 
 		// Subscribe to Application.status! once PubSub is available
 		this._initConnectivitySubscription();
+		// Bridge window page lifecycle events to Application.lifecycle!
+		this._initPageLifecycleBridge();
 		// Add print-landscape class to body if not present
 		if (!document.body.classList.contains('print-landscape')) {
 			document.body.classList.add('print-landscape');
@@ -620,6 +624,12 @@ class Application extends Component {
 		if (this._unsubscribeConnectivity) {
 			this._unsubscribeConnectivity();
 			this._unsubscribeConnectivity = null;
+		}
+
+		// Unsubscribe from Application.lifecycle! PubSub for pagehide event
+		if (this._unsubscribePageHide) {
+			this._unsubscribePageHide();
+			this._unsubscribePageHide = null;
 		}
 
 		this._clearOfflineIndicationTimeout();
@@ -883,6 +893,16 @@ Application.prototype._initConnectivitySubscription = function () {
 		in its useEffect after first render (however we use useLayoutEffect there, so it should not be an issue).
 	*/
 	setTimeout(this._initConnectivitySubscription, 0);
+};
+
+/*
+	On Application lifecycle events, bridge the events to PubSub topic Application.lifecycle!
+*/
+Application.prototype._initPageLifecycleBridge = function () {
+	if (this._unsubscribePageHide) return;
+	this._unsubscribePageHide = subscribePageHide((event) => {
+		this.PubSub?.publish?.('Application.lifecycle!', { type: 'pagehide', persisted: event.persisted });
+	});
 };
 
 export default Application;
