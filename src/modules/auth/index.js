@@ -150,7 +150,7 @@ export default class AuthModule extends Module {
 				}
 
 				// Mark current tab as holding an active auth session
-				this._markAuthTabActive();
+				this._markAuthPageActive();
 
 				// Add interceptor with Bearer token in the Header into axios calls
 				this.App.addAxiosInterceptor(this.authInterceptor());
@@ -500,7 +500,7 @@ export default class AuthModule extends Module {
 			const response = await this.Api.token_authorization_code(authorization_code, this.RedirectURL);
 			this.OAuthTokens = response.data;
 			sessionStorage.setItem('SeaCatOAuth2Tokens', JSON.stringify(response.data));
-			this._markAuthTabActive();
+			this._markAuthPageActive();
 			return true;
 		}
 		catch (err) {
@@ -514,7 +514,7 @@ export default class AuthModule extends Module {
 		Cleared on pagehide (refresh/close) so the next load keeps tokens
 		A duplicated tab inherits the uncleared flag >> it is detected as a clone
 	*/
-	_markAuthTabActive() {
+	_markAuthPageActive() {
 		sessionStorage.setItem('SeaCatAuthTabActive', '1'); // 1 stands for true (active)
 		// _authTabUnloadBound is a inner guard which prevents multiple event listeners from being added
 		if (this._authTabUnloadBound) return;
