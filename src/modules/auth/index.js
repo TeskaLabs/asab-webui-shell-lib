@@ -220,7 +220,7 @@ export default class AuthModule extends Module {
 
 	// Handle 401 Unauthorized responses from the server
 	unauthorizedInterceptor() {
-		let handling = false; // Guard against multiple simultaneous 401s
+		let handlingPromise = null; // Shared promise so concurrent 401s await the same refresh/expire flow
 		return async (error) => {
 			if (error?.response?.status !== 401) return;
 
@@ -243,18 +243,21 @@ export default class AuthModule extends Module {
 				return;
 			}
 
-			if (!handling) {
-				handling = true;
-				try {
-					await this._refreshTokens();
-					const isUserInfoUpdated = await this.updateUserInfo();
-					if (!isUserInfoUpdated) {
-						this._triggerSessionExpired();
+			if (!handlingPromise) {
+				handlingPromise = (async () => {
+					try {
+						await this._refreshTokens();
+						const isUserInfoUpdated = await this.updateUserInfo();
+						if (!isUserInfoUpdated) {
+							this._triggerSessionExpired();
+						}
+					} finally {
+						handlingPromise = null;
 					}
-				} finally {
-					handling = false;
-				}
+				})();
 			}
+			// Await so sessionExpired is set before callers reach addAlertFromException
+			await handlingPromise;
 		};
 	}
 

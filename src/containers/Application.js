@@ -718,6 +718,10 @@ class Application extends Component {
 			|| exceptionStatus === 504) && this._indicateGatewayTimeout()) {
 			return;
 		}
+		// Skip 401 alert when session has expired
+		if (exceptionStatus === 401 && this.AppStore?.getState()?.auth?.sessionExpired) {
+			return;
+		}
 		// Handle specific response statuses and set the appropriate level and message
 		const statusAlert = STATUS_ALERTS[exceptionStatus];
 		if (statusAlert) {
