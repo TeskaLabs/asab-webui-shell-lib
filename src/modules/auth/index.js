@@ -542,6 +542,7 @@ export default class AuthModule extends Module {
 		sessionStorage.setItem('SeaCatLoginAttempts', String(this._loginAttempts));
 
 		if (this._loginAttempts > MAX_LOGIN_ATTEMPTS) {
+			// The info card for a user who ends up in a login redirect loop is shown by LoginLoopCard via sessionStorage SeaCatLoginAttempts
 			console.error(`AuthModule: Login redirect loop detected! ${this._loginAttempts} consecutive login redirects occurred! Please validate the authentication configuration.`);
 			return;
 		}

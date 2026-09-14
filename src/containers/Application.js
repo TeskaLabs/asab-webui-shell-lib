@@ -30,6 +30,7 @@ import TitleService from "../services/TitleService";
 import HelpService from "./Header/Help/HelpService";
 
 import AccessDeniedCard from '../modules/tenant/access/AccessDeniedCard';
+import { LoginLoopCard } from '../modules/auth/components/LoginLoopCard';
 import ApplicationRouter from './Router/ApplicationRouter';
 
 import SuspenseScreen from '../screens/SuspenseScreen';
@@ -830,6 +831,7 @@ class Application extends Component {
 				<Alerts app={this} />
 				<main id="app-main">
 					<AccessDeniedCard app={this} />
+					<LoginLoopCard app={this} />
 				</main>
 			</Suspense>
 		</PubSubProvider>
