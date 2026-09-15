@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.8.0
+
+- Fix session expiration issue with multiple tabs. Add guard for recurring logins. Create a Application.lifecycle! pubsub with `pagehide` event (to be extended for more events like `pageshow`) (#85)
+
 ## 27.7.3
 
 - Implement filtering for Tenant dropdown when there is `>= 10` tenants in the dropdown (#84)
