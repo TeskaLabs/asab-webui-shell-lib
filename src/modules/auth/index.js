@@ -44,6 +44,12 @@ export default class AuthModule extends Module {
 
 		this.SessionExpiration = null; // Session expiration as defined in user info
 		this.sessionValidationInterval = null; // Initialize session validation interval
+		this._sessionExpired = false; // Guard which ensures _triggerSessionExpired() runs at most once
+		this._unsubscribeLifecycle = null; // Unsubscribe function for the Application.lifecycle! subscription (set by _markAuthPageActive)
+
+		// Login-loop protection counts consecutive login redirects and resets on auth success
+		const _n = parseInt(sessionStorage.getItem('SeaCatLoginAttempts') || '0', 10);
+		this._loginAttempts = Number.isFinite(_n) ? _n : 0;
 
 		// Access control screen
 		app.Router.addRoute({
@@ -80,6 +86,21 @@ export default class AuthModule extends Module {
 					tenant_access_denied, user will stay in splashscreen
 					with Access denied card
 				*/
+				return;
+			}
+
+			/*
+				Duplicated tabs clone sessionStorage and SeaCatAuthTabActive is set
+				while the tab is live and cleared on pagehide (refresh/close).
+				If the flag (SeaCatAuthTabActive) is still present at startup,
+				then its evaluated as a clone and it drops tokens and re-authenticate.
+				Skipping the evaluation during the OAuth `code` redirect
+			*/
+			if (authorization_code === null && this.OAuthTokens != null && sessionStorage.getItem('SeaCatAuthTabActive')) {
+				this.OAuthTokens = null;
+				sessionStorage.removeItem('SeaCatOAuth2Tokens');
+				sessionStorage.removeItem('SeaCatAuthTabActive');
+				await this._attemptLogin(this.RedirectURL, false);
 				return;
 			}
 
@@ -123,13 +144,19 @@ export default class AuthModule extends Module {
 				if (!result) {
 					// User info not found - go to login
 					sessionStorage.removeItem('SeaCatOAuth2Tokens');
-					let force_login_prompt = true;
-					await this.Api.login(this.RedirectURL, force_login_prompt);
+					sessionStorage.removeItem('SeaCatAuthTabActive');
+					let force_login_prompt = false;
+					await this._attemptLogin(this.RedirectURL, force_login_prompt);
 					return;
 				}
 
+				// Mark current tab as holding an active auth session
+				this._markAuthPageActive();
+
 				// Add interceptor with Bearer token in the Header into axios calls
 				this.App.addAxiosInterceptor(this.authInterceptor());
+				// Add response error interceptor to handle 401 Unauthorized globally
+				this.App.addAxiosResponseErrorInterceptor(this.unauthorizedInterceptor());
 				// Add webSocket interceptor with Bearer token into websocket calls
 				this.App.addWebSocketInterceptor(this.webSocketAuthInterceptor());
 
@@ -141,7 +168,7 @@ export default class AuthModule extends Module {
 					if (!tenantAuthorized) {
 						// If tenant not authorized, redirect to Access denied card
 						let force_login_prompt = false;
-						await this.Api.login(this.RedirectURL, force_login_prompt);
+						await this._attemptLogin(this.RedirectURL, force_login_prompt);
 						return;
 					}
 				}
@@ -158,7 +185,7 @@ export default class AuthModule extends Module {
 					*/
 					if (resources == undefined) {
 						let force_login_prompt = false;
-						await this.Api.login(this.RedirectURL, force_login_prompt);
+						await this._attemptLogin(this.RedirectURL, force_login_prompt);
 						return;
 					}
 
@@ -172,13 +199,15 @@ export default class AuthModule extends Module {
 			}
 
 			if ((this.UserInfo == null) && (this.MustAuthenticate)) {
-				// TODO: force_login_prompt = true to break authentication failure loop
 				let force_login_prompt = false;
-				await this.Api.login(this.RedirectURL, force_login_prompt);
+				await this._attemptLogin(this.RedirectURL, force_login_prompt);
 				return;
 			}
 		}
 
+		// Authorization completed successfully so reset the login-loop counter
+		this._loginAttempts = 0;
+		sessionStorage.removeItem('SeaCatLoginAttempts');
 		this.App.removeSplashScreenRequestor(this);
 	}
 
@@ -188,6 +217,49 @@ export default class AuthModule extends Module {
 			return config;
 		}
 		return interceptor;
+	}
+
+	// Handle 401 Unauthorized responses from the server
+	unauthorizedInterceptor() {
+		let handlingPromise = null; // Shared promise so concurrent 401s await the same refresh/expire flow
+		return async (error) => {
+			if (error?.response?.status !== 401) return;
+
+			// If session expired, do not continue
+			if (this._sessionExpired) return;
+
+			// Ignore 401s from auth endpoints themselves to avoid loops
+			const requestBaseURL = error?.config?.baseURL;
+			const requestPath = error?.config?.url;
+			const oidcURL = this.App.getServiceURL('openidconnect');
+			const seacatAuthURL = this.App.getServiceURL('seacat-auth');
+			// Ignore 401 requests from the oidc service (token/userinfo endpoints) to avoid refresh loops
+			// For seacat-auth, only ignore the internal /openidconnect/* sub-path (used by the internal userinfo call)
+			if (requestBaseURL && (
+				requestBaseURL === oidcURL ||
+				(requestBaseURL === seacatAuthURL && (
+					requestPath === '/openidconnect' || requestPath?.startsWith('/openidconnect/')
+				))
+			)) {
+				return;
+			}
+
+			if (!handlingPromise) {
+				handlingPromise = (async () => {
+					try {
+						await this._refreshTokens();
+						const isUserInfoUpdated = await this.updateUserInfo();
+						if (!isUserInfoUpdated) {
+							this._triggerSessionExpired();
+						}
+					} finally {
+						handlingPromise = null;
+					}
+				})();
+			}
+			// Await so sessionExpired is set before callers reach addAlertFromException
+			await handlingPromise;
+		};
 	}
 
 	webSocketAuthInterceptor() {
@@ -245,7 +317,12 @@ export default class AuthModule extends Module {
 
 		this._stopSessionExpirationValidation(); // Stop session validation and clear the timeout
 
+		// Clear login-loop counter so a fresh login after logout starts from 0
+		this._loginAttempts = 0;
+		sessionStorage.removeItem('SeaCatLoginAttempts');
+
 		sessionStorage.removeItem('SeaCatOAuth2Tokens');
+		sessionStorage.removeItem('SeaCatAuthTabActive');
 		const promise = this.Api.logout(this.OAuthTokens['access_token'])
 		if (promise == null) {
 			window.location.reload();
@@ -424,12 +501,54 @@ export default class AuthModule extends Module {
 			const response = await this.Api.token_authorization_code(authorization_code, this.RedirectURL);
 			this.OAuthTokens = response.data;
 			sessionStorage.setItem('SeaCatOAuth2Tokens', JSON.stringify(response.data));
+			this._markAuthPageActive();
 			return true;
 		}
 		catch (err) {
 			console.error("Failed to update token", err);
 			return false;
 		}
+	}
+
+	/*
+		Mark current tab as holding an active auth session
+		Cleared on pagehide (refresh/close) so the next load keeps tokens
+		A duplicated tab inherits the uncleared flag >> it is detected as a clone
+	*/
+	_markAuthPageActive() {
+		sessionStorage.setItem('SeaCatAuthTabActive', '1'); // 1 stands for true (active)
+		// Subscribe just once, it is not intentional to trigger pagehide twice
+		if (this._unsubscribeLifecycle) return;
+		// Subscribe to the pagehide event
+		this._unsubscribeLifecycle = this.App.PubSub.subscribe('Application.lifecycle!', ({ type, persisted }) => {
+			if (type === 'pagehide' && !persisted) {
+				sessionStorage.removeItem('SeaCatAuthTabActive');
+			}
+		});
+	}
+
+	/*
+		Login-loop protection wrapper around Api.login()
+
+		Each call increments SeaCatLoginAttempts in sessionStorage. After more than
+		MAX_LOGIN_ATTEMPTS consecutive redirects without a successful auth, further
+		redirects are suppressed.
+
+		The counter is cleared when initialize() completes successfully.
+	*/
+	async _attemptLogin(redirectURL, force_login_prompt = false) {
+		const MAX_LOGIN_ATTEMPTS = 10;
+
+		this._loginAttempts += 1;
+		sessionStorage.setItem('SeaCatLoginAttempts', String(this._loginAttempts));
+
+		if (this._loginAttempts > MAX_LOGIN_ATTEMPTS) {
+			// The info card for a user who ends up in a login redirect loop is shown by LoginLoopCard via sessionStorage SeaCatLoginAttempts
+			console.error(`AuthModule: Login redirect loop detected! ${this._loginAttempts} consecutive login redirects occurred! Please validate the authentication configuration.`);
+			return;
+		}
+
+		await this.Api.login(redirectURL, force_login_prompt);
 	}
 
 	// Method for refreshing OAuth tokens
@@ -464,6 +583,37 @@ export default class AuthModule extends Module {
 			}
 		} else {
 			return undefined;
+		}
+	}
+
+	// Trigger session expiration UI: show alert, disable UI, stop validation loop
+	_triggerSessionExpired() {
+		if (this._sessionExpired) return;
+		this._sessionExpired = true;
+
+		clearTimeout(this.sessionValidationInterval);
+		this.sessionValidationInterval = null;
+
+		// Remove the SeaCatAuthTabActive flag and unsubscribe from the pagehide subscription
+		sessionStorage.removeItem('SeaCatAuthTabActive');
+		if (this._unsubscribeLifecycle) {
+			this._unsubscribeLifecycle();
+			this._unsubscribeLifecycle = null;
+		}
+		this.App.addAlert("info", "ASABAuthModule|Your session has expired.", 3600 * 1000, true, (alert) => <SessionExpirationAlert alert={alert} />);
+		if (this.App.AppStore) {
+			this.App.AppStore.dispatch?.({ type: types.AUTH_SESSION_EXPIRATION, sessionExpired: true });
+
+			// Disable UI elements
+			[...document.querySelectorAll('#app-sidebar .nav-link, [class^="btn"]:not(.alert-button), [class*=" btn"]:not(.alert-button), .btn-group a, .page-item, input, select')].forEach(i => {
+				i.classList.add("disabled");
+				i.setAttribute("disabled", "");
+			});
+
+			// Reload on navigation actions
+			window.addEventListener("popstate", () => {
+				window.location.reload();
+			});
 		}
 	}
 
@@ -540,24 +690,7 @@ export default class AuthModule extends Module {
 				const isUserInfoUpdated = await this.updateUserInfo();
 				if (!isUserInfoUpdated) {
 					// Stop further checks
-					clearTimeout(this.sessionValidationInterval);
-					this.sessionValidationInterval = null;
-					this.App.addAlert("info", "ASABAuthModule|Your session has expired.", 3600 * 1000, true, (alert) => <SessionExpirationAlert alert={alert} />);
-					// Disable UI elements
-					if (this.App.AppStore) {
-						this.App.AppStore.dispatch?.({ type: types.AUTH_SESSION_EXPIRATION, sessionExpired: true });
-
-						// Disable UI elements
-						[...document.querySelectorAll('#app-sidebar .nav-link, [class^="btn"]:not(.alert-button), [class*=" btn"]:not(.alert-button), .btn-group a, .page-item, input, select')].forEach(i => {
-							i.classList.add("disabled");
-							i.setAttribute("disabled", "");
-						});
-
-						// Reload on navigation actions
-						window.addEventListener("popstate", () => {
-							window.location.reload();
-						});
-					}
+					this._triggerSessionExpired();
 					return;
 				}
 			}
@@ -573,7 +706,7 @@ export default class AuthModule extends Module {
 	// Stop looping on session expiration validation
 	_stopSessionExpirationValidation() {
 		if (this.sessionValidationInterval) {
-			clearInterval(this.sessionValidationInterval);
+			clearTimeout(this.sessionValidationInterval);
 			this.sessionValidationInterval = null;
 		}
 	}
