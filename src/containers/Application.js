@@ -5,6 +5,7 @@ import { Module, PubSubProvider, ErrorHandler, AppStoreProvider, createAppStore 
 
 import { jsonParseWithBigInt as _jsonParseWithBigInt } from '../utils/jsonParseWithBigInt';
 import { STATUS_ALERTS } from '../utils/statusAlerts.jsx';
+import { subscribePageHide } from '../utils/pageLifecycle';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import Toast from './Toast/ToastContainer.jsx';
@@ -30,6 +31,7 @@ import TitleService from "../services/TitleService";
 import HelpService from "./Header/Help/HelpService";
 
 import AccessDeniedCard from '../modules/tenant/access/AccessDeniedCard';
+import { LoginLoopCard } from '../modules/auth/components/LoginLoopCard';
 import ApplicationRouter from './Router/ApplicationRouter';
 
 import SuspenseScreen from '../screens/SuspenseScreen';
@@ -67,6 +69,7 @@ class Application extends Component {
 
 		this.SplashscreenRequestors = new Set(); // If not empty, the splash screen will be rendered
 		this.AxiosInterceptors = new Set();
+		this.AxiosResponseErrorInterceptors = new Set(); // Interceptors for handling error responses from the server (e.g 401)
 		this.WebSocketInterceptors = new Set();
 
 		this.HeaderService = new HeaderService(this, "HeaderService");
@@ -108,6 +111,7 @@ class Application extends Component {
 		// Subscribe and unsubscribe handlers for connectivity detection
 		this._initConnectivitySubscription = this._initConnectivitySubscription.bind(this);
 		this._unsubscribeConnectivity = null;
+		this._unsubscribePageHide = null;
 
 		this.ConfigService.addDefaults(props.configdefaults);
 
@@ -375,7 +379,7 @@ class Application extends Component {
 			}
 			// If the request was satisfied (application/json and presence of BigInt) return the modified object. If not, we return unchanged object
 			return response;
-		}, function (error) {
+		}, async function (error) {
 			if (!error.config?._networkingIndicatorOff) {
 				that.popNetworkingIndicator();
 			}
@@ -387,6 +391,15 @@ class Application extends Component {
 					error.response.data = JSON.parse(error.response.data);
 				} catch (e) {
 					console.error("Error parsing error of the error body:", e);
+				}
+			}
+
+			// Call registered response error interceptors (e.g. for 401 handling)
+			for (let interceptor of that.AxiosResponseErrorInterceptors.keys()) {
+				try {
+					await interceptor(error);
+				} catch (interceptorError) {
+					console.error("Error in AxiosResponseErrorInterceptors", interceptorError);
 				}
 			}
 
@@ -431,6 +444,13 @@ class Application extends Component {
 		this.AxiosInterceptors.delete(interceptor);
 	}
 
+	addAxiosResponseErrorInterceptor(interceptor) {
+		this.AxiosResponseErrorInterceptors.add(interceptor);
+	}
+
+	removeAxiosResponseErrorInterceptor(interceptor) {
+		this.AxiosResponseErrorInterceptors.delete(interceptor);
+	}
 
 	addWebSocketInterceptor(interceptor) {
 		this.WebSocketInterceptors.add(interceptor);
@@ -569,6 +589,8 @@ class Application extends Component {
 
 		// Subscribe to Application.status! once PubSub is available
 		this._initConnectivitySubscription();
+		// Bridge window page lifecycle events to Application.lifecycle!
+		this._initPageLifecycleBridge();
 		// Add print-landscape class to body if not present
 		if (!document.body.classList.contains('print-landscape')) {
 			document.body.classList.add('print-landscape');
@@ -602,6 +624,12 @@ class Application extends Component {
 		if (this._unsubscribeConnectivity) {
 			this._unsubscribeConnectivity();
 			this._unsubscribeConnectivity = null;
+		}
+
+		// Unsubscribe from Application.lifecycle! PubSub for pagehide event
+		if (this._unsubscribePageHide) {
+			this._unsubscribePageHide();
+			this._unsubscribePageHide = null;
 		}
 
 		this._clearOfflineIndicationTimeout();
@@ -699,6 +727,10 @@ class Application extends Component {
 		if ((exceptionStatus === 502
 			|| exceptionStatus === 503
 			|| exceptionStatus === 504) && this._indicateGatewayTimeout()) {
+			return;
+		}
+		// Skip 401 alert when session has expired
+		if (exceptionStatus === 401 && this.AppStore?.getState()?.auth?.sessionExpired) {
 			return;
 		}
 		// Handle specific response statuses and set the appropriate level and message
@@ -809,6 +841,7 @@ class Application extends Component {
 				<Alerts app={this} />
 				<main id="app-main">
 					<AccessDeniedCard app={this} />
+					<LoginLoopCard app={this} />
 				</main>
 			</Suspense>
 		</PubSubProvider>
@@ -860,6 +893,16 @@ Application.prototype._initConnectivitySubscription = function () {
 		in its useEffect after first render (however we use useLayoutEffect there, so it should not be an issue).
 	*/
 	setTimeout(this._initConnectivitySubscription, 0);
+};
+
+/*
+	On Application lifecycle events, bridge the events to PubSub topic Application.lifecycle!
+*/
+Application.prototype._initPageLifecycleBridge = function () {
+	if (this._unsubscribePageHide) return;
+	this._unsubscribePageHide = subscribePageHide((event) => {
+		this.PubSub?.publish?.('Application.lifecycle!', { type: 'pagehide', persisted: event.persisted });
+	});
 };
 
 export default Application;
