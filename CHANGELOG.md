@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.8.1
+
+- Extend the Sidebar items on optional `openFor` property, which detects Sidebar sections to remain expanded when the current page matches configured routes (wildcards or exact routes) (#86)
+
 ## 27.8.0
 
 - Fix session expiration issue with multiple tabs. Add guard for recurring logins. Create a Application.lifecycle! pubsub with `pagehide` event (to be extended for more events like `pageshow`) (#85)
