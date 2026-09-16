@@ -15,7 +15,21 @@ export default class Navigation extends Component {
 				path: '/some/path',	// Url path
 				end: true,		// Whether path must be matched exactly
 				name: 'Some Name',	// Route name
-				component: ReactComponent // Component to be rendered
+				openFor: ['/some/path/*'], // Optional array of routes to keep the item open
+				icon: 'bi bi-folder', // Icon
+				resource: 'some:resource:access', // Resource to check access for
+				order: 100, // Order of the item
+				children: [ // Optional array of children
+					{
+						path: '/some/path/child',
+						end: true,
+						name: 'Child Name',
+						openFor: ['/some/path/child'], // Optional array of routes to keep the child highlighted
+						icon: 'bi bi-file', // Icon
+						resource: 'some:resource:access', // Resource to check access for
+						order: 100, // Order of the child
+					}
+				],
 			}
 		*/
 
