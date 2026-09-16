@@ -28,7 +28,10 @@ export const SidebarItem = ({
 			setOpen(false);
 		}
 
-		setActive((item.url && (location.pathname === item.url || location.pathname.startsWith(item.url + '/'))) ? true : false);
+		setActive(
+			Boolean(item.url && (location.pathname === item.url || location.pathname.startsWith(item.url + '/')))
+			|| matchesOpenFor(location.pathname, item.openFor)
+		);
 
 	}, [location]);
 
