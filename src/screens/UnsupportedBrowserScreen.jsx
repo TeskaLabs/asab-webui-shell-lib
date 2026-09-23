@@ -13,6 +13,7 @@ import './UnsupportedBrowserScreen.scss';
 /*
 	Shown in #app-main when the browser fails the shell capability probe.
 	Header and Sidebar stay mounted so the user can still log out.
+	Skipped when config browserSupportCheck is set to false
 */
 export function UnsupportedBrowserScreen() {
 	const { t } = useTranslation();

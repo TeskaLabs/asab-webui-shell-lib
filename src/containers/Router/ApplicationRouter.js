@@ -8,13 +8,14 @@ import RouteErrorHandler from '../RouteErrorHandler';
 import UnauthorizedAccessScreen from '../../screens/UnauthorizedAccessScreen';
 import InvalidRouteScreen from "../../screens/InvalidRouteScreen";
 import { isBrowserSupported } from '../../utils/browserSupport.jsx';
-import { UnsupportedBrowserScreen }from '../../screens/UnsupportedBrowserScreen.jsx';
+import { UnsupportedBrowserScreen } from '../../screens/UnsupportedBrowserScreen.jsx';
 
 
 export default function ApplicationRouter(props) {
 	const routes = useAppSelector(state => state.router?.routes);
 
-	if (!isBrowserSupported()) {
+	// Verify browser support only if browserSupportCheck is not disabled
+	if (props.app.Config.get('browserSupportCheck') !== false && !isBrowserSupported()) {
 		return(<UnsupportedBrowserScreen />);
 	}
 
