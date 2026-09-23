@@ -1,0 +1,26 @@
+.unsupported-browser-container {
+	overflow: hidden;
+}
+
+.unsupported-browser-card {
+	height: 80%;
+	width: 50%;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	border: 1px solid var(--bs-danger);
+}
+
+.unsupported-browser-cardbody {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: auto;
+	margin: 1rem;
+}
+
+.unsupported-browser-img-container {
+	height: 75%;
+	max-height: 50vh;
+}
