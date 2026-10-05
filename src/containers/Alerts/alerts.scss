@@ -6,4 +6,9 @@
 	width: 80%;
 	margin-left: 10%;
 	margin-right: 10%;
+
+	/* Move the alerts bit lower after the session expires */
+	&.session-expired {
+		top: 120px;
+	}
 }
