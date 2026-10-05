@@ -11,7 +11,7 @@ import { getBrowserLabel } from '../utils/browserSupport.jsx';
 import './UnsupportedBrowserScreen.scss';
 
 /*
-	Shown in #app-main when the browser fails the shell capability probe.
+	Shown in #app-main when the browser fails to match supported browser criteria.
 	Header and Sidebar stay mounted so the user can still log out.
 	Skipped when config browserSupportCheck is set to false
 */
