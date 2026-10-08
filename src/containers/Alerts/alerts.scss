@@ -2,10 +2,12 @@
 	position: fixed;
 	z-index: 1500;
 	top: 40px;
-
-	width: 80%;
-	margin-left: 10%;
-	margin-right: 10%;
+	left: 0;
+	right: 0;
+	width: 60rem;
+	max-width: 90%;
+	margin-left: auto;
+	margin-right: auto;
 
 	/* Move the alerts bit lower after the session expires */
 	&.session-expired {
