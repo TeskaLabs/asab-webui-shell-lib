@@ -23,4 +23,10 @@
 .unsupported-browser-img-container {
 	height: 75%;
 	max-height: 50vh;
+
+	svg,
+	img {
+		max-height: 28vh;
+		width: auto;
+	}
 }

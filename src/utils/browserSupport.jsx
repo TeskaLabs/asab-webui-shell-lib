@@ -6,7 +6,7 @@
 */
 
 // First supported version per detected family. Bump when a new engine floor is required.
-const MIN_SUPPORTED = {
+export const MIN_SUPPORTED = {
 	Safari: '16.4', // lookbehind
 	Chrome: '62',
 	Firefox: '78',

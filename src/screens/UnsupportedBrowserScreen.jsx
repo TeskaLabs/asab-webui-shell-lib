@@ -7,7 +7,7 @@ import {
 } from 'reactstrap';
 
 import { FlowbiteIllustration } from 'asab_webui_components';
-import { getBrowserLabel } from '../utils/browserSupport.jsx';
+import { getBrowserLabel, MIN_SUPPORTED } from '../utils/browserSupport.jsx';
 import './UnsupportedBrowserScreen.scss';
 
 /*
@@ -41,8 +41,14 @@ export function UnsupportedBrowserScreen() {
 									title={t('UnsupportedBrowserScreen|Browser not supported')}
 								/>
 							</div>
-							<h4 className="mb-3">{t('UnsupportedBrowserScreen|Browser not supported')}</h4>
-							<p className="card-text">{message}</p>
+							<h4 className="mb-2">{t('UnsupportedBrowserScreen|Browser not supported')}</h4>
+							<p className="card-text mb-2">{message}</p>
+							<p className="mb-1">{t('UnsupportedBrowserScreen|Minimum supported versions:')}</p>
+							<ul className="list-unstyled mb-0 unsupported-browser-versions">
+								{Object.entries(MIN_SUPPORTED).map(([name, version]) => (
+									<li key={name}>{name} {version}+</li>
+								))}
+							</ul>
 						</Col>
 					</Row>
 				</CardBody>
