@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.8.2
+
+- Implement list of unsupported browsers and their versions with a Unsupported browser screen (#87)
+
 ## 27.8.1
 
 - Extend the Sidebar items on optional `openFor` property, which detects Sidebar sections to remain expanded when the current page matches configured routes (wildcards or exact routes) (#86)

@@ -7,10 +7,18 @@ import RouteErrorHandler from '../RouteErrorHandler';
 // TODO: properly isolate authorization screen from the Application (should be injected when needed and only when AuthModule is enabled)
 import UnauthorizedAccessScreen from '../../screens/UnauthorizedAccessScreen';
 import InvalidRouteScreen from "../../screens/InvalidRouteScreen";
+import { isBrowserSupported } from '../../utils/browserSupport.jsx';
+import { UnsupportedBrowserScreen } from '../../screens/UnsupportedBrowserScreen.jsx';
 
 
 export default function ApplicationRouter(props) {
 	const routes = useAppSelector(state => state.router?.routes);
+
+	// Verify browser support only if browserSupportCheck is not disabled
+	if (props.app.Config.get('browserSupportCheck') !== false && !isBrowserSupported()) {
+		return(<UnsupportedBrowserScreen />);
+	}
+
 	return(
 		<Routes>
 			{routes && routes.map((route, idx) => {
