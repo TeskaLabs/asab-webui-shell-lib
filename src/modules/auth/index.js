@@ -250,7 +250,10 @@ export default class AuthModule extends Module {
 			}
 
 			// Await so sessionExpired is set before callers reach addAlertFromException
-			await this._renewSession();
+			const { userInfoUpdated } = await this._renewSession();
+			if (userInfoUpdated === false) {
+				this._triggerSessionExpired();
+			}
 		};
 	}
 
@@ -555,20 +558,19 @@ export default class AuthModule extends Module {
 	}
 
 	/*
-		Refresh tokens and validate them on userinfo as one step, expire the session if the token is rejected.
+		Refresh tokens and validate them on userinfo as one step.
 		Concurrent callers share the in-flight run, because each refresh invalidates the previous access token server-side.
-		Returns true if the tokens were refreshed.
+		Returns { tokensRefreshed, userInfoUpdated } where userInfoUpdated follows the updateUserInfo() return values.
+		Callers decide about the session expiration.
 	*/
 	_renewSession() {
-		if (this._sessionExpired) return Promise.resolve(false);
+		if (this._sessionExpired) return Promise.resolve({ tokensRefreshed: false, userInfoUpdated: undefined });
 		if (!this._renewPromise) {
 			this._renewPromise = (async () => {
 				try {
 					const tokensRefreshed = await this._refreshTokens();
-					if (await this.updateUserInfo() === false) {
-						this._triggerSessionExpired();
-					}
-					return tokensRefreshed;
+					const userInfoUpdated = await this.updateUserInfo();
+					return { tokensRefreshed, userInfoUpdated };
 				} finally {
 					this._renewPromise = null;
 				}
@@ -660,7 +662,7 @@ export default class AuthModule extends Module {
 				// Validate session on half of the session expiration or if the remaining time is <= 5min
 				if (!refreshSessionDone && ((timeRemaining <= 300) || (currentTime >= sessionMidpoint))) {
 					refreshSessionDone = true;
-					const tokensRefreshed = await this._renewSession();
+					const { tokensRefreshed } = await this._renewSession();
 					// If current session expiration differs from last known expiration, recalculate session variables
 					if (tokensRefreshed && (this.SessionExpiration !== lastKnownExpiration)) {
 						lastKnownExpiration = this.SessionExpiration;
@@ -678,16 +680,19 @@ export default class AuthModule extends Module {
 
 				// If remaining time is between 1 and 60s, repetitivelly ask for userInfo and trigger "about to expire" warning
 				if ((timeRemaining <= 60) && (timeRemaining > 0)) {
-					const tokensRefreshed = await this._renewSession(); // Returns true/false if token is refreshed/not refreshed
+					const { tokensRefreshed } = await this._renewSession();
 					if (!tokensRefreshed && !warningDisplayed && !this._sessionExpired) {
 						this.App.addAlert("info", "General|Your session will expire soon", 30, true);
 						warningDisplayed = true; // Mark the warning as displayed
 					}
 				}
 
-				// Validation on expired session, renewal triggers the session expiration if the token is rejected
+				// Validation on expired session
 				if (this.SessionExpiration <= currentTime) {
-					await this._renewSession();
+					const { userInfoUpdated } = await this._renewSession();
+					if (userInfoUpdated === false) {
+						this._triggerSessionExpired();
+					}
 				}
 			} catch (err) {
 				// Keep the validation loop running, the next cycle retries
