@@ -245,7 +245,7 @@ export default class AuthModule extends Module {
 			}
 
 			// Each refresh invalidates the previous access token server-side, so only a 401 for the current token can mean an invalid session
-			if (error?.config?.headers?.Authorization !== `Bearer ${this.OAuthTokens?.access_token}`) {
+			if (error?.config?.headers?.get?.('Authorization') !== `Bearer ${this.OAuthTokens?.access_token}`) {
 				return;
 			}
 
@@ -648,45 +648,50 @@ export default class AuthModule extends Module {
 		let warningDisplayed = false; // Tracks if the "about to expire" warning has been shown
 
 		const validateSession = async () => {
-			const currentTime = Date.now() / 1000; // Convert milliseconds to seconds
-			let timeRemaining = this.SessionExpiration - currentTime; // Time difference for triggering "about to expire" warning
-			// Prevent glitches on very large time remaining values
-			if (timeRemaining > MAX_SESSION_DURATION) {
-				// Set timeout to maximum allowed value
-				timeRemaining = MAX_SESSION_DURATION;
-			}
+			try {
+				const currentTime = Date.now() / 1000; // Convert milliseconds to seconds
+				let timeRemaining = this.SessionExpiration - currentTime; // Time difference for triggering "about to expire" warning
+				// Prevent glitches on very large time remaining values
+				if (timeRemaining > MAX_SESSION_DURATION) {
+					// Set timeout to maximum allowed value
+					timeRemaining = MAX_SESSION_DURATION;
+				}
 
-			// Validate session on half of the session expiration or if the remaining time is <= 5min
-			if (!refreshSessionDone && ((timeRemaining <= 300) || (currentTime >= sessionMidpoint))) {
-				refreshSessionDone = true;
-				const tokensRefreshed = await this._renewSession();
-				// If current session expiration differs from last known expiration, recalculate session variables
-				if (tokensRefreshed && (this.SessionExpiration !== lastKnownExpiration)) {
-					lastKnownExpiration = this.SessionExpiration;
-					sessionStartTime = currentTime;
-					sessionDuration = lastKnownExpiration - sessionStartTime;
-					// Prevent glitches on very large time remaining values
-					if (sessionDuration > MAX_SESSION_DURATION) {
-						// Set timeout to maximum allowed value
-						sessionDuration = MAX_SESSION_DURATION;
+				// Validate session on half of the session expiration or if the remaining time is <= 5min
+				if (!refreshSessionDone && ((timeRemaining <= 300) || (currentTime >= sessionMidpoint))) {
+					refreshSessionDone = true;
+					const tokensRefreshed = await this._renewSession();
+					// If current session expiration differs from last known expiration, recalculate session variables
+					if (tokensRefreshed && (this.SessionExpiration !== lastKnownExpiration)) {
+						lastKnownExpiration = this.SessionExpiration;
+						sessionStartTime = currentTime;
+						sessionDuration = lastKnownExpiration - sessionStartTime;
+						// Prevent glitches on very large time remaining values
+						if (sessionDuration > MAX_SESSION_DURATION) {
+							// Set timeout to maximum allowed value
+							sessionDuration = MAX_SESSION_DURATION;
+						}
+						sessionMidpoint = sessionStartTime + sessionDuration / 2;
+						refreshSessionDone = false;
 					}
-					sessionMidpoint = sessionStartTime + sessionDuration / 2;
-					refreshSessionDone = false;
 				}
-			}
 
-			// If remaining time is between 1 and 60s, repetitivelly ask for userInfo and trigger "about to expire" warning
-			if ((timeRemaining <= 60) && (timeRemaining > 0)) {
-				const tokensRefreshed = await this._renewSession(); // Returns true/false if token is refreshed/not refreshed
-				if (!tokensRefreshed && !warningDisplayed && !this._sessionExpired) {
-					this.App.addAlert("info", "General|Your session will expire soon", 30, true);
-					warningDisplayed = true; // Mark the warning as displayed
+				// If remaining time is between 1 and 60s, repetitivelly ask for userInfo and trigger "about to expire" warning
+				if ((timeRemaining <= 60) && (timeRemaining > 0)) {
+					const tokensRefreshed = await this._renewSession(); // Returns true/false if token is refreshed/not refreshed
+					if (!tokensRefreshed && !warningDisplayed && !this._sessionExpired) {
+						this.App.addAlert("info", "General|Your session will expire soon", 30, true);
+						warningDisplayed = true; // Mark the warning as displayed
+					}
 				}
-			}
 
-			// Validation on expired session, renewal triggers the session expiration if the token is rejected
-			if (this.SessionExpiration <= currentTime) {
-				await this._renewSession();
+				// Validation on expired session, renewal triggers the session expiration if the token is rejected
+				if (this.SessionExpiration <= currentTime) {
+					await this._renewSession();
+				}
+			} catch (err) {
+				// Keep the validation loop running, the next cycle retries
+				console.error("Failed to validate session", err);
 			}
 
 			// Stop further checks on expired session, it can be also triggered by the unauthorized interceptor meanwhile
