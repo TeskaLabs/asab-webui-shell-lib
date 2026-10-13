@@ -2,7 +2,7 @@
 
 ## 27.8.3
 
-- Move Create tenant from the Header to the Tenants dropdown menu (#46)
+- Move `Create tenant` to the Tenants dropdown menu (#46)
 
 ## 27.8.2
 
