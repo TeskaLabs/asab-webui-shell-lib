@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.8.3
+
+- Move `Create tenant` to the Tenants dropdown menu (#46)
+
 ## 27.8.2
 
 - Fix on session expiration issue with a single tab (#89)
