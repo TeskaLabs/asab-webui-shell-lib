@@ -12,7 +12,7 @@ import { AttentionBadge, useAppSelector } from 'asab_webui_components';
 import Icon from './SidebarIcon';
 
 export const SidebarItem = ({
-	item, disabled, isOpen, setOpen, isSmallResolution, beacon = undefined
+	item, disabled, isOpen, setOpen, isSmallResolution, beacon = undefined, openFor
 }) => {
 	const location = useLocation();
 	const { t } = useTranslation();
@@ -24,11 +24,14 @@ export const SidebarItem = ({
 
 	useEffect(() => {
 		// TODO: refactor the handling of active and open states, since it does not behave as expected in some cases
-		if(isOpen && !isActive) {
-			setOpen(false)
+		if (isOpen && !isActive && !matchesOpenFor(location.pathname, openFor)) {
+			setOpen(false);
 		}
 
-		setActive((item.url && (location.pathname === item.url || location.pathname.startsWith(item.url + '/'))) ? true : false);
+		setActive(
+			Boolean(item.url && (location.pathname === item.url || location.pathname.startsWith(item.url + '/')))
+			|| matchesOpenFor(location.pathname, item.openFor)
+		);
 
 	}, [location]);
 
@@ -80,6 +83,10 @@ export const SidebarCollapsibleItem = ({
 	// Should collapsed item uncollapse
 	useEffect(() => {
 		if (item.children && !isOpen) {
+			if (matchesOpenFor(location.pathname, item.openFor)) {
+				setOpen(true);
+				return;
+			}
 			for (const child of item.children) {
 				if (location.pathname.includes(child.url)) {
 				  setOpen(true);
@@ -141,6 +148,7 @@ export const SidebarCollapsibleItem = ({
 						isOpen={isOpen}
 						setOpen={setOpen}
 						isSmallResolution={isSmallResolution}
+						openFor={item.openFor}
 						beacon={itemsBeacon[`beacon.${child?.name?.toLowerCase()}`] && childBeacon(itemsBeacon, `beacon.${child.name.toLowerCase()}`)}
 					/>
 				))}
@@ -166,3 +174,13 @@ const parentBeacon = (data, prefix, itemName) => {
 const childBeacon = (data, key) => {
 	return data[key] ? { [key]: data[key] } : {};
 };
+
+// Optional item.openFor patterns, e.g. ['/route/*'] - keeps parent open on matching routes
+const matchesOpenFor = (pathname, patterns) =>
+	patterns?.some((p) => {
+		if (p.endsWith('*')) {
+			const prefix = p.slice(0, -1);
+			return pathname.startsWith(prefix) || pathname === prefix.slice(0, -1);
+		}
+		return pathname === p || pathname.startsWith(p + '/');
+	}) ?? false;

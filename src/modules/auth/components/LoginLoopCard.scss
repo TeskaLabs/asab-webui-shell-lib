@@ -1,0 +1,6 @@
+.auth-login-loop-wrapper {
+	position: absolute;
+	z-index: 99999;
+	left: 50%; /*Horizontally center*/
+	transform: translateX(-50%); /*Horizontally center*/
+}

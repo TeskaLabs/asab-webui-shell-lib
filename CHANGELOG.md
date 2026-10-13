@@ -1,8 +1,20 @@
 # CHANGELOG for ASAB WebUI Shell
 
-## 27.7.4
+## 27.8.3
 
 - Move Create tenant from the Header to the Tenants dropdown menu (#46)
+
+## 27.8.2
+
+- Fix on session expiration issue with a single tab (#89)
+
+## 27.8.1
+
+- Extend the Sidebar items on optional `openFor` property, which detects Sidebar sections to remain expanded when the current page matches configured routes (wildcards or exact routes) (#86)
+
+## 27.8.0
+
+- Fix session expiration issue with multiple tabs. Add guard for recurring logins. Create a Application.lifecycle! pubsub with `pagehide` event (to be extended for more events like `pageshow`) (#85)
 
 ## 27.7.3
 

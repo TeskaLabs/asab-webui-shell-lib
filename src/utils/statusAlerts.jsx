@@ -3,8 +3,13 @@
 	This is a extension to the addAlertFromException function in the Application.js file.
 	
 	The 502, 503 and 504 errors are handled directly in the Application.js file, since it does not render an alert at all.
+	The 401 alert is suppressed in Application.js when the session has expired (AuthModule shows SessionExpirationAlert).
 */
 export const STATUS_ALERTS = {
+	401: {
+		level: 'warning',
+		message: 'General|Unauthorized request. Please contact the administrator.',
+	},
 	408: {
 		level: 'warning',
 		message: 'General|The request timed out. Please try again.',
