@@ -11,6 +11,7 @@ export default function AlertsComponent(props) {
 	const [seconds, setSeconds] = useState(0);
 	const store = props.app.AppStore;
 	const alerts = useAppSelector(state => state.alerts.alerts);
+	const sessionExpired = useAppSelector(state => state.auth?.sessionExpired);
 	const { t } = useTranslation();
 
 	// Expire old alerts
@@ -40,7 +41,7 @@ export default function AlertsComponent(props) {
 	}, [seconds]);
 
 	return (
-		<div id='alerts'>
+		<div id='alerts' className={sessionExpired ? 'session-expired' : undefined}>
 			{alerts.map((alert) => {
 				if (alert.component === null) {
 					return (
