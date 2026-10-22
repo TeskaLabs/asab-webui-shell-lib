@@ -45,6 +45,7 @@ export default class AuthModule extends Module {
 		this.SessionExpiration = null; // Session expiration as defined in user info
 		this.sessionValidationInterval = null; // Initialize session validation interval
 		this._sessionExpired = false; // Guard which ensures _triggerSessionExpired() runs at most once
+		this._renewPromise = null; // In-flight _renewSession() run shared by all callers
 		this._unsubscribeLifecycle = null; // Unsubscribe function for the Application.lifecycle! subscription (set by _markAuthPageActive)
 
 		// Login-loop protection counts consecutive login redirects and resets on auth success
@@ -221,7 +222,6 @@ export default class AuthModule extends Module {
 
 	// Handle 401 Unauthorized responses from the server
 	unauthorizedInterceptor() {
-		let handlingPromise = null; // Shared promise so concurrent 401s await the same refresh/expire flow
 		return async (error) => {
 			if (error?.response?.status !== 401) return;
 
@@ -244,21 +244,16 @@ export default class AuthModule extends Module {
 				return;
 			}
 
-			if (!handlingPromise) {
-				handlingPromise = (async () => {
-					try {
-						await this._refreshTokens();
-						const isUserInfoUpdated = await this.updateUserInfo();
-						if (!isUserInfoUpdated) {
-							this._triggerSessionExpired();
-						}
-					} finally {
-						handlingPromise = null;
-					}
-				})();
+			// Each refresh invalidates the previous access token server-side, so only a 401 for the current token can mean an invalid session
+			if (error?.config?.headers?.get?.('Authorization') !== `Bearer ${this.OAuthTokens?.access_token}`) {
+				return;
 			}
+
 			// Await so sessionExpired is set before callers reach addAlertFromException
-			await handlingPromise;
+			const { userInfoUpdated } = await this._renewSession();
+			if (userInfoUpdated === false) {
+				this._triggerSessionExpired();
+			}
 		};
 	}
 
@@ -412,39 +407,31 @@ export default class AuthModule extends Module {
 		return valid;
 	}
 
+	/*
+		Returns true on success, false when the token is rejected (401)
+		and undefined on a transient error (network, 5xx) which keeps the current user info
+	*/
 	async updateUserInfo() {
 		const internal = this.OAuthTokens.internal || false;
 
-		if (!internal) {
-			let response;
-			try {
-				response = await this.Api.userinfo(this.OAuthTokens.access_token);
+		let response;
+		try {
+			response = await this.Api.userinfo(this.OAuthTokens.access_token, internal);
+		}
+		catch (err) {
+			console.error("Failed to update user info", err);
+			if (err?.response?.status !== 401) {
+				return undefined;
 			}
-			catch (err) {
-				console.error("Failed to update user info", err);
-				this.UserInfo = null;
-				if (this.App.AppStore) {
-					this.App.AppStore.dispatch?.({ type: types.AUTH_USERINFO, payload: this.UserInfo });
-				}
-				return false;
+			this.UserInfo = null;
+			if (this.App.AppStore) {
+				this.App.AppStore.dispatch?.({ type: types.AUTH_USERINFO, payload: this.UserInfo });
 			}
-			this.UserInfo = response.data;
-			this.SessionExpiration = response.data?.exp;	
-		} else {
-			let response;
-			try {
-				response = await this.Api.userinfo(this.OAuthTokens.access_token, internal);
-			}
-			catch (err) {
-				console.error("Failed to update user info", err);
-				this.UserInfo = null;
-				if (this.App.AppStore) {
-					this.App.AppStore.dispatch?.({ type: types.AUTH_USERINFO, payload: this.UserInfo });
-				}
-				return false;
-			}
-			this.UserInfo = response.data;
+			return false;
+		}
+		this.UserInfo = response.data;
 
+		if (internal) {
 			// If the resource is `{'*': [....]}` then it is a global resources token (i.e. for API keys)
 			const resources = response.data.resources;
 			const isGlobalResources = resources != null
@@ -467,9 +454,9 @@ export default class AuthModule extends Module {
 					return false;
 				}
 			}
-
-			this.SessionExpiration = response.data?.exp;
 		}
+
+		this.SessionExpiration = response.data?.exp;
 
 		if (this.App.AppStore) {
 			this.App.AppStore.dispatch?.({ type: types.AUTH_USERINFO, payload: this.UserInfo });
@@ -570,6 +557,28 @@ export default class AuthModule extends Module {
 		}
 	}
 
+	/*
+		Refresh tokens and validate them on userinfo as one step.
+		Concurrent callers share the in-flight run, because each refresh invalidates the previous access token server-side.
+		Returns { tokensRefreshed, userInfoUpdated } where userInfoUpdated follows the updateUserInfo() return values.
+		Callers decide about the session expiration.
+	*/
+	_renewSession() {
+		if (this._sessionExpired) return Promise.resolve({ tokensRefreshed: false, userInfoUpdated: undefined });
+		if (!this._renewPromise) {
+			this._renewPromise = (async () => {
+				try {
+					const tokensRefreshed = await this._refreshTokens();
+					const userInfoUpdated = await this.updateUserInfo();
+					return { tokensRefreshed, userInfoUpdated };
+				} finally {
+					this._renewPromise = null;
+				}
+			})();
+		}
+		return this._renewPromise;
+	}
+
 	_getAuthorizedTenant(userInfo) {
 		/*
 			Return the authorized tenant ID from userinfo. 
@@ -641,23 +650,21 @@ export default class AuthModule extends Module {
 		let warningDisplayed = false; // Tracks if the "about to expire" warning has been shown
 
 		const validateSession = async () => {
-			const currentTime = Date.now() / 1000; // Convert milliseconds to seconds
-			let timeRemaining = this.SessionExpiration - currentTime; // Time difference for triggering "about to expire" warning
-			// Prevent glitches on very large time remaining values
-			if (timeRemaining > MAX_SESSION_DURATION) {
-				// Set timeout to maximum allowed value
-				timeRemaining = MAX_SESSION_DURATION;
-			}
+			try {
+				const currentTime = Date.now() / 1000; // Convert milliseconds to seconds
+				let timeRemaining = this.SessionExpiration - currentTime; // Time difference for triggering "about to expire" warning
+				// Prevent glitches on very large time remaining values
+				if (timeRemaining > MAX_SESSION_DURATION) {
+					// Set timeout to maximum allowed value
+					timeRemaining = MAX_SESSION_DURATION;
+				}
 
-			// Validate session on half of the session expiration or if the remaining time is <= 5min
-			if (!refreshSessionDone && ((timeRemaining <= 300) || (currentTime >= sessionMidpoint))) {
-				refreshSessionDone = true;
-				const tokensRefreshed = await this._refreshTokens();
-				// Recalculate if session expiration was extended
-				if (tokensRefreshed) {
-					await this.updateUserInfo(); // Update userinfo
+				// Validate session on half of the session expiration or if the remaining time is <= 5min
+				if (!refreshSessionDone && ((timeRemaining <= 300) || (currentTime >= sessionMidpoint))) {
+					refreshSessionDone = true;
+					const { tokensRefreshed } = await this._renewSession();
 					// If current session expiration differs from last known expiration, recalculate session variables
-					if (this.SessionExpiration !== lastKnownExpiration) {
+					if (tokensRefreshed && (this.SessionExpiration !== lastKnownExpiration)) {
 						lastKnownExpiration = this.SessionExpiration;
 						sessionStartTime = currentTime;
 						sessionDuration = lastKnownExpiration - sessionStartTime;
@@ -670,30 +677,30 @@ export default class AuthModule extends Module {
 						refreshSessionDone = false;
 					}
 				}
+
+				// If remaining time is between 1 and 60s, repetitivelly ask for userInfo and trigger "about to expire" warning
+				if ((timeRemaining <= 60) && (timeRemaining > 0)) {
+					const { tokensRefreshed } = await this._renewSession();
+					if (!tokensRefreshed && !warningDisplayed && !this._sessionExpired) {
+						this.App.addAlert("info", "General|Your session will expire soon", 30, true);
+						warningDisplayed = true; // Mark the warning as displayed
+					}
+				}
+
+				// Validation on expired session
+				if (this.SessionExpiration <= currentTime) {
+					const { userInfoUpdated } = await this._renewSession();
+					if (userInfoUpdated === false) {
+						this._triggerSessionExpired();
+					}
+				}
+			} catch (err) {
+				// Keep the validation loop running, the next cycle retries
+				console.error("Failed to validate session", err);
 			}
 
-			// If remaining time is between 1 and 60s, repetitivelly ask for userInfo and trigger "about to expire" warning
-			if ((timeRemaining <= 60) && (timeRemaining > 0)) {
-				const tokensRefreshed = await this._refreshTokens(); // Returns true/false if token is refreshed/not refreshed
-				await this.updateUserInfo(); // Continue updating user info
-				if (!tokensRefreshed && !warningDisplayed) {
-					this.App.addAlert("info", "General|Your session will expire soon", 30, true);
-					warningDisplayed = true; // Mark the warning as displayed
-				}
-			}
-
-			// Validation on expired session
-			if (this.SessionExpiration <= currentTime) {
-				// Handle refresh token prior updating user info
-				await this._refreshTokens();
-				// Handle session expiration
-				const isUserInfoUpdated = await this.updateUserInfo();
-				if (!isUserInfoUpdated) {
-					// Stop further checks
-					this._triggerSessionExpired();
-					return;
-				}
-			}
+			// Stop further checks on expired session, it can be also triggered by the unauthorized interceptor meanwhile
+			if (this._sessionExpired) return;
 
 			// Re-trigger validation after 10 seconds
 			this.sessionValidationInterval = setTimeout(validateSession, 10000);
