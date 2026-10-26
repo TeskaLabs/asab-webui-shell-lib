@@ -5,8 +5,10 @@ import { navItemMatchesRoute } from "./utils/sidebarRouteMatch.jsx";
 
 export const SidebarItemRenderer = ({ sidebarItems, sessionExpired, isSmallResolution = undefined, beacon = undefined }) => {
 	const location = useLocation();
-	// Default-open the first collapsible only when the current route is not already a sidebar item
-	// (plain link or another collapsible) — avoids open-then-collapse flash on leaf nav routes
+	/*
+		Default-open the first collapsible only when the current route is not already a sidebar item
+		(plain link or another collapsible), avoids open-then-collapse flash on leaf nav routes.
+	*/
 	const routeMatchesSidebar = sidebarItems?.some((item) => navItemMatchesRoute(location.pathname, item));
 
 	return (
