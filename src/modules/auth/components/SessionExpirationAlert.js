@@ -10,6 +10,7 @@ export function SessionExpirationAlert({ alert }) {
 		<Alert
 			key={alert.key}
 			color={alert.level}
+			className='shadow'
 			fade={true}
 			isOpen={!alert.acked}
 		>

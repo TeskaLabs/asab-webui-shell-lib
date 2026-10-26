@@ -1,8 +1,13 @@
 # CHANGELOG for ASAB WebUI Shell
 
-## 27.8.3
+## 27.8.4
 
 - Move `Create tenant` to the Tenants dropdown menu (#46)
+
+## 27.8.3
+
+- Add Alerts offset when the session expires, diminish the size of the alerts (#88)
+- Implement list of unsupported browsers and their versions with a Unsupported browser screen (#87)
 
 ## 27.8.2
 
