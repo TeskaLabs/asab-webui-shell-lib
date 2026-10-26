@@ -10,7 +10,7 @@ import {
 import { AttentionBadge, useAppSelector } from 'asab_webui_components';
 
 import Icon from './SidebarIcon';
-import { matchesOpenFor } from './utils/sidebarRouteMatch.jsx';
+import { matchesOpenFor, collapsibleMatchesRoute } from './utils/sidebarRouteMatch.jsx';
 
 export const SidebarItem = ({
 	item, disabled, isOpen, setOpen, isSmallResolution, beacon = undefined, openFor
@@ -88,17 +88,8 @@ export const SidebarCollapsibleItem = ({
 
 	// Should collapsed item uncollapse
 	useEffect(() => {
-		if (item.children && !isOpen) {
-			if (matchesOpenFor(location.pathname, item.openFor)) {
-				setOpen(true);
-				return;
-			}
-			for (const child of item.children) {
-				if (location.pathname.includes(child.url)) {
-				  setOpen(true);
-				  break;
-				}
-			}
+		if (item.children && !isOpen && collapsibleMatchesRoute(location.pathname, item)) {
+			setOpen(true);
 		}
 	}, [isOpen]);
 

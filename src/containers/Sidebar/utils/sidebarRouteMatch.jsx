@@ -8,7 +8,7 @@ export const matchesOpenFor = (pathname, patterns) =>
 		return pathname === p || pathname.startsWith(p + '/');
 	}) ?? false;
 
-const collapsibleMatchesRoute = (pathname, item) => {
+export const collapsibleMatchesRoute = (pathname, item) => {
 	if (!item?.children) {
 		return false;
 	}
