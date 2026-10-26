@@ -20,7 +20,7 @@ export default function TenantDropdown({ app }) {
 	const current = useAppSelector(state => state?.tenant?.current);
 	const tenants = useAppSelector(state => state?.tenant?.tenants);
 	const canCreateTenant = app?.Modules?.some(obj => obj?.Name === "LmioTrexModule") && isAuthorized(['lmio:tenant:create'], app);
-	const tenantsAvailable = tenants && tenants.length > 0;
+	const tenantsAvailable = tenants?.length > 0;
 	const showDropdown = tenantsAvailable || canCreateTenant;
 
 	const hasSearch = tenants?.length >= 10; // Display search input if there is >= 10 tenants
