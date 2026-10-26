@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.8.4
+
+- Display the item with a children opened by default if the item is a first item in the sidebar and the route does not match with anything else in the navigation (#90)
+
 ## 27.8.3
 
 - Add Alerts offset when the session expires, diminish the size of the alerts (#88)
