@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
@@ -10,6 +10,7 @@ import {
 import { AttentionBadge, useAppSelector } from 'asab_webui_components';
 
 import Icon from './SidebarIcon';
+import { matchesOpenFor, collapsibleMatchesRoute } from './utils/sidebarRouteMatch.jsx';
 
 export const SidebarItem = ({
 	item, disabled, isOpen, setOpen, isSmallResolution, beacon = undefined, openFor
@@ -18,13 +19,18 @@ export const SidebarItem = ({
 	const { t } = useTranslation();
 	const isSidebarCollapsed = useAppSelector(state => state.sidebar?.isSidebarCollapsed);
 	const [isActive, setActive] = useState(false);
+	// Collapse parent only after a real navigation (not on mount / Strict Mode double-invoke)
+	const prevPathname = useRef(location.pathname);
 	const lowercasedItemName = item?.name?.toLowerCase();
 	// Attention requred flag
 	const itemBeacon = beacon?.[`beacon.${lowercasedItemName}`];
 
 	useEffect(() => {
 		// TODO: refactor the handling of active and open states, since it does not behave as expected in some cases
-		if (isOpen && !isActive && !matchesOpenFor(location.pathname, openFor)) {
+		const pathnameChanged = prevPathname.current !== location.pathname;
+		prevPathname.current = location.pathname;
+
+		if (pathnameChanged && isOpen && !isActive && !matchesOpenFor(location.pathname, openFor)) {
 			setOpen(false);
 		}
 
@@ -64,9 +70,9 @@ export const SidebarItem = ({
 
 
 export const SidebarCollapsibleItem = ({
-	item, disabled, isSmallResolution, beacon = undefined
+	item, disabled, isSmallResolution, beacon = undefined, defaultOpen = false
 }) => {
-	const [isOpen, setOpen] = useState(false);
+	const [isOpen, setOpen] = useState(defaultOpen);
 	const location = useLocation();
 	const { t } = useTranslation();
 	const isSidebarCollapsed = useAppSelector(state => state.sidebar?.isSidebarCollapsed);
@@ -82,17 +88,8 @@ export const SidebarCollapsibleItem = ({
 
 	// Should collapsed item uncollapse
 	useEffect(() => {
-		if (item.children && !isOpen) {
-			if (matchesOpenFor(location.pathname, item.openFor)) {
-				setOpen(true);
-				return;
-			}
-			for (const child of item.children) {
-				if (location.pathname.includes(child.url)) {
-				  setOpen(true);
-				  break;
-				}
-			}
+		if (item.children && !isOpen && collapsibleMatchesRoute(location.pathname, item)) {
+			setOpen(true);
 		}
 	}, [isOpen]);
 
@@ -174,13 +171,3 @@ const parentBeacon = (data, prefix, itemName) => {
 const childBeacon = (data, key) => {
 	return data[key] ? { [key]: data[key] } : {};
 };
-
-// Optional item.openFor patterns, e.g. ['/route/*'] - keeps parent open on matching routes
-const matchesOpenFor = (pathname, patterns) =>
-	patterns?.some((p) => {
-		if (p.endsWith('*')) {
-			const prefix = p.slice(0, -1);
-			return pathname.startsWith(prefix) || pathname === prefix.slice(0, -1);
-		}
-		return pathname === p || pathname.startsWith(p + '/');
-	}) ?? false;
