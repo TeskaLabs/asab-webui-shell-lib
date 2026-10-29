@@ -33,18 +33,18 @@
 		"i18next-browser-languagedetector": "^8.2.0"
 	},
 	"devDependencies": {
-		"@babel/cli": "^7.22.11",
-		"@babel/core": "^7.22.11",
-		"@babel/plugin-transform-runtime": "^7.22.10",
-		"@babel/preset-env": "^7.22.10",
-		"@babel/preset-react": "^7.22.5",
+		"@babel/cli": "^8.0.6",
+		"@babel/core": "^8.0.9",
+		"@babel/plugin-transform-runtime": "^8.0.6",
+		"@babel/preset-env": "^8.0.7",
+		"@babel/preset-react": "^8.0.1",
 		"babel-plugin-module-resolver": "^5.0.2",
 		"copyfiles": "^2.4.1",
 		"rimraf": "^6.0.1"
 	},
 	"peerDependencies": {
 		"asab_webui_components": "^27.3.1",
-		"@babel/runtime": "^7.22.11",
+		"@babel/runtime": "^8.0.8",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
 		"axios": "^1.15.0",
