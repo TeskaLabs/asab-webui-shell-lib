@@ -48,8 +48,8 @@
 		"react": "^19.2.7",
 		"react-dom": "^19.2.7",
 		"axios": "^1.15.0",
-		"i18next": "^25.5.2",
-		"react-i18next": "^16.0.0",
+		"i18next": "^26.5.0",
+		"react-i18next": "^17.1.0",
 		"react-router": "^8.5.0",
 		"reactstrap": "^9.2.0"
 	}
