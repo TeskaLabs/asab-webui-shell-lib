@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 27.8.5
+
+- Fix issue with Sidebar with children does not open on route change when the children is the route (#92)
+
 ## 27.8.4
 
 - Display the item with a children opened by default if the item is a first item in the sidebar and the route does not match with anything else in the navigation (#90)
