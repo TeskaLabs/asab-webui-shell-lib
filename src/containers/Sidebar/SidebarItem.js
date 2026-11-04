@@ -63,7 +63,8 @@ export const SidebarCollapsibleItem = ({
 }) => {
 	const [isOpen, setOpen] = useState(defaultOpen);
 	const location = useLocation();
-	const isMounted = useRef(false);
+	//Track the last pathname to avoid a React Strict Mode double-invoke (same pathname, different effect run)
+	const lastPathname = useRef(null);
 	const { t } = useTranslation();
 	const isSidebarCollapsed = useAppSelector(state => state.sidebar?.isSidebarCollapsed);
 	const lowercasedItemName = item.name.toLowerCase();
@@ -82,9 +83,17 @@ export const SidebarCollapsibleItem = ({
 		if (!item.children) return;
 		const shouldBeOpen = collapsibleMatchesRoute(location.pathname, item);
 
-		if (!isMounted.current) {
-			// On mount: only auto-open if the route matches; never close a defaultOpen collapsible.
-			isMounted.current = true;
+		/*
+			Detect a real navigation vs. mount / Strict Mode double-invoke.
+			Strict Mode runs the effect twice with the same pathname; comparing against
+			the last handled pathname (rather than a boolean flag) correctly treats
+			both runs as "mount" and never closes a defaultOpen collapsible.
+		*/
+		const isNavigation = lastPathname.current !== null && lastPathname.current !== location.pathname;
+		lastPathname.current = location.pathname;
+
+		if (!isNavigation) {
+			// Mount (or Strict Mode re-mount): only auto-open, never auto-close.
 			if (shouldBeOpen) setOpen(true);
 			return;
 		}
