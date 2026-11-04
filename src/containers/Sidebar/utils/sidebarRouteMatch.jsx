@@ -15,7 +15,7 @@ export const collapsibleMatchesRoute = (pathname, item) => {
 	if (matchesOpenFor(pathname, item.openFor)) {
 		return true;
 	}
-	return item.children.some((child) => child.url && pathname.includes(child.url));
+	return item.children.some((child) => child.url && (pathname === child.url || pathname.startsWith(child.url + '/')));
 };
 
 export const navItemMatchesRoute = (pathname, item) => {

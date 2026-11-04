@@ -13,33 +13,22 @@ import Icon from './SidebarIcon';
 import { matchesOpenFor, collapsibleMatchesRoute } from './utils/sidebarRouteMatch.jsx';
 
 export const SidebarItem = ({
-	item, disabled, isOpen, setOpen, isSmallResolution, beacon = undefined, openFor
+	item, disabled, isSmallResolution, beacon = undefined
 }) => {
 	const location = useLocation();
 	const { t } = useTranslation();
 	const isSidebarCollapsed = useAppSelector(state => state.sidebar?.isSidebarCollapsed);
 	const [isActive, setActive] = useState(false);
-	// Collapse parent only after a real navigation (not on mount / Strict Mode double-invoke)
-	const prevPathname = useRef(location.pathname);
 	const lowercasedItemName = item?.name?.toLowerCase();
-	// Attention requred flag
+	// Attention required flag
 	const itemBeacon = beacon?.[`beacon.${lowercasedItemName}`];
 
 	useEffect(() => {
-		// TODO: refactor the handling of active and open states, since it does not behave as expected in some cases
-		const pathnameChanged = prevPathname.current !== location.pathname;
-		prevPathname.current = location.pathname;
-
-		if (pathnameChanged && isOpen && !isActive && !matchesOpenFor(location.pathname, openFor)) {
-			setOpen(false);
-		}
-
 		setActive(
 			Boolean(item.url && (location.pathname === item.url || location.pathname.startsWith(item.url + '/')))
 			|| matchesOpenFor(location.pathname, item.openFor)
 		);
-
-	}, [location]);
+	}, [location.pathname]);
 
 	return (
 		<div className="nav-item">
@@ -74,6 +63,7 @@ export const SidebarCollapsibleItem = ({
 }) => {
 	const [isOpen, setOpen] = useState(defaultOpen);
 	const location = useLocation();
+	const isMounted = useRef(false);
 	const { t } = useTranslation();
 	const isSidebarCollapsed = useAppSelector(state => state.sidebar?.isSidebarCollapsed);
 	const lowercasedItemName = item.name.toLowerCase();
@@ -86,12 +76,27 @@ export const SidebarCollapsibleItem = ({
 		return sum + (current.count || 0); // Ensure we sum only valid count values
 	}, 0) : 0;
 
-	// Should collapsed item uncollapse
+	// Open or close the collapsible based on whether the current route belongs to it.
+	// All open/close logic lives here so individual child items cannot conflict with each other.
 	useEffect(() => {
-		if (item.children && !isOpen && collapsibleMatchesRoute(location.pathname, item)) {
-			setOpen(true);
+		if (!item.children) return;
+		const shouldBeOpen = collapsibleMatchesRoute(location.pathname, item);
+
+		if (!isMounted.current) {
+			// On mount: only auto-open if the route matches; never close a defaultOpen collapsible.
+			isMounted.current = true;
+			if (shouldBeOpen) setOpen(true);
+			return;
 		}
-	}, [isOpen]);
+
+		// On subsequent navigations: use the functional updater so isOpen is never stale
+		// and never needs to be listed as a dependency.
+		setOpen((prev) => {
+			if (!prev && shouldBeOpen) return true;
+			if (prev && !shouldBeOpen) return false;
+			return prev;
+		});
+	}, [location.pathname]);
 
 	const onClickOpen = (e) => {
 		e.preventDefault();
@@ -137,18 +142,15 @@ export const SidebarCollapsibleItem = ({
 			</div>
 
 			<Collapse isOpen={isOpen} className="sidebar-collapse">
-				{item.children.map((child, idx) => (
-					<SidebarItem
-						key={idx}
-						item={child}
-						disabled={disabled}
-						isOpen={isOpen}
-						setOpen={setOpen}
-						isSmallResolution={isSmallResolution}
-						openFor={item.openFor}
-						beacon={itemsBeacon[`beacon.${child?.name?.toLowerCase()}`] && childBeacon(itemsBeacon, `beacon.${child.name.toLowerCase()}`)}
-					/>
-				))}
+			{item.children.map((child, idx) => (
+				<SidebarItem
+					key={idx}
+					item={child}
+					disabled={disabled}
+					isSmallResolution={isSmallResolution}
+					beacon={itemsBeacon[`beacon.${child?.name?.toLowerCase()}`] && childBeacon(itemsBeacon, `beacon.${child.name.toLowerCase()}`)}
+				/>
+			))}
 			</Collapse>
 		</>
 	)
