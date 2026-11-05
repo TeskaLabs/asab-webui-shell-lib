@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 28.0.0
+
+- Version bumps of external dependencies (#91)
+
 ## 27.8.5
 
 - Fix issue with Sidebar with children does not open on route change when the children is the route (#92)
