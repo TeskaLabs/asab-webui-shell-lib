@@ -89,7 +89,7 @@
 			display: block;
 		}
 
-		.btn-sm, .btn, .btn-primary, .btn-primary, .btn-outline-primary {
+		[class^="btn btn-"] {
 			display: none !important;
 		}
 
