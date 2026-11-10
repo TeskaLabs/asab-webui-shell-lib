@@ -132,14 +132,12 @@ function ApplicationManifestsCard({ app }) {
 			<ul className="list-group list-group-flush">
 				{manifests.map((entry) => (
 					<li className="list-group-item" key={entry.id}>
-						<Row className="fw-semibold mb-2">
-							<Col>{entry.displayName ?? entry.id}</Col>
-						</Row>
-						{entry.version &&
 						<Row>
-							<Col className="col-6">{t('AboutCard|Version')}</Col>
-							<Col>{entry.version}</Col>
-						</Row>}
+							<Col className="fw-semibold">{entry.displayName ?? entry.id}</Col>
+							{entry.version &&
+								<Col>{entry.version}</Col>
+							}
+						</Row>
 						{entry.created_at &&
 						<Row>
 							<Col className="col-6">{t('AboutCard|Built at')}</Col>
