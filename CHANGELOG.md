@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 28.0.1
+
+- Fix print styles for buttons (#93)
+
 ## 28.0.0
 
 - Version bumps of external dependencies (#91)
