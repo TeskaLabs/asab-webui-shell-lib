@@ -17,6 +17,7 @@ export default function TenantDropdown() {
 	const [searchInput, setSearchInput] = useState('');
 	const current = useAppSelector(state => state?.tenant?.current);
 	const tenants = useAppSelector(state => state?.tenant?.tenants);
+	const extDropdownItems = useAppSelector(state => state?.tenant?.extDropdownItems);
 
 	const hasSearch = tenants?.length >= 10; // Display search input if there is >= 10 tenants
 	const toggle = () => {
@@ -54,6 +55,11 @@ export default function TenantDropdown() {
 					{filteredTenants.map((tenant, i) => (
 						<DropdownItem key={i} tag="a" href={'?tenant='+tenant+'#/'}>
 							<TenantLabel tenant={tenant}/>
+						</DropdownItem>
+					))}
+					{extDropdownItems.map((item, i) => (
+						<DropdownItem key={i} tag="a" href={item.href}>
+							{item.label}
 						</DropdownItem>
 					))}
 				</DropdownMenu>
