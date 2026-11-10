@@ -33,6 +33,7 @@ function AboutScreen(props) {
 						}
 					</div>
 					<AboutCard app={props.app} />
+					<ApplicationManifestsCard app={props.app} />
 				</Col>
 			</Row>
 		</Container>
@@ -57,9 +58,6 @@ export default AboutScreen;
 	}
 
 */
-
-
-// TODO: add info about version release and date of the release
 
 function AboutCard(props) {
 	const { t } = useTranslation();
@@ -114,4 +112,42 @@ function AboutCard(props) {
 			</ul>
 		</Card>
 	)
+}
+
+function ApplicationManifestsCard({ app }) {
+	const { t } = useTranslation();
+
+	const manifests = app?.Services?.ManifestService?.getAll?.() ?? [];
+	if (manifests.length === 0) {
+		return null;
+	}
+
+	return (
+		<Card className="mt-4">
+			<CardHeader className="card-header-flex">
+				<div className="flex-fill">
+					<h3>{t('AboutCard|Application versions')}</h3>
+				</div>
+			</CardHeader>
+			<ul className="list-group list-group-flush">
+				{manifests.map((entry) => (
+					<li className="list-group-item" key={entry.id}>
+						<Row className="fw-semibold mb-2">
+							<Col>{entry.displayName ?? entry.id}</Col>
+						</Row>
+						{entry.version &&
+						<Row>
+							<Col className="col-6">{t('AboutCard|Version')}</Col>
+							<Col>{entry.version}</Col>
+						</Row>}
+						{entry.created_at &&
+						<Row>
+							<Col className="col-6">{t('AboutCard|Built at')}</Col>
+							<Col>{entry.created_at}</Col>
+						</Row>}
+					</li>
+				))}
+			</ul>
+		</Card>
+	);
 }
