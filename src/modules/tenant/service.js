@@ -16,7 +16,7 @@ export default class TenantService extends Service {
 		// If the tenant list is in the configuration, use it
 		// This is useful when tenants are present but auth not
 		const tenants = this.App.Config.get('tenants');
-		if (tenants !== null) {
+		if (tenants) {
 			await this.setTenants(tenants.filter((tenant) => tenant !== undefined));
 		}
 	}
@@ -45,7 +45,7 @@ export default class TenantService extends Service {
 
 			if (authorizedTenant) {
 				tenant = authorizedTenant;
-			} else if ((availableTenants) && (availableTenants.length > 0)) {
+			} else if (availableTenants && availableTenants.length > 0) {
 				const withoutSystem = availableTenants.filter((tenant) => tenant !== 'system');
 
 				if (withoutSystem.length > 0) {
@@ -64,7 +64,7 @@ export default class TenantService extends Service {
 		}
 
 		// In case the list of available tenants is empty or undefined, remove the tenant parameter from URL
-		if ((!availableTenants) || (availableTenants.length == 0)) {
+		if (!availableTenants || availableTenants.length === 0) {
 			await locationReplace(window.location.pathname + window.location.hash);
 			return;
 		}
@@ -89,7 +89,6 @@ export default class TenantService extends Service {
 			tenants_list: availableTenants,
 			current: currentTenant
 		});
-
 	}
 
 	/*
