@@ -34,7 +34,7 @@ export default class TenantService extends Service {
 		var tenantFromUrl = extractTenantFromUrl();
 
 		if (availableTenants) {
-			// Sort available tenants
+			// Sort available tenants alphabetically
 			availableTenants.sort((a, b) =>{
 				const tenantA = a?.toString()?.toLowerCase() || '';
 				const tenantB = b?.toString()?.toLowerCase() || '';
@@ -42,17 +42,30 @@ export default class TenantService extends Service {
 			});
 		}
 
-		/* If tenant has not been provided in access URL, insert the authorized tenant 
-		or the first available tenant into the URL and reload the application */
+		/* If tenant has not been provided in access URL, insert the authorized tenant
+		or the first available tenant (preferably not the system one) into the URL and reload the application */
 		if (tenantFromUrl == null) {
+			let tenant;
+
 			if (authorizedTenant) {
-				await locationReplace(`${window.location.pathname}?tenant=${authorizedTenant}${window.location.hash}`);
-				return;
+				tenant = authorizedTenant;
 			} else if ((availableTenants) && (availableTenants.length > 0)) {
-				await locationReplace(`${window.location.pathname}?tenant=${availableTenants[0]}${window.location.hash}`);
+				const withoutSystem = availableTenants.filter((tenant) => tenant !== 'system');
+
+				if (withoutSystem.length > 0) {
+					tenant = withoutSystem[0];
+				} else {
+					tenant = availableTenants[0];
+				}
+			} else {
+				// no tenant to inject to the url
+				await locationReplace(window.location.pathname + window.location.hash);
 				return;
 			}
-		} 
+
+			await locationReplace(`${window.location.pathname}?tenant=${tenant}${window.location.hash}`);
+			return;
+		}
 
 		// In case the list of available tenants is empty or undefined, remove the tenant parameter from URL
 		if ((!availableTenants) || (availableTenants.length == 0)) {
