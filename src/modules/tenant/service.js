@@ -33,6 +33,15 @@ export default class TenantService extends Service {
 		// Extract the current tenant from URL params
 		var tenantFromUrl = extractTenantFromUrl();
 
+		if (availableTenants) {
+			// Sort available tenants
+			availableTenants.sort((a, b) =>{
+				const tenantA = a?.toString()?.toLowerCase() || '';
+				const tenantB = b?.toString()?.toLowerCase() || '';
+				return tenantA.localeCompare(tenantB);
+			});
+		}
+
 		/* If tenant has not been provided in access URL, insert the authorized tenant 
 		or the first available tenant into the URL and reload the application */
 		if (tenantFromUrl == null) {
@@ -61,12 +70,6 @@ export default class TenantService extends Service {
 				}
 			}
 			currentTenant = tenantFromUrl;
-			// Sort available tenants
-			availableTenants.sort((a, b) =>{
-				const tenantA = a?.toString()?.toLowerCase() || '';
-				const tenantB = b?.toString()?.toLowerCase() || '';
-				return tenantA.localeCompare(tenantB);
-			});
 		} else {
 			currentTenant = undefined;
 		}
