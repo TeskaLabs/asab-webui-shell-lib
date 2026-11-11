@@ -15,13 +15,9 @@ export default class TenantService extends Service {
 
 		// If the tenant list is in the configuration, use it
 		// This is useful when tenants are present but auth not
-		var tenants = this.App.Config.get('tenants');
-		if (tenants != null) {
-			var tenants_list = [];
-			for (var i = 0; tenants[i] != undefined; i++) {
-				tenants_list.push(tenants[i]);
-			}
-			await this.setTenants(tenants_list);
+		const tenants = this.App.Config.get('tenants');
+		if (tenants !== null) {
+			await this.setTenants(tenants.filter((tenant) => tenant !== undefined));
 		}
 	}
 
@@ -31,7 +27,7 @@ export default class TenantService extends Service {
 	*/
 	async setTenants(availableTenants, authorizedTenant = undefined) {
 		// Extract the current tenant from URL params
-		var tenantFromUrl = extractTenantFromUrl();
+		const tenantFromUrl = extractTenantFromUrl();
 
 		if (availableTenants) {
 			// Sort available tenants alphabetically
@@ -44,7 +40,7 @@ export default class TenantService extends Service {
 
 		/* If tenant has not been provided in access URL, insert the authorized tenant
 		or the first available tenant (preferably not the system one) into the URL and reload the application */
-		if (tenantFromUrl == null) {
+		if (tenantFromUrl === null) {
 			let tenant;
 
 			if (authorizedTenant) {
@@ -101,7 +97,7 @@ export default class TenantService extends Service {
 		It requires SeaCat Auth service
 	*/
 	async getTenantData() {
-		let currentTenant = this.getCurrentTenant();
+		const currentTenant = this.getCurrentTenant();
 		// If tenant data being cached already, then return the data
 		if (this.TenantDataCache[currentTenant]) {
 			return this.TenantDataCache[currentTenant];
