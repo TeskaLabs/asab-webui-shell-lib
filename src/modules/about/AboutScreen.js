@@ -32,7 +32,8 @@ function AboutScreen(props) {
 							null
 						}
 					</div>
-					<AboutCard app={props.app} />
+					<AboutCard />
+					<ApplicationManifestsCard app={props.app} />
 				</Col>
 			</Row>
 		</Container>
@@ -58,13 +59,12 @@ export default AboutScreen;
 
 */
 
-function AboutCard({ app }) {
+function AboutCard() {
 	const { t } = useTranslation();
 	const title = useAppSelector(state => state.config?.title);
 	const vendor = useAppSelector(state => state.config?.vendor);
 	const website = useAppSelector(state => state.config?.website);
 	const email = useAppSelector(state => state.config?.email);
-	const manifests = app?.Services?.ManifestService?.getAll?.() ?? [];
 
 	return(
 		<Card>
@@ -109,10 +109,27 @@ function AboutCard({ app }) {
 						</Col>
 					</Row>
 				</li>}
-				{manifests.length > 0 &&
-				<li className="list-group-item">
-					<h5 className='py-2 mb-0'>{t('AboutCard|Application versions')}</h5>
-				</li>}
+			</ul>
+		</Card>
+	)
+}
+
+function ApplicationManifestsCard({ app }) {
+	const { t } = useTranslation();
+
+	const manifests = app?.Services?.ManifestService?.getAll?.() ?? [];
+	if (manifests.length === 0) {
+		return null;
+	}
+
+	return (
+		<Card className="mt-4">
+			<CardHeader className="card-header-flex">
+				<div className="flex-fill">
+					<h3>{t('AboutCard|Application versions')}</h3>
+				</div>
+			</CardHeader>
+			<ul className="list-group list-group-flush">
 				{manifests.map((entry) => (
 					<li className="list-group-item" key={entry.id}>
 						<Row>
@@ -130,5 +147,5 @@ function AboutCard({ app }) {
 				))}
 			</ul>
 		</Card>
-	)
+	);
 }
