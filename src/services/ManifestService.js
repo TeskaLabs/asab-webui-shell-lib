@@ -1,5 +1,7 @@
 import { Service } from 'asab_webui_components';
 
+import MOCK_MANIFEST_ENTRIES from './manifestServiceMockData.js';
+
 /*
 	Registry of build-time manifests from the host and loaded microfrontends.
 	Each federated app registers in its Module constructor via app.registerManifest(...).
@@ -8,6 +10,21 @@ export default class ManifestService extends Service {
 	constructor(app, serviceName = 'ManifestService') {
 		super(app, serviceName);
 		this._manifests = new Map();
+		this._registerMockManifestsInDevelopment();
+	}
+
+	/** Development-only sample apps for About / DataTable UI testing. */
+	registerMockManifests() {
+		for (const entry of MOCK_MANIFEST_ENTRIES) {
+			this.register(entry);
+		}
+	}
+
+	_registerMockManifestsInDevelopment() {
+		// Webpack replaces process.env.NODE_ENV; do not gate on `typeof process` (no `process` in browser).
+		if (process.env.NODE_ENV !== 'production') {
+			this.registerMockManifests();
+		}
 	}
 
 	register(entry) {
@@ -29,8 +46,23 @@ export default class ManifestService extends Service {
 		});
 	}
 
-	/** All registered manifests, sorted by displayName then id. */
-	getAll() {
+	isEmpty() {
+		return this._manifests.size === 0;
+	}
+
+	/** Paginated list for DataTable loaders (`p` = page, `i` = limit per page). */
+	list(params = {}) {
+		const all = this._getSortedManifests();
+		const page = Math.max(1, parseInt(params.p, 10) || 1);
+		const limit = Math.max(1, parseInt(params.i, 10) || 10);
+		const start = (page - 1) * limit;
+		return {
+			count: all.length,
+			data: all.slice(start, start + limit),
+		};
+	}
+
+	_getSortedManifests() {
 		return [...this._manifests.values()].sort((a, b) => {
 			const nameCmp = String(a.displayName).localeCompare(String(b.displayName));
 			if (nameCmp !== 0) {

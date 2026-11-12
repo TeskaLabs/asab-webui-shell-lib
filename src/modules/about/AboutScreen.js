@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAppSelector } from 'asab_webui_components';
+import { useAppSelector, DataTableCard2 } from 'asab_webui_components';
 
 import { getBrandImage } from '../../components/branding/BrandImage';
 
 import {
 	Container, Row, Col,
-	Card, CardHeader, CardBody,
+	Card, CardHeader,
 } from 'reactstrap';
 
 
@@ -19,7 +19,7 @@ function AboutScreen(props) {
 	}, [theme]);
 
 	return (
-		<Container className='pt-5'>
+		<Container>
 			<Row className="justify-content-center">
 				<Col md="6">
 					<div className="my-4">
@@ -116,36 +116,49 @@ function AboutCard() {
 
 function ApplicationManifestsCard({ app }) {
 	const { t } = useTranslation();
+	const manifestService = app?.Services?.ManifestService;
 
-	const manifests = app?.Services?.ManifestService?.getAll?.() ?? [];
-	if (manifests.length === 0) {
+	const loader = async ({ params }) => {
+		const { count, data } = manifestService?.list?.(params) ?? { count: 0, data: [] };
+		return { count, rows: data };
+	};
+
+	const columns = [
+		{
+			title: t('General|Name'),
+			thStyle: { minWidth: '8rem' },
+			render: ({ row }) => <span className="fw-semibold">{row.displayName ?? row.id}</span>,
+		},
+		{
+			title: t('AboutCard|Tag'),
+			thStyle: { minWidth: '8rem' },
+			render: ({ row }) => <span>{row.version ?? ''}</span>,
+		},
+		{
+			title: t('AboutCard|Built at'),
+			thStyle: { minWidth: '6rem' },
+			render: ({ row }) => <span>{row.created_at ?? ''}</span>,
+		},
+	];
+
+	const Header = () => (
+		<div className="flex-fill">
+			<h3>{t('AboutCard|Application versions')}</h3>
+		</div>
+	);
+
+	if (!manifestService || manifestService.isEmpty()) {
 		return null;
 	}
 
 	return (
-		<Card className="mt-4">
-			<CardHeader className="card-header-flex">
-				<div className="flex-fill">
-					<h3>{t('AboutCard|Application versions')}</h3>
-				</div>
-			</CardHeader>
-			<ul className="list-group list-group-flush">
-				{manifests.map((entry) => (
-					<li className="list-group-item" key={entry.id}>
-						<Row>
-							<Col className="fw-semibold">{entry.displayName ?? entry.id}</Col>
-							{entry.version &&
-								<Col>{entry.version}</Col>
-							}
-						</Row>
-						{entry.created_at &&
-						<Row>
-							<Col className="col-6">{t('AboutCard|Built at')}</Col>
-							<Col>{entry.created_at}</Col>
-						</Row>}
-					</li>
-				))}
-			</ul>
-		</Card>
+		<div className="mt-4">
+			<DataTableCard2
+				columns={columns}
+				loader={loader}
+				header={<Header />}
+				disableParams={true}
+			/>
+		</div>
 	);
 }
