@@ -9,6 +9,7 @@ export default class TenantService extends Service {
 		super(app, name);
 		// Tenant data cache
 		this.TenantDataCache = {};
+		this.extDropdownItems = [];
 	}
 
 	async initialize() {
@@ -117,4 +118,10 @@ export default class TenantService extends Service {
 		}
 		return currentTenant;
 	}
+
+	addDropdownItem(dropdownItem) {
+		this.extDropdownItems.push(dropdownItem);
+		this.App?.AppStore?.dispatch?.({ type: types.TENANT_DROPDOWN_ITEM, extDropdownItems: this.extDropdownItems });
+	}
+
 }
