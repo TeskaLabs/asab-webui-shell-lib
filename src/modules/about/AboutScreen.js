@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppSelector, DataTableCard2 } from 'asab_webui_components';
 
@@ -11,29 +11,25 @@ import {
 
 
 function AboutScreen(props) {
-	const [ brandImage, setBrandImage ] = useState(undefined);
 	const theme = useAppSelector(state => state.theme);
-
-	useEffect(() => {
-		setBrandImage(getBrandImage(props, theme));
-	}, [theme]);
+	const brandImage = useMemo(() => getBrandImage(props, theme), [theme]);
 
 	return (
-		<Container>
-			<Row className="justify-content-center">
-				<Col md="6">
-					<div className="my-4">
-						{brandImage ?
-								<img
-									src={brandImage?.full}
-									alt="TeskaLabs logo"
+		<Container className='h-100'>
+			<Row className="justify-content-center h-100 pt-4">
+				<Col md="6" className='d-flex flex-column gap-4 h-100 min-vh-0'>
+					{brandImage && 
+						<div style={{ height: '8rem' }}>
+							<img
+								src={brandImage.full}
+								alt="TeskaLabs logo"
 							/>
-						:
-							null
-						}
-					</div>
+						</div>
+					}
 					<AboutCard />
-					<ApplicationManifestsCard app={props.app} />
+					<div className='flex-grow-1'>
+						<ApplicationManifestsCard app={props.app} />
+					</div>
 				</Col>
 			</Row>
 		</Container>
@@ -126,25 +122,46 @@ function ApplicationManifestsCard({ app }) {
 	const columns = [
 		{
 			title: t('General|Name'),
-			thStyle: { minWidth: '8rem' },
-			render: ({ row }) => <span className="fw-semibold">{row.displayName ?? row.id}</span>,
+			tdStyle: { width: '8rem', maxWidth: '12rem' },
+			render: ({ row }) => {
+				const label = row.displayName ?? row.id;
+				return (
+					<span className="fw-semibold d-block text-truncate" title={label}>
+						{label}
+					</span>
+				);
+			},
 		},
 		{
 			title: t('AboutCard|Tag'),
-			thStyle: { minWidth: '8rem' },
-			render: ({ row }) => <span>{row.version ?? ''}</span>,
+			tdStyle: { width: '8rem', maxWidth: '12rem' },
+			render: ({ row }) => {
+				const tag = row.version ?? '';
+				return (
+					<span className="d-block text-truncate" title={tag}>
+						{tag}
+					</span>
+				);
+			},
 		},
 		{
 			title: t('AboutCard|Built at'),
-			thStyle: { minWidth: '6rem' },
-			render: ({ row }) => <span>{row.created_at ?? ''}</span>,
+			tdStyle: { width: '8rem', maxWidth: '12rem' },
+			render: ({ row }) => {
+				const builtAt = row.created_at ?? '';
+				return (
+					<span className="d-block text-truncate" title={builtAt}>
+						{builtAt}
+					</span>
+				);
+			},
 		},
 	];
 
 	const Header = () => (
 		<div className="flex-fill">
 			<h3>{t('AboutCard|Application versions')}</h3>
-		</div>
+		</div>	
 	);
 
 	if (!manifestService || manifestService.isEmpty()) {
@@ -152,13 +169,11 @@ function ApplicationManifestsCard({ app }) {
 	}
 
 	return (
-		<div className="mt-4">
 			<DataTableCard2
 				columns={columns}
 				loader={loader}
 				header={<Header />}
 				disableParams={true}
 			/>
-		</div>
 	);
 }
