@@ -15,13 +15,9 @@ export default class TenantService extends Service {
 
 		// If the tenant list is in the configuration, use it
 		// This is useful when tenants are present but auth not
-		var tenants = this.App.Config.get('tenants');
-		if (tenants != null) {
-			var tenants_list = [];
-			for (var i = 0; tenants[i] != undefined; i++) {
-				tenants_list.push(tenants[i]);
-			}
-			await this.setTenants(tenants_list);
+		const tenants = this.App.Config.get('tenants');
+		if (tenants) {
+			await this.setTenants(tenants.filter((tenant) => tenant !== undefined));
 		}
 	}
 
@@ -31,22 +27,44 @@ export default class TenantService extends Service {
 	*/
 	async setTenants(availableTenants, authorizedTenant = undefined) {
 		// Extract the current tenant from URL params
-		var tenantFromUrl = extractTenantFromUrl();
+		const tenantFromUrl = extractTenantFromUrl();
 
-		/* If tenant has not been provided in access URL, insert the authorized tenant 
-		or the first available tenant into the URL and reload the application */
-		if (tenantFromUrl == null) {
+		if (availableTenants) {
+			// Sort available tenants alphabetically
+			availableTenants.sort((a, b) =>{
+				const tenantA = a?.toString()?.toLowerCase() || '';
+				const tenantB = b?.toString()?.toLowerCase() || '';
+				return tenantA.localeCompare(tenantB);
+			});
+		}
+
+		/* If tenant has not been provided in access URL, insert the authorized tenant
+		or the first available tenant (preferably not the system one) into the URL and reload the application */
+		if (tenantFromUrl === null) {
+			let tenant;
+
 			if (authorizedTenant) {
-				await locationReplace(`${window.location.pathname}?tenant=${authorizedTenant}${window.location.hash}`);
-				return;
-			} else if ((availableTenants) && (availableTenants.length > 0)) {
-				await locationReplace(`${window.location.pathname}?tenant=${availableTenants[0]}${window.location.hash}`);
+				tenant = authorizedTenant;
+			} else if (availableTenants && availableTenants.length > 0) {
+				const withoutSystem = availableTenants.filter((tenant) => tenant !== 'system');
+
+				if (withoutSystem.length > 0) {
+					tenant = withoutSystem[0];
+				} else {
+					tenant = availableTenants[0];
+				}
+			} else {
+				// no tenant to inject to the url
+				await locationReplace(window.location.pathname + window.location.hash);
 				return;
 			}
-		} 
+
+			await locationReplace(`${window.location.pathname}?tenant=${tenant}${window.location.hash}`);
+			return;
+		}
 
 		// In case the list of available tenants is empty or undefined, remove the tenant parameter from URL
-		if ((!availableTenants) || (availableTenants.length == 0)) {
+		if (!availableTenants || availableTenants.length === 0) {
 			await locationReplace(window.location.pathname + window.location.hash);
 			return;
 		}
@@ -61,12 +79,6 @@ export default class TenantService extends Service {
 				}
 			}
 			currentTenant = tenantFromUrl;
-			// Sort available tenants
-			availableTenants.sort((a, b) =>{
-				const tenantA = a?.toString()?.toLowerCase() || '';
-				const tenantB = b?.toString()?.toLowerCase() || '';
-				return tenantA.localeCompare(tenantB);
-			});
 		} else {
 			currentTenant = undefined;
 		}
@@ -77,7 +89,6 @@ export default class TenantService extends Service {
 			tenants_list: availableTenants,
 			current: currentTenant
 		});
-
 	}
 
 	/*
@@ -85,7 +96,7 @@ export default class TenantService extends Service {
 		It requires SeaCat Auth service
 	*/
 	async getTenantData() {
-		let currentTenant = this.getCurrentTenant();
+		const currentTenant = this.getCurrentTenant();
 		// If tenant data being cached already, then return the data
 		if (this.TenantDataCache[currentTenant]) {
 			return this.TenantDataCache[currentTenant];
