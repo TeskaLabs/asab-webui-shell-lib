@@ -1,6 +1,6 @@
 import React, { useState, useLayoutEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAppSelector, DataTableCard2 } from 'asab_webui_components';
+import { useAppSelector, DataTableCard2, DateTime } from 'asab_webui_components';
 
 import { getBrandImage } from '../../components/branding/BrandImage';
 
@@ -11,25 +11,10 @@ import {
 
 
 function AboutScreen(props) {
-	const theme = useAppSelector(state => state.theme);
-	const [ brandImage, setBrandImage ] = useState(null);
-
-	useLayoutEffect(() => {
-		setBrandImage(getBrandImage(props, theme));
-	}, [theme]);
-
 	return (
 		<Container className='h-100'>
-			<Row className="justify-content-center h-100 pt-4">
-				<Col md="6" className='d-flex flex-column gap-4 h-100 min-vh-0'>
-					{brandImage && 
-						<div style={{ height: '8rem' }}>
-							<img
-								src={brandImage.full}
-								alt="TeskaLabs logo"
-							/>
-						</div>
-					}
+			<Row className="justify-content-center h-100">
+				<Col md="6" className='d-flex flex-column gap-4'>
 					<AboutCard />
 					<div className='flex-grow-1'>
 						<ApplicationManifestsCard app={props.app} />
@@ -46,7 +31,7 @@ export default AboutScreen;
 /*
 
 	Language localizations for AboutCard can be added to the translation.json files of
-	public/locales/en & public/locales/cs
+	public/locales/en & public/locales/cs@
 
 	Example:
 
@@ -126,7 +111,7 @@ function ApplicationManifestsCard({ app }) {
 	const columns = [
 		{
 			title: t('General|Name'),
-			tdStyle: { width: '8rem', maxWidth: '12rem' },
+			thStyle: { width: '8rem', maxWidth: '12rem' },
 			render: ({ row }) => {
 				const label = row.displayName ?? row.id;
 				return (
@@ -138,11 +123,11 @@ function ApplicationManifestsCard({ app }) {
 		},
 		{
 			title: t('AboutCard|Tag'),
-			tdStyle: { width: '8rem', maxWidth: '12rem' },
+			thStyle: { width: '8rem', maxWidth: '12rem' },
 			render: ({ row }) => {
 				const tag = row.version ?? '';
 				return (
-					<span className="d-block text-truncate" title={tag}>
+					<span className="font-monospace d-block text-truncate" title={tag}>
 						{tag}
 					</span>
 				);
@@ -150,12 +135,12 @@ function ApplicationManifestsCard({ app }) {
 		},
 		{
 			title: t('AboutCard|Built at'),
-			tdStyle: { width: '8rem', maxWidth: '12rem' },
+			thStyle: { width: '8rem', maxWidth: '12rem' },
 			render: ({ row }) => {
 				const builtAt = row.created_at ?? '';
 				return (
 					<span className="d-block text-truncate" title={builtAt}>
-						{builtAt}
+						<DateTime value={builtAt} />
 					</span>
 				);
 			},
