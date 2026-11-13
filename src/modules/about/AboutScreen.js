@@ -1,38 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAppSelector } from 'asab_webui_components';
-
-import { getBrandImage } from '../../components/branding/BrandImage';
+import { useAppSelector, DataTableCard2, DateTime } from 'asab_webui_components';
 
 import {
 	Container, Row, Col,
-	Card, CardHeader, CardBody,
+	Card, CardHeader,
 } from 'reactstrap';
 
 
 function AboutScreen(props) {
-	const [ brandImage, setBrandImage ] = useState(undefined);
-	const theme = useAppSelector(state => state.theme);
-
-	useEffect(() => {
-		setBrandImage(getBrandImage(props, theme));
-	}, [theme]);
-
 	return (
-		<Container className='pt-5'>
-			<Row className="justify-content-center">
-				<Col md="6">
-					<div className="my-4">
-						{brandImage ?
-								<img
-									src={brandImage?.full}
-									alt="TeskaLabs logo"
-							/>
-						:
-							null
-						}
+		<Container className='h-100'>
+			<Row className="justify-content-center h-100">
+				<Col md="6" className='d-flex flex-column gap-4'>
+					<AboutCard />
+					<div className='flex-grow-1'>
+						<ApplicationManifestsCard app={props.app} />
 					</div>
-					<AboutCard app={props.app} />
 				</Col>
 			</Row>
 		</Container>
@@ -58,10 +42,7 @@ export default AboutScreen;
 
 */
 
-
-// TODO: add info about version release and date of the release
-
-function AboutCard(props) {
+function AboutCard() {
 	const { t } = useTranslation();
 	const title = useAppSelector(state => state.config?.title);
 	const vendor = useAppSelector(state => state.config?.vendor);
@@ -100,7 +81,7 @@ function AboutCard(props) {
 						</Col>
 					</Row>
 				</li>}
-				{website &&
+				{email &&
 				<li className="list-group-item">
 					<Row>
 						<Col className="col-6">
@@ -114,4 +95,72 @@ function AboutCard(props) {
 			</ul>
 		</Card>
 	)
+}
+
+function ApplicationManifestsCard({ app }) {
+	const { t } = useTranslation();
+	const manifestService = app?.Services?.ManifestService;
+
+	const loader = async ({ params }) => {
+		const { count, data } = manifestService?.list?.(params) ?? { count: 0, data: [] };
+		return { count, rows: data };
+	};
+
+	const columns = [
+		{
+			title: t('General|Name'),
+			thStyle: { width: '8rem', maxWidth: '12rem' },
+			render: ({ row }) => {
+				const label = row.displayName ?? row.id;
+				return (
+					<span className="fw-semibold d-block text-truncate" title={label}>
+						{label}
+					</span>
+				);
+			},
+		},
+		{
+			title: 'Tag', // No need to translate
+			thStyle: { width: '8rem', maxWidth: '12rem' },
+			render: ({ row }) => {
+				const tag = row.version ?? '';
+				return (
+					<span className="font-monospace d-block text-truncate" title={tag}>
+						{tag}
+					</span>
+				);
+			},
+		},
+		{
+			title: t('AboutCard|Built at'),
+			thStyle: { width: '8rem', maxWidth: '12rem' },
+			render: ({ row }) => {
+				const builtAt = row.created_at ?? '';
+				return (
+					<span className="d-block text-truncate" title={builtAt}>
+						<DateTime value={builtAt} />
+					</span>
+				);
+			},
+		},
+	];
+
+	const Header = () => (
+		<div className="flex-fill">
+			<h3>{t('AboutCard|Application versions')}</h3>
+		</div>	
+	);
+
+	if (!manifestService || manifestService.isEmpty()) {
+		return null;
+	}
+
+	return (
+			<DataTableCard2
+				columns={columns}
+				loader={loader}
+				header={<Header />}
+				disableParams={true}
+			/>
+	);
 }

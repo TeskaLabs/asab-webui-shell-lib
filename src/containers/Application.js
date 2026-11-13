@@ -28,6 +28,7 @@ import HeaderService from '../services/HeaderService';
 import ThemeService from '../theme/ThemeService';
 import BrandingService from '../services/BrandingService';
 import TitleService from "../services/TitleService";
+import ManifestService from '../services/ManifestService';
 import HelpService from "./Header/Help/HelpService";
 
 import AccessDeniedCard from '../modules/tenant/access/AccessDeniedCard';
@@ -76,6 +77,7 @@ class Application extends Component {
 		this.ThemeService = new ThemeService(this, "ThemeService");
 		this.BrandingService = new BrandingService(this, "BrandingService");
 		this.TitleService = new TitleService(this, "TitleService");
+		this.ManifestService = new ManifestService(this, "ManifestService");
 		this.HelpService = new HelpService(this, "HelpService");
 
 		// The application can provide a list of keys that should be automatically parsed as BigInt, when received from the server in Axios call
@@ -564,6 +566,10 @@ class Application extends Component {
 			return;
 		}
 		this.Services[service.Name] = service;
+	}
+
+	registerManifest(entry) {
+		this.Services.ManifestService?.register(entry);
 	}
 
 	locateService(name) {
