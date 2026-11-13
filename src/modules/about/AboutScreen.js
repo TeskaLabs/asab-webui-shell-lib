@@ -122,7 +122,7 @@ function ApplicationManifestsCard({ app }) {
 			},
 		},
 		{
-			title: t('AboutCard|Tag'),
+			title: 'Tag',
 			thStyle: { width: '8rem', maxWidth: '12rem' },
 			render: ({ row }) => {
 				const tag = row.version ?? '';
