@@ -89,7 +89,8 @@
 			display: block;
 		}
 
-		[class^="btn btn-"] {
+
+		.btn, button {
 			display: none !important;
 		}
 
