@@ -1,8 +1,6 @@
-import React, { useState, useLayoutEffect } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppSelector, DataTableCard2, DateTime } from 'asab_webui_components';
-
-import { getBrandImage } from '../../components/branding/BrandImage';
 
 import {
 	Container, Row, Col,
@@ -83,7 +81,7 @@ function AboutCard() {
 						</Col>
 					</Row>
 				</li>}
-				{website &&
+				{email &&
 				<li className="list-group-item">
 					<Row>
 						<Col className="col-6">
@@ -122,7 +120,7 @@ function ApplicationManifestsCard({ app }) {
 			},
 		},
 		{
-			title: 'Tag',
+			title: 'Tag', // No need to translate
 			thStyle: { width: '8rem', maxWidth: '12rem' },
 			render: ({ row }) => {
 				const tag = row.version ?? '';
