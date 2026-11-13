@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useState, useLayoutEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppSelector, DataTableCard2 } from 'asab_webui_components';
 
@@ -12,7 +12,11 @@ import {
 
 function AboutScreen(props) {
 	const theme = useAppSelector(state => state.theme);
-	const brandImage = useMemo(() => getBrandImage(props, theme), [theme]);
+	const [ brandImage, setBrandImage ] = useState(null);
+
+	useLayoutEffect(() => {
+		setBrandImage(getBrandImage(props, theme));
+	}, [theme]);
 
 	return (
 		<Container className='h-100'>
