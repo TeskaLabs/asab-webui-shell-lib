@@ -31,7 +31,7 @@ export default AboutScreen;
 /*
 
 	Language localizations for AboutCard can be added to the translation.json files of
-	public/locales/en & public/locales/cs@
+	public/locales/en & public/locales/cs
 
 	Example:
 
