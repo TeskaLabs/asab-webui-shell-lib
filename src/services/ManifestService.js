@@ -35,7 +35,9 @@ export default class ManifestService extends Service {
 
 	/** Paginated list for DataTable loaders (`p` = page, `i` = limit per page). */
 	list(params = {}) {
-		const all = this._getSortedManifests();
+		const all = [...this._manifests.values()].sort((a, b) => {
+			return String(a.displayName).localeCompare(String(b.displayName));
+		});
 		const page = Math.max(1, parseInt(params.p, 10) || 1);
 		const limit = Math.max(1, parseInt(params.i, 10) || 10);
 		const start = (page - 1) * limit;
@@ -43,15 +45,5 @@ export default class ManifestService extends Service {
 			count: all.length,
 			data: all.slice(start, start + limit),
 		};
-	}
-
-	_getSortedManifests() {
-		return [...this._manifests.values()].sort((a, b) => {
-			const nameCmp = String(a.displayName).localeCompare(String(b.displayName));
-			if (nameCmp !== 0) {
-				return nameCmp;
-			}
-			return String(a.id).localeCompare(String(b.id));
-		});
 	}
 }
