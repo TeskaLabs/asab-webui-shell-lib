@@ -1,5 +1,5 @@
-import React, { useState, useMemo, Suspense } from 'react';
-import { useAppSelector } from 'asab_webui_components';
+import React, { useState, useMemo, Suspense, useEffect } from 'react';
+import { useAppSelector, usePubSub } from 'asab_webui_components';
 import { useTranslation } from 'react-i18next';
 
 import {
@@ -18,8 +18,15 @@ export default function TenantDropdown() {
 	const current = useAppSelector(state => state?.tenant?.current);
 	const tenants = useAppSelector(state => state?.tenant?.tenants);
 	const extDropdownComponents = useAppSelector(state => state?.tenant?.extDropdownComponents) ?? [];
+	const { publish } = usePubSub();
 
 	const hasSearch = tenants?.length >= 10; // Display search input if there is >= 10 tenants
+
+	useEffect(() => {
+		if (isOpen) {
+			publish('Tenant.list.refresh!');
+		}
+	}, [isOpen, publish]);
 	const toggle = () => {
 		setIsOpen(prev => !prev);
 		hasSearch && setSearchInput('');
