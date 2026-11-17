@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState, useLayoutEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppSelector, DataTableCard2, DateTime } from 'asab_webui_components';
+
+import { getBrandImage } from '../../components/branding/BrandImage';
 
 import {
 	Container, Row, Col,
@@ -9,14 +11,33 @@ import {
 
 
 function AboutScreen(props) {
+	const theme = useAppSelector(state => state.theme);
+	const [ brandImage, setBrandImage ] = useState(null);
+
+	useLayoutEffect(() => {
+		setBrandImage(getBrandImage(props, theme));
+	}, [theme]);
+
 	return (
 		<Container className='h-100'>
-			<Row className="justify-content-center h-100">
-				<Col md="6" className='d-flex flex-column gap-4'>
+			<Row className='justify-content-center'>
+				<Col md={8} className='my-4'>
+					{brandImage ?
+						<img
+							src={brandImage?.full}
+							alt="TeskaLabs logo"
+						/>
+					:
+						null
+					}
+				</Col>
+			</Row>
+			<Row className='g-4 h-50'>
+				<Col md={5}>
 					<AboutCard />
-					<div className='flex-grow-1'>
-						<ApplicationManifestsCard app={props.app} />
-					</div>
+				</Col>
+				<Col md={7}>
+					<ApplicationManifestsCard app={props.app} />
 				</Col>
 			</Row>
 		</Container>
@@ -50,7 +71,7 @@ function AboutCard() {
 	const email = useAppSelector(state => state.config?.email);
 
 	return(
-		<Card>
+		<Card className='h-100'>
 			<CardHeader className="card-header-flex">
 				<div className="flex-fill">
 					<h3>
@@ -156,11 +177,12 @@ function ApplicationManifestsCard({ app }) {
 	}
 
 	return (
-			<DataTableCard2
-				columns={columns}
-				loader={loader}
-				header={<Header />}
-				disableParams={true}
-			/>
+		<DataTableCard2
+			columns={columns}
+			loader={loader}
+			header={<Header />}
+			disableParams={true}
+			className='h-100'
+		/>
 	);
 }
