@@ -81,6 +81,11 @@
 	position: fixed !important;
 }
 
+/* Temporal monaco workaround for not displaying the shortcut tooltips (e.g. o ctr+f) until this monaco issue is resolved (monaco-editor #5208) */
+.workbench-hover-container {
+	display: none !important;
+}
+
 .cursor-pointer {
 	cursor: pointer;
 }
