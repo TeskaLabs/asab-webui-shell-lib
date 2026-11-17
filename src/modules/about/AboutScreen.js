@@ -13,6 +13,8 @@ import {
 function AboutScreen(props) {
 	const theme = useAppSelector(state => state.theme);
 	const [ brandImage, setBrandImage ] = useState(null);
+	const manifestService = props.app?.Services?.ManifestService;
+	const showAppManifests = manifestService && !manifestService.isEmpty();
 
 	useLayoutEffect(() => {
 		setBrandImage(getBrandImage(props, theme));
@@ -21,7 +23,7 @@ function AboutScreen(props) {
 	return (
 		<Container className='h-100'>
 			<Row className='justify-content-center'>
-				<Col md={8} className='my-4'>
+				<Col md={6} className='my-4'>
 					{brandImage ?
 						<img
 							src={brandImage?.full}
@@ -32,13 +34,15 @@ function AboutScreen(props) {
 					}
 				</Col>
 			</Row>
-			<Row className='g-4 h-50'>
+			<Row className={`g-4 justify-content-center ${showAppManifests ? 'h-50' : ''}`} >
 				<Col md={5}>
 					<AboutCard />
 				</Col>
-				<Col md={7}>
-					<ApplicationManifestsCard app={props.app} />
-				</Col>
+				{showAppManifests && (
+					<Col md={7}>
+						<ApplicationManifestsCard manifestService={manifestService} />
+					</Col>
+				)}
 			</Row>
 		</Container>
 	);
@@ -118,9 +122,8 @@ function AboutCard() {
 	)
 }
 
-function ApplicationManifestsCard({ app }) {
+function ApplicationManifestsCard({ manifestService }) {
 	const { t } = useTranslation();
-	const manifestService = app?.Services?.ManifestService;
 
 	const loader = async ({ params }) => {
 		const { count, data } = manifestService?.list?.(params) ?? { count: 0, data: [] };
@@ -171,10 +174,6 @@ function ApplicationManifestsCard({ app }) {
 			<h3>{t('AboutCard|Application versions')}</h3>
 		</div>	
 	);
-
-	if (!manifestService || manifestService.isEmpty()) {
-		return null;
-	}
 
 	return (
 		<DataTableCard2
