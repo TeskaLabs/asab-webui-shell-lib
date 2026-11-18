@@ -10,6 +10,7 @@ import {
 	Input,
 } from 'reactstrap';
 
+import './TenantDropdown.scss';
 
 export default function TenantDropdown() {
 	const { t } = useTranslation();
@@ -40,16 +41,13 @@ export default function TenantDropdown() {
 	}, [tenants, searchInput, hasSearch]);
 
 	return (
-		<Dropdown isOpen={isOpen} toggle={toggle} direction="down" title={t('General|Tenant')}>
+		<Dropdown className="tenant-dropdown" isOpen={isOpen} toggle={toggle} direction="down" title={t('General|Tenant')}>
 			<DropdownToggle nav caret>
 				<i className="bi bi-house-lock pe-2"></i>
 				<TenantLabel tenant={current}/>
 			</DropdownToggle>
 			{isOpen && tenants?.length > 0 && (
-				<DropdownMenu
-					className={`shadow overflow-y-auto${hasSearch ? ' pt-0' : ''}`}
-					style={{ maxHeight: '20em' }}
-				>
+				<DropdownMenu className={`shadow overflow-y-auto${hasSearch ? ' pt-0' : ''}`}>
 					<DropdownItem header>{t('General|Tenants')}</DropdownItem>
 					{hasSearch
 						&& <Input
