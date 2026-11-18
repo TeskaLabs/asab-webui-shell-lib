@@ -17,7 +17,7 @@ export default class Navigation extends Component {
 				name: 'Some Name',	// Route name
 				openFor: ['/some/path/*'], // Optional array of routes to keep the item open
 				icon: 'bi bi-folder', // Icon
-				resource: 'some:resource:access', // Resource to check access for
+				resource: 'some:resource:access', // Resource to check access for (string or string[] for AND)
 				order: 100, // Order of the item
 				children: [ // Optional array of children
 					{
@@ -26,7 +26,7 @@ export default class Navigation extends Component {
 						name: 'Child Name',
 						openFor: ['/some/path/child'], // Optional array of routes to keep the child highlighted
 						icon: 'bi bi-file', // Icon
-						resource: 'some:resource:access', // Resource to check access for
+						resource: 'some:resource:access', // Resource to check access for (string or string[] for AND)
 						order: 100, // Order of the child
 					}
 				],

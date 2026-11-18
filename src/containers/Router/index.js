@@ -16,7 +16,7 @@ export default class Router extends Component {
 				end: true, // Whether path must be matched exactly
 				name: 'Some Name', // Route name
 				component: ReactComponent, // Component to be rendered
-				resource: some:resource, // Resource of the component | *optional
+				resource: 'some:resource', // Resource of the component (string or string[] for AND) | *optional
 				help: "https://docs.teskalabs.com" // Help content of the screen (route) | *optional
 			}
 		*/
