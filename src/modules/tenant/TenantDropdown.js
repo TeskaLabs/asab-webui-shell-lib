@@ -42,40 +42,6 @@ export default function TenantDropdown({ app }) {
 		hasSearch && setSearchInput('');
 	};
 
-	const removeTenant = async (tenantId) => {
-		const LMIOTrexAPI = app?.axiosCreate?.('lmio-trex');
-		if (!LMIOTrexAPI || !current) {
-			return;
-		}
-		try {
-			const response = await LMIOTrexAPI.delete(`/${current}/tenant/${tenantId}`);
-			if (response.data.result !== 'OK') {
-				throw new Error(response.data?.error || 'There was an issue processing a request');
-			}
-
-			if (tenantId == current) {
-				app.addAlert('success', 'Tenant removed successfully, you will be logged out in a while');
-				setTimeout(() => {
-					window.location.reload();
-				}, 5000);
-			} else {
-				app.addAlert('success', 'Tenant removed successfully');
-				const auth = app?.Modules?.find(m => m.Name === 'AuthModule');
-				if (auth?.OAuthTokens) {
-					void auth.renewSession();
-				}
-			}
-		} catch (e) {
-			app.addAlertFromException(e, 'Failed to remove the tenant');
-		}
-	};
-
-	const removeTenantForm = (tenantId) => {
-		if (confirm('Do you want to remove the tenant?')) {
-			removeTenant(tenantId);
-		}
-	};
-
 	const filteredTenants = useMemo(() => {
 		if (!hasSearch || !searchInput) return tenants;
 
@@ -101,31 +67,9 @@ export default function TenantDropdown({ app }) {
 							placeholder={t('General|Search')}
 						/>}
 					<div className='tenant-dropdown-scroll'>
-						{filteredTenants.map((tenant) => (
-							<DropdownItem key={tenant} tag="div" className="d-flex align-items-center">
-								<a className="flex-grow-1 text-decoration-none text-body" href={`?tenant=${tenant}#/`}>
-									<TenantLabel tenant={tenant} />
-								</a>
-								<button
-									type="button"
-									title="Remove tenant"
-									style={{
-										border: 'none',
-										background: 'transparent',
-										padding: 0,
-										marginLeft: '0.5rem',
-										color: '#dc3545',
-										lineHeight: 1,
-										cursor: 'pointer',
-									}}
-									onClick={(e) => {
-										e.preventDefault();
-										e.stopPropagation();
-										removeTenantForm(tenant);
-									}}
-								>
-									<i className="bi bi-trash" />
-								</button>
+						{filteredTenants.map((tenant, i) => (
+							<DropdownItem key={i} tag="a" href={'?tenant='+tenant+'#/'}>
+								<TenantLabel tenant={tenant}/>
 							</DropdownItem>
 						))}
 					</div>
