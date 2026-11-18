@@ -1,5 +1,5 @@
 import React, { useState, useMemo, Suspense, useEffect } from 'react';
-import { useAppSelector, usePubSub } from 'asab_webui_components';
+import { useAppSelector } from 'asab_webui_components';
 import { useTranslation } from 'react-i18next';
 
 import {
@@ -12,21 +12,29 @@ import {
 
 import './TenantDropdown.scss';
 
-export default function TenantDropdown() {
+export default function TenantDropdown({ app }) {
 	const { t } = useTranslation();
 	const [isOpen, setIsOpen] = useState(false);
 	const [searchInput, setSearchInput] = useState('');
 	const current = useAppSelector(state => state?.tenant?.current);
 	const tenants = useAppSelector(state => state?.tenant?.tenants);
 	const extDropdownComponents = useAppSelector(state => state?.tenant?.extDropdownComponents) ?? [];
-	const { publish } = usePubSub();
 
 	const hasSearch = tenants?.length >= 10; // Display search input if there is >= 10 tenants
 
-	useEffect(() => {
-		if (isOpen) {
-			publish('Tenant.list.refresh!');
+	// Refresh OAuth session and userinfo, causes the tenant list to be updated.
+	// Used when the tenant dropdown opens so new SeaCat assignments appear without re-login.
+	useEffect(function refreshTenantList() {
+		if (!isOpen) {
+			return
 		}
+
+		const auth = app?.Modules?.find(m => m.Name === 'AuthModule');
+		if (!auth?.OAuthTokens) {
+			return;
+		}
+		
+		void auth.renewSession();
 	}, [isOpen]);
 
 	const toggle = () => {
