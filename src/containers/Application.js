@@ -28,7 +28,6 @@ import HeaderService from '../services/HeaderService';
 import ThemeService from '../theme/ThemeService';
 import BrandingService from '../services/BrandingService';
 import TitleService from "../services/TitleService";
-import ManifestService from '../services/ManifestService';
 import HelpService from "./Header/Help/HelpService";
 
 import AccessDeniedCard from '../modules/tenant/access/AccessDeniedCard';
@@ -77,8 +76,10 @@ class Application extends Component {
 		this.ThemeService = new ThemeService(this, "ThemeService");
 		this.BrandingService = new BrandingService(this, "BrandingService");
 		this.TitleService = new TitleService(this, "TitleService");
-		this.ManifestService = new ManifestService(this, "ManifestService");
 		this.HelpService = new HelpService(this, "HelpService");
+
+		// Build-time manifests from the host and loaded microfrontends (see registerManifest).
+		this._manifests = new Map();
 
 		// The application can provide a list of keys that should be automatically parsed as BigInt, when received from the server in Axios call
 		// This is important to preserve 64bit numbers from the server such as IP addresses, timestamps etc.
@@ -569,7 +570,40 @@ class Application extends Component {
 	}
 
 	registerManifest(entry) {
-		this.Services.ManifestService?.register(entry);
+		if (entry == null || typeof entry !== 'object') {
+			console.warn('Application: manifest entry must be an object');
+			return;
+		}
+
+		const manifestId = String(entry.id ?? '').trim();
+		if (!manifestId) {
+			console.warn('Application: manifest entry requires a non-empty id');
+			return;
+		}
+
+		this._manifests.set(manifestId, {
+			...entry,
+			id: manifestId,
+			displayName: entry.displayName ?? manifestId,
+		});
+	}
+
+	isManifestRegistryEmpty() {
+		return this._manifests.size === 0;
+	}
+
+	/** Paginated list for DataTable loaders (`p` = page, `i` = limit per page). */
+	listManifests(params = {}) {
+		const all = [...this._manifests.values()].sort((a, b) => {
+			return String(a.displayName).localeCompare(String(b.displayName));
+		});
+		const page = Math.max(1, parseInt(params.p, 10) || 1);
+		const limit = Math.max(1, parseInt(params.i, 10) || 10);
+		const start = (page - 1) * limit;
+		return {
+			count: all.length,
+			data: all.slice(start, start + limit),
+		};
 	}
 
 	locateService(name) {

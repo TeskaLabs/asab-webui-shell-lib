@@ -13,8 +13,7 @@ import {
 function AboutScreen(props) {
 	const theme = useAppSelector(state => state.theme);
 	const [ brandImage, setBrandImage ] = useState(null);
-	const manifestService = props.app?.Services?.ManifestService;
-	const showAppManifests = manifestService && !manifestService.isEmpty();
+	const showAppManifests = !props.app.isManifestRegistryEmpty();
 
 	useLayoutEffect(() => {
 		setBrandImage(getBrandImage(props, theme));
@@ -40,7 +39,7 @@ function AboutScreen(props) {
 				</Col>
 				{showAppManifests && (
 					<Col md={7}>
-						<ApplicationManifestsCard manifestService={manifestService} />
+						<ApplicationManifestsCard app={props.app} />
 					</Col>
 				)}
 			</Row>
@@ -122,11 +121,11 @@ function AboutCard() {
 	)
 }
 
-function ApplicationManifestsCard({ manifestService }) {
+function ApplicationManifestsCard({ app }) {
 	const { t } = useTranslation();
 
 	const loader = async ({ params }) => {
-		const { count, data } = manifestService?.list?.(params) ?? { count: 0, data: [] };
+		const { count, data } = app.listManifests?.(params) ?? { count: 0, data: [] };
 		return { count, rows: data };
 	};
 
