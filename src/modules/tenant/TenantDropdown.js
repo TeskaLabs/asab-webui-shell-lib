@@ -27,7 +27,8 @@ export default function TenantDropdown() {
 		if (isOpen) {
 			publish('Tenant.list.refresh!');
 		}
-	}, [isOpen, publish]);
+	}, [isOpen]);
+
 	const toggle = () => {
 		setIsOpen(prev => !prev);
 		hasSearch && setSearchInput('');
@@ -47,7 +48,7 @@ export default function TenantDropdown() {
 				<TenantLabel tenant={current}/>
 			</DropdownToggle>
 			{isOpen && tenants?.length > 0 && (
-				<DropdownMenu className={`shadow overflow-y-auto${hasSearch ? ' pt-0' : ''}`}>
+				<DropdownMenu className={`shadow ${hasSearch ? ' pt-0' : ''} tenant-dropdown-menu`}>
 					<DropdownItem header>{t('General|Tenants')}</DropdownItem>
 					{hasSearch
 						&& <Input
@@ -57,16 +58,22 @@ export default function TenantDropdown() {
 							type="text"
 							placeholder={t('General|Search')}
 						/>}
-					{filteredTenants.map((tenant, i) => (
-						<DropdownItem key={i} tag="a" href={'?tenant='+tenant+'#/'}>
-							<TenantLabel tenant={tenant}/>
-						</DropdownItem>
-					))}
-					{extDropdownComponents.map((Component, i) => (
-						<Suspense key={i} fallback={null}>
-							{React.createElement(Component)}
-						</Suspense>
-					))}
+					<div className='tenant-dropdown-scroll'>
+						{filteredTenants.map((tenant, i) => (
+							<DropdownItem key={i} tag="a" href={'?tenant='+tenant+'#/'}>
+								<TenantLabel tenant={tenant}/>
+							</DropdownItem>
+						))}
+					</div>
+					{extDropdownComponents.length > 0 && (
+						<div className="pt-2 border-top tenant-dropdown-extensions">
+							{extDropdownComponents.map((Component, i) => (
+								<Suspense key={i} fallback={null}>
+									{React.createElement(Component)}
+								</Suspense>
+							))}
+						</div>
+					)}
 				</DropdownMenu>
 			)}
 		</Dropdown>
