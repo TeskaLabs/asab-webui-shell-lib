@@ -66,7 +66,7 @@ export default function TenantDropdown() {
 						))}
 					</div>
 					{extDropdownComponents.length > 0 && (
-						<div className="pt-2 border-top tenant-dropdown-extensions">
+						<div className="pt-2 mt-1 border-top tenant-dropdown-extensions">
 							{extDropdownComponents.map((Component, i) => (
 								<Suspense key={i} fallback={null}>
 									{React.createElement(Component)}
