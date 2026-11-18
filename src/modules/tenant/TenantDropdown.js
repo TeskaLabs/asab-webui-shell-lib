@@ -18,7 +18,7 @@ export default function TenantDropdown({ app }) {
 	const [searchInput, setSearchInput] = useState('');
 	const current = useAppSelector(state => state?.tenant?.current);
 	const tenants = useAppSelector(state => state?.tenant?.tenants);
-	const extDropdownComponents = useAppSelector(state => state?.tenant?.extDropdownComponents) ?? [];
+	const additionalDropdownComponents = useAppSelector(state => state?.tenant?.additionalDropdownComponents) ?? [];
 
 	const hasSearch = tenants?.length >= 10; // Display search input if there is >= 10 tenants
 
@@ -73,9 +73,9 @@ export default function TenantDropdown({ app }) {
 							</DropdownItem>
 						))}
 					</div>
-					{extDropdownComponents.length > 0 && (
-						<div className="pt-2 mt-1 border-top tenant-dropdown-extensions">
-							{extDropdownComponents.map((Component, i) => (
+					{additionalDropdownComponents.length > 0 && (
+						<div className="pt-2 mt-1 border-top tenant-dropdown-additional">
+							{additionalDropdownComponents.map((Component, i) => (
 								<Suspense key={i} fallback={null}>
 									{React.createElement(Component)}
 								</Suspense>

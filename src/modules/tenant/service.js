@@ -9,7 +9,7 @@ export default class TenantService extends Service {
 		super(app, name);
 		// Tenant data cache
 		this.TenantDataCache = {};
-		this.extDropdownComponents = [];
+		this.additionalDropdownComponents = [];
 	}
 
 	async initialize() {
@@ -120,11 +120,11 @@ export default class TenantService extends Service {
 	}
 
 	// Component should render valid DropdownMenu children (e.g. DropdownItem).
-	addExtDropdownItem(component) {
-		this.extDropdownComponents.push(component);
+	addAdditionalDropdownComponent(component) {
+		this.additionalDropdownComponents.push(component);
 		this.App?.AppStore?.dispatch?.({
-			type: types.TENANT_DROPDOWN_ITEM,
-			extDropdownComponents: this.extDropdownComponents,
+			type: types.TENANT_ADDITIONAL_DROPDOWN_COMPONENTS,
+			additionalDropdownComponents: this.additionalDropdownComponents,
 		});
 	}
 }

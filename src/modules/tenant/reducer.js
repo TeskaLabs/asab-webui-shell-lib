@@ -5,7 +5,7 @@ import {types} from './actions';
 const initialState = {
 	tenants: [],
 	current: null,
-	extDropdownComponents: [],
+	additionalDropdownComponents: [],
 }
 
 export default function reducer(state = initialState, action) {
@@ -18,10 +18,10 @@ export default function reducer(state = initialState, action) {
 				current: action.current,
 			};
 
-		case types.TENANT_DROPDOWN_ITEM:
+		case types.TENANT_ADDITIONAL_DROPDOWN_COMPONENTS:
 			return {
 				...state,
-				extDropdownComponents: action.extDropdownComponents,
+				additionalDropdownComponents: action.additionalDropdownComponents,
 			}
 
 		default:
