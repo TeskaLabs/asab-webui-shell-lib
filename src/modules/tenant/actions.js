@@ -1,4 +1,5 @@
 export const types = {
 	TENANTS_CHANGED: "asab/TenantService/CHANGED",
 	TENANT_SELECTED: "asab/TenantService/SELECT_TENANT",
+	TENANT_ADDITIONAL_DROPDOWN_COMPONENTS: "asab/TenantService/ADDITIONAL_DROPDOWN_COMPONENTS",
 }

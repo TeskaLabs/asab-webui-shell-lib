@@ -1,0 +1,17 @@
+.tenant-dropdown {
+	.tenant-dropdown-menu {
+		max-height: 70vh;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.tenant-dropdown-scroll {
+		overflow-y: auto;
+	}
+
+	.tenant-dropdown-additional {
+		&:empty {
+			display: none;
+		}
+	}
+}

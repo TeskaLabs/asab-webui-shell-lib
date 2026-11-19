@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, Suspense, useEffect } from 'react';
 import { useAppSelector } from 'asab_webui_components';
 import { useTranslation } from 'react-i18next';
 
@@ -10,15 +10,33 @@ import {
 	Input,
 } from 'reactstrap';
 
+import './TenantDropdown.scss';
 
-export default function TenantDropdown() {
+export default function TenantDropdown({ app }) {
 	const { t } = useTranslation();
 	const [isOpen, setIsOpen] = useState(false);
 	const [searchInput, setSearchInput] = useState('');
 	const current = useAppSelector(state => state?.tenant?.current);
 	const tenants = useAppSelector(state => state?.tenant?.tenants);
+	const additionalDropdownComponents = useAppSelector(state => state?.tenant?.additionalDropdownComponents) ?? [];
 
 	const hasSearch = tenants?.length >= 10; // Display search input if there is >= 10 tenants
+
+	// Refresh OAuth session and userinfo, causes the tenant list to be updated.
+	// Used when the tenant dropdown opens so new SeaCat assignments appear without re-login.
+	useEffect(function refreshTenantList() {
+		if (!isOpen) {
+			return
+		}
+
+		const auth = app?.Modules?.find(m => m.Name === 'AuthModule');
+		if (!auth?.OAuthTokens) {
+			return;
+		}
+		
+		void auth.renewSession();
+	}, [isOpen]);
+
 	const toggle = () => {
 		setIsOpen(prev => !prev);
 		hasSearch && setSearchInput('');
@@ -32,16 +50,13 @@ export default function TenantDropdown() {
 	}, [tenants, searchInput, hasSearch]);
 
 	return (
-		<Dropdown isOpen={isOpen} toggle={toggle} direction="down" title={t('General|Tenant')}>
+		<Dropdown className="tenant-dropdown" isOpen={isOpen} toggle={toggle} direction="down" title={t('General|Tenant')}>
 			<DropdownToggle nav caret>
 				<i className="bi bi-house-lock pe-2"></i>
 				<TenantLabel tenant={current}/>
 			</DropdownToggle>
 			{isOpen && tenants?.length > 0 && (
-				<DropdownMenu
-					className={`shadow overflow-y-auto${hasSearch ? ' pt-0' : ''}`}
-					style={{ maxHeight: '20em' }}
-				>
+				<DropdownMenu className={`shadow ${hasSearch ? ' pt-0' : ''} tenant-dropdown-menu`}>
 					<DropdownItem header>{t('General|Tenants')}</DropdownItem>
 					{hasSearch
 						&& <Input
@@ -51,11 +66,22 @@ export default function TenantDropdown() {
 							type="text"
 							placeholder={t('General|Search')}
 						/>}
-					{filteredTenants.map((tenant, i) => (
-						<DropdownItem key={i} tag="a" href={'?tenant='+tenant+'#/'}>
-							<TenantLabel tenant={tenant}/>
-						</DropdownItem>
-					))}
+					<div className='tenant-dropdown-scroll'>
+						{filteredTenants.map((tenant, i) => (
+							<DropdownItem key={i} tag="a" href={'?tenant='+tenant+'#/'}>
+								<TenantLabel tenant={tenant}/>
+							</DropdownItem>
+						))}
+					</div>
+					{additionalDropdownComponents.length > 0 && (
+						<div className="pt-2 mt-1 border-top tenant-dropdown-additional">
+							{additionalDropdownComponents.map((Component, i) => (
+								<Suspense key={i} fallback={null}>
+									{React.createElement(Component)}
+								</Suspense>
+							))}
+						</div>
+					)}
 				</DropdownMenu>
 			)}
 		</Dropdown>

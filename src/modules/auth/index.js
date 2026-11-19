@@ -45,7 +45,7 @@ export default class AuthModule extends Module {
 		this.SessionExpiration = null; // Session expiration as defined in user info
 		this.sessionValidationInterval = null; // Initialize session validation interval
 		this._sessionExpired = false; // Guard which ensures _triggerSessionExpired() runs at most once
-		this._renewPromise = null; // In-flight _renewSession() run shared by all callers
+		this._renewPromise = null; // In-flight renewSession() run shared by all callers
 		this._unsubscribeLifecycle = null; // Unsubscribe function for the Application.lifecycle! subscription (set by _markAuthPageActive)
 
 		// Login-loop protection counts consecutive login redirects and resets on auth success
@@ -250,7 +250,7 @@ export default class AuthModule extends Module {
 			}
 
 			// Await so sessionExpired is set before callers reach addAlertFromException
-			const { userInfoUpdated } = await this._renewSession();
+			const { userInfoUpdated } = await this.renewSession();
 			if (userInfoUpdated === false) {
 				this._triggerSessionExpired();
 			}
@@ -563,7 +563,7 @@ export default class AuthModule extends Module {
 		Returns { tokensRefreshed, userInfoUpdated } where userInfoUpdated follows the updateUserInfo() return values.
 		Callers decide about the session expiration.
 	*/
-	_renewSession() {
+	renewSession() {
 		if (this._sessionExpired) return Promise.resolve({ tokensRefreshed: false, userInfoUpdated: undefined });
 		if (!this._renewPromise) {
 			this._renewPromise = (async () => {
@@ -662,7 +662,7 @@ export default class AuthModule extends Module {
 				// Validate session on half of the session expiration or if the remaining time is <= 5min
 				if (!refreshSessionDone && ((timeRemaining <= 300) || (currentTime >= sessionMidpoint))) {
 					refreshSessionDone = true;
-					const { tokensRefreshed } = await this._renewSession();
+					const { tokensRefreshed } = await this.renewSession();
 					// If current session expiration differs from last known expiration, recalculate session variables
 					if (tokensRefreshed && (this.SessionExpiration !== lastKnownExpiration)) {
 						lastKnownExpiration = this.SessionExpiration;
@@ -680,7 +680,7 @@ export default class AuthModule extends Module {
 
 				// If remaining time is between 1 and 60s, repetitivelly ask for userInfo and trigger "about to expire" warning
 				if ((timeRemaining <= 60) && (timeRemaining > 0)) {
-					const { tokensRefreshed } = await this._renewSession();
+					const { tokensRefreshed } = await this.renewSession();
 					if (!tokensRefreshed && !warningDisplayed && !this._sessionExpired) {
 						this.App.addAlert("info", "General|Your session will expire soon", 30, true);
 						warningDisplayed = true; // Mark the warning as displayed
@@ -689,7 +689,7 @@ export default class AuthModule extends Module {
 
 				// Validation on expired session
 				if (this.SessionExpiration <= currentTime) {
-					const { userInfoUpdated } = await this._renewSession();
+						const { userInfoUpdated } = await this.renewSession();
 					if (userInfoUpdated === false) {
 						this._triggerSessionExpired();
 					}
