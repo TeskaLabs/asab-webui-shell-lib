@@ -1,40 +1,53 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useLayoutEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAppSelector } from 'asab_webui_components';
+import { useAppSelector, DataTableCard2, DateTime } from 'asab_webui_components';
 
 import { getBrandImage } from '../../components/branding/BrandImage';
+import { listManifests } from './manifestRegistry.js';
 
 import {
 	Container, Row, Col,
-	Card, CardHeader, CardBody,
+	Card, CardHeader,
 } from 'reactstrap';
 
 
 function AboutScreen(props) {
-	const [ brandImage, setBrandImage ] = useState(undefined);
 	const theme = useAppSelector(state => state.theme);
+	const [ brandImage, setBrandImage ] = useState(null);
+	const showAppManifests = listManifests().count > 0;
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		setBrandImage(getBrandImage(props, theme));
 	}, [theme]);
 
+	const contentWidth = { md: 7 };
+
 	return (
-		<Container className='pt-5'>
+		<Container className="h-100">
 			<Row className="justify-content-center">
-				<Col md="6">
-					<div className="my-4">
-						{brandImage ?
-								<img
-									src={brandImage?.full}
-									alt="TeskaLabs logo"
-							/>
-						:
-							null
-						}
-					</div>
-					<AboutCard app={props.app} />
+				<Col md={6} className="my-4 text-center">
+					{brandImage ?
+						<img
+							src={brandImage?.full}
+							alt="TeskaLabs logo"
+						/>
+					:
+						null
+					}
 				</Col>
 			</Row>
+			<Row className="justify-content-center pb-4">
+				<Col {...contentWidth}>
+					<AboutCard />
+				</Col>
+			</Row>
+			{showAppManifests && (
+				<Row className="justify-content-center h-75">
+					<Col {...contentWidth}>
+						<ApplicationManifestsCard />
+					</Col>
+				</Row>
+			)}
 		</Container>
 	);
 }
@@ -58,25 +71,15 @@ export default AboutScreen;
 
 */
 
-
-// TODO: add info about version release and date of the release
-
-function AboutCard(props) {
+function AboutCard() {
 	const { t } = useTranslation();
 	const title = useAppSelector(state => state.config?.title);
 	const vendor = useAppSelector(state => state.config?.vendor);
 	const website = useAppSelector(state => state.config?.website);
 	const email = useAppSelector(state => state.config?.email);
 
-	return(
+	return (
 		<Card>
-			<CardHeader className="card-header-flex">
-				<div className="flex-fill">
-					<h3>
-						{t('AboutCard|About')} {title}
-					</h3>
-				</div>
-			</CardHeader>
 			<ul className="list-group list-group-flush">
 				{vendor &&
 				<li className="list-group-item">
@@ -100,7 +103,7 @@ function AboutCard(props) {
 						</Col>
 					</Row>
 				</li>}
-				{website &&
+				{email &&
 				<li className="list-group-item">
 					<Row>
 						<Col className="col-6">
@@ -113,5 +116,69 @@ function AboutCard(props) {
 				</li>}
 			</ul>
 		</Card>
-	)
+	);
+}
+
+function ApplicationManifestsCard() {
+	const { t } = useTranslation();
+
+	const loader = async ({ params }) => {
+		const { count, data } = listManifests(params);
+		return { count, rows: data };
+	};
+
+	const columns = [
+		{
+			title: t('General|Name'),
+			thStyle: { width: '8rem', maxWidth: '12rem' },
+			render: ({ row }) => {
+				const label = row.displayName ?? row.id;
+				return (
+					<span className="fw-semibold d-block text-truncate" title={label}>
+						{label}
+					</span>
+				);
+			},
+		},
+		{
+			title: 'Tag', // No need to translate
+			thStyle: { width: '8rem', maxWidth: '12rem' },
+			render: ({ row }) => {
+				const tag = row.version ?? '';
+				return (
+					<span className="font-monospace d-block text-truncate" title={tag}>
+						{tag}
+					</span>
+				);
+			},
+		},
+		{
+			title: t('AboutCard|Built at'),
+			thStyle: { width: '8rem', maxWidth: '12rem' },
+			render: ({ row }) => {
+				const builtAt = row.created_at ?? '';
+				return (
+					<span className="d-block text-truncate" title={builtAt}>
+						<DateTime value={builtAt} />
+					</span>
+				);
+			},
+		},
+	];
+
+	const Header = () => (
+		<div className="flex-fill">
+			<h3>{t('AboutCard|Application versions')}</h3>
+		</div>	
+	);
+
+	return (
+		<DataTableCard2
+			columns={columns}
+			loader={loader}
+			header={<Header />}
+			disableParams={true}
+			className='h-100'
+		/>
+	);
 }

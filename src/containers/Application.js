@@ -36,6 +36,8 @@ import ApplicationRouter from './Router/ApplicationRouter';
 
 import SuspenseScreen from '../screens/SuspenseScreen';
 import { OfflineIndication } from '../modules/attentionrequired/components/OfflineIndication.jsx';
+// About page build-info registry - mfe calls app.registerManifest at bootstrap.
+import { registerManifest as _registerManifest } from '../modules/about/manifestRegistry';
 
 import './Application.scss';
 
@@ -566,6 +568,7 @@ class Application extends Component {
 		this.Services[service.Name] = service;
 	}
 
+
 	locateService(name) {
 		if (!name in this.Services) {
 			console.warn(`Service ${name} doesn't exist.`);
@@ -573,7 +576,11 @@ class Application extends Component {
 		}
 		return this.Services[name];
 	}
-
+	
+	// Registers build-time manifest metadata from the host or a loaded microfrontend.
+	registerManifest(entry) {
+		return _registerManifest(entry);
+	}
 
 	// This function handles keystroke events and performs enabling/disabling of mods
 	_handleKeyUp(event) {
