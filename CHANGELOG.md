@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 28.0.2
+
+- Fix print styles for buttons (#93)
+
 ## 28.0.1
 
 - Fix issue with flickering monaco tooltips on CTRL+F panel. The tooltips were intentionally removed until the flickering issue is being resolved on monaco side (#97)
