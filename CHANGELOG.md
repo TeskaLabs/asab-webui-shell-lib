@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 28.0.3
+
+- Change title order in the browser's tab (#99)
+
 ## 28.0.2
 
 - Fix print styles for buttons (#93)
