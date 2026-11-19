@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useAppSelector, DataTableCard2, DateTime } from 'asab_webui_components';
 
 import { getBrandImage } from '../../components/branding/BrandImage';
+import { listManifests } from './manifestRegistry.js';
 
 import {
 	Container, Row, Col,
@@ -13,16 +14,18 @@ import {
 function AboutScreen(props) {
 	const theme = useAppSelector(state => state.theme);
 	const [ brandImage, setBrandImage ] = useState(null);
-	const showAppManifests = !props.app.isManifestRegistryEmpty();
+	const showAppManifests = listManifests().count > 0;
 
 	useLayoutEffect(() => {
 		setBrandImage(getBrandImage(props, theme));
 	}, [theme]);
 
+	const contentWidth = { md: 7 };
+
 	return (
-		<Container className='h-100'>
-			<Row className='justify-content-center'>
-				<Col md={6} className='my-4'>
+		<Container className="h-100">
+			<Row className="justify-content-center">
+				<Col md={6} className="my-4 text-center">
 					{brandImage ?
 						<img
 							src={brandImage?.full}
@@ -33,16 +36,18 @@ function AboutScreen(props) {
 					}
 				</Col>
 			</Row>
-			<Row className={`g-4 justify-content-center ${showAppManifests ? 'h-50' : ''}`} >
-				<Col md={5}>
+			<Row className="justify-content-center pb-4">
+				<Col {...contentWidth}>
 					<AboutCard />
 				</Col>
-				{showAppManifests && (
-					<Col md={7}>
-						<ApplicationManifestsCard app={props.app} />
-					</Col>
-				)}
 			</Row>
+			{showAppManifests && (
+				<Row className="justify-content-center h-75">
+					<Col {...contentWidth}>
+						<ApplicationManifestsCard />
+					</Col>
+				</Row>
+			)}
 		</Container>
 	);
 }
@@ -73,15 +78,8 @@ function AboutCard() {
 	const website = useAppSelector(state => state.config?.website);
 	const email = useAppSelector(state => state.config?.email);
 
-	return(
-		<Card className='h-100'>
-			<CardHeader className="card-header-flex">
-				<div className="flex-fill">
-					<h3>
-						{t('AboutCard|About')} {title}
-					</h3>
-				</div>
-			</CardHeader>
+	return (
+		<Card>
 			<ul className="list-group list-group-flush">
 				{vendor &&
 				<li className="list-group-item">
@@ -118,14 +116,14 @@ function AboutCard() {
 				</li>}
 			</ul>
 		</Card>
-	)
+	);
 }
 
-function ApplicationManifestsCard({ app }) {
+function ApplicationManifestsCard() {
 	const { t } = useTranslation();
 
 	const loader = async ({ params }) => {
-		const { count, data } = app.listManifests?.(params) ?? { count: 0, data: [] };
+		const { count, data } = listManifests(params);
 		return { count, rows: data };
 	};
 

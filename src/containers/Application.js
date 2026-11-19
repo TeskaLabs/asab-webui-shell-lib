@@ -36,6 +36,8 @@ import ApplicationRouter from './Router/ApplicationRouter';
 
 import SuspenseScreen from '../screens/SuspenseScreen';
 import { OfflineIndication } from '../modules/attentionrequired/components/OfflineIndication.jsx';
+// About page build-info registry - mfe calls app.registerManifest at bootstrap.
+import { registerManifest as _registerManifest } from '../modules/about/manifestRegistry';
 
 import './Application.scss';
 
@@ -77,9 +79,6 @@ class Application extends Component {
 		this.BrandingService = new BrandingService(this, "BrandingService");
 		this.TitleService = new TitleService(this, "TitleService");
 		this.HelpService = new HelpService(this, "HelpService");
-
-		// Build-time manifests from the host and loaded microfrontends (see registerManifest).
-		this._manifests = new Map();
 
 		// The application can provide a list of keys that should be automatically parsed as BigInt, when received from the server in Axios call
 		// This is important to preserve 64bit numbers from the server such as IP addresses, timestamps etc.
@@ -569,42 +568,6 @@ class Application extends Component {
 		this.Services[service.Name] = service;
 	}
 
-	registerManifest(entry) {
-		if (entry == null || typeof entry !== 'object') {
-			console.warn('Application: manifest entry must be an object');
-			return;
-		}
-
-		const manifestId = String(entry.id ?? '').trim();
-		if (!manifestId) {
-			console.warn('Application: manifest entry requires a non-empty id');
-			return;
-		}
-
-		this._manifests.set(manifestId, {
-			...entry,
-			id: manifestId,
-			displayName: entry.displayName ?? manifestId,
-		});
-	}
-
-	isManifestRegistryEmpty() {
-		return this._manifests.size === 0;
-	}
-
-	/** Paginated list for DataTable loaders (`p` = page, `i` = limit per page). */
-	listManifests(params = {}) {
-		const all = [...this._manifests.values()].sort((a, b) => {
-			return String(a.displayName).localeCompare(String(b.displayName));
-		});
-		const page = Math.max(1, parseInt(params.p, 10) || 1);
-		const limit = Math.max(1, parseInt(params.i, 10) || 10);
-		const start = (page - 1) * limit;
-		return {
-			count: all.length,
-			data: all.slice(start, start + limit),
-		};
-	}
 
 	locateService(name) {
 		if (!name in this.Services) {
@@ -613,7 +576,11 @@ class Application extends Component {
 		}
 		return this.Services[name];
 	}
-
+	
+	// Registers build-time manifest metadata from the host or a loaded microfrontend.
+	registerManifest(entry) {
+		return _registerManifest(entry);
+	}
 
 	// This function handles keystroke events and performs enabling/disabling of mods
 	_handleKeyUp(event) {
