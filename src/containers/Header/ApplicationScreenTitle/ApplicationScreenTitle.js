@@ -44,7 +44,7 @@ const ApplicationScreenTitle = (props) => {
 	}, [route]);
 
 	useEffect(() => {
-		document.title = (title && routeName) ? `${title} | ${routeName}` : title;
+		document.title = (title && routeName) ? `${routeName} | ${title}` : title;
 	}, [routeName, t]);
 
 	// If specifically declared in the configuration, that header title should not be available, dont display header title
