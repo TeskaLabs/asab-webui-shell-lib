@@ -78,26 +78,6 @@ $card-flex-height: 3.2rem;
 		}
 	}
 
-	> .nav {
-		padding: 0;
-		display: contents;
-
-		.nav-item a {
-			border: none;
-			background: inherit;
-			border-bottom: 2px solid transparent;
-		}
-
-		.nav-item a:hover {
-			cursor: pointer;
-			border-bottom: 2px solid var(--bs-secondary);
-		}
-
-		.nav-item a.active {
-			border-bottom: 2px solid var(--bs-primary);
-		}
-	}
-
 	h2, h3, h4, h5, h6 {
 		margin-bottom: 0;
 	}
