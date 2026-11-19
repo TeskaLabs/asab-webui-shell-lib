@@ -1,0 +1,19 @@
+// Shared tab styling (testing: red hover background)
+
+// Reactstrap `Nav tabs` puts `nav-tabs` and custom classes on the same <ul>.
+.nav-tabs.asab-tabs {
+	border-bottom: 0;
+
+	.nav-item a {
+		background: inherit;
+		border-bottom: var(--bs-secondary);
+	}
+
+	.nav-item a:hover {
+		cursor: pointer;
+	}
+
+	.nav-link {
+		margin-bottom: 0;
+	}
+}

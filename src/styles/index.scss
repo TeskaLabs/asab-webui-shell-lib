@@ -5,9 +5,10 @@
 @use './components/html';
 @use './components/card';
 @use './components/alert';
-@use './components/button.scss';
+@use './components/button';
 @use './components/form';
 @use './components/find-in-page';
+@use './components/tabs';
 
 // Import default bootstrap styles
 @import 'bootstrap/dist/css/bootstrap.min.css';
