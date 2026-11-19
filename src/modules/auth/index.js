@@ -8,6 +8,7 @@ import { SET_NAVIGATION_ITEMS } from '../../actions';
 import { SeaCatAuthApi } from './api';
 import { locationReplace } from '../../components/locationReplace';
 import { extractTenantFromUrl } from '../../utils/extractTenantFromUrl';
+import { hasAssignedResources } from '../../utils/hasAssignedResources';
 
 // TODO: Use SessionExpirationAlert only after proper fix of the component
 import { SessionExpirationAlert }from './components/SessionExpirationAlert';
@@ -378,12 +379,7 @@ export default class AuthModule extends Module {
 
 	// Validate sidebar items
 	_validateItemNav(resource, resources) {
-		let valid = resources ? resources.indexOf(resource) !== -1 : false;
-		// If user is superuser, then item is enabled
-		if (resources.indexOf('authz:superuser') !== -1) {
-			valid = true;
-		}
-		return valid;
+		return hasAssignedResources(resource, resources);
 	}
 
 	// Validate tenant access

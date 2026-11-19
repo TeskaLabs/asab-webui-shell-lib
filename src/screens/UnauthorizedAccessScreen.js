@@ -8,6 +8,7 @@ import {
 } from 'reactstrap';
 
 import { FlowbiteIllustration } from 'asab_webui_components';
+import { formatRequiredResources, hasAssignedResources } from '../utils/hasAssignedResources';
 import './UnauthorizedAccessScreen.scss';
 
 /*
@@ -27,8 +28,7 @@ export default function UnauthorizedAccessScreen(props) {
 	// Check for desired resource. If present or user is superuser, return the original component
 	const isAuthorized = (props.resource === "*") ||
 			(props.app.Modules.filter(obj => obj.Name === "AuthModule").length === 0) ||
-			(resources.indexOf(props.resource) !== -1) ||
-			(resources.indexOf("authz:superuser") !== -1);
+			hasAssignedResources(props.resource, resources);
 
 	useLayoutEffect(() => {
 		// Determine if the component should be in print-ready or print-unauthorized state
@@ -52,6 +52,8 @@ export default function UnauthorizedAccessScreen(props) {
 		return <>{props.routeComponent}</>;
 	}
 
+	// TODO: add option to inject a custom unauthorized screen component instead of the default one
+
 	// Else return the Not authorized screen
 	return(
 		<Container className="unauthorized-container h-100">
@@ -62,10 +64,10 @@ export default function UnauthorizedAccessScreen(props) {
 							<div className="unauthorized-img-container">
 								<FlowbiteIllustration name="unauthorized" className="pb-4" title={t("UnauthorizedAccessScreen|Unauthorized access")}/>
 							</div>
-							{props.resource ?
+							{formatRequiredResources(props.resource) ?
 								<>
 									<p className="card-text">{t("UnauthorizedAccessScreen|You are not authorized to access this part of the application. Please ask your application administrator for following resource")}:</p>
-									<h5 className="card-title">{props.resource}</h5>
+									<h5 className="card-title">{formatRequiredResources(props.resource)}</h5>
 								</>
 								:
 								<p className="card-text">{t("UnauthorizedAccessScreen|You are not authorized to access this part of the application.")}</p>
