@@ -36,6 +36,12 @@ export default class TenantService extends Service {
 				const tenantB = b?.toString()?.toLowerCase() || '';
 				return tenantA.localeCompare(tenantB);
 			});
+			
+			const systemIndex =	availableTenants.indexOf('system');
+			
+			if (systemIndex !== -1) {
+				availableTenants.push(availableTenants.splice(systemIndex, 1)[0]);
+			}
 		}
 
 		/* If tenant has not been provided in access URL, insert the authorized tenant
@@ -46,13 +52,7 @@ export default class TenantService extends Service {
 			if (authorizedTenant) {
 				tenant = authorizedTenant;
 			} else if (availableTenants && availableTenants.length > 0) {
-				const withoutSystem = availableTenants.filter((tenant) => tenant !== 'system');
-
-				if (withoutSystem.length > 0) {
-					tenant = withoutSystem[0];
-				} else {
-					tenant = availableTenants[0];
-				}
+				tenant = availableTenants[0];
 			} else {
 				// no tenant to inject to the url
 				await locationReplace(window.location.pathname + window.location.hash);
