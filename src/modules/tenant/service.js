@@ -37,7 +37,7 @@ export default class TenantService extends Service {
 				return tenantA.localeCompare(tenantB);
 			});
 			
-			// move system tenant to the end of the array
+			// Move system tenant to the end of the array
 			const systemIndex =	availableTenants.indexOf('system');
 			
 			if (systemIndex !== -1) {
