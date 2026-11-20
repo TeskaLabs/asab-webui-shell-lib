@@ -1,5 +1,9 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 28.0.4
+
+- Avoid selecting the `system` tenant if possible (#96)
+
 ## 28.0.3
 
 - Change title order in the browser's tab (#99)
