@@ -4,7 +4,7 @@
 
 .btn {
 	--bs-btn-font-size: var(--bs-body-font-size);
-	--bs-btn-border-radius: 0px;  // No radius for buttons
+	--bs-btn-border-radius: 0px; // No radius for buttons
 	--bs-btn-border-color: transparent; // No border color for buttons
 }
 
@@ -29,19 +29,19 @@
 }
 
 [class^="btn"].btn.disabled {
-		//this will enable pointer events, so the 'title' attribute is shown on hover
-		pointer-events: auto;
-		cursor: default;
+	//this will enable pointer events, so the 'title' attribute is shown on hover
+	pointer-events: auto;
+	cursor: default;
 
-		&:hover {
-			filter: unset;
-		}
+	&:hover {
+		filter: unset;
+	}
 
-		&:active {
-			//background should not change on :active to appear still disabled
-			--bs-btn-active-bg: var(--bs-btn-disabled-bg);
-			filter: unset;
-		}
+	&:active {
+		//background should not change on :active to appear still disabled
+		--bs-btn-active-bg: var(--bs-btn-disabled-bg);
+		filter: unset;
+	}
 }
 
 .btn-primary {
@@ -52,6 +52,7 @@
 
 	&primary {
 		--bs-btn-color: var(--royal-blue);
+
 		&:active {
 			--bs-btn-active-bg: var(--royal-blue);
 		}
@@ -60,8 +61,17 @@
 	&light {
 		--bs-btn-disabled-color: var(--slate-smoke);
 		--bs-btn-color: var(--slate-smoke);
+
 		&:active {
 			--bs-btn-active-bg: var(--slate-smoke);
+		}
+	}
+
+	&secondary {
+		--bs-btn-color: var(--pastel-sky-blue);
+
+		&:active {
+			--bs-btn-active-bg: var(--deep-space-blue);
 		}
 	}
 }
@@ -71,23 +81,28 @@
 		--bs-btn-bg: var(--soft-sky-blue);
 	}
 
-	.btn-outline-{
+	.btn-outline- {
 		&primary {
 			--bs-btn-color: var(--soft-sky-blue);
+
 			&:active {
-			--bs-btn-active-bg: var(--soft-sky-blue);
+				--bs-btn-active-bg: var(--soft-sky-blue);
 			}
 		}
+
 		&light {
 			--bs-btn-disabled-color: var(--slate-smoke);
 			--bs-btn-color: var(--slate-smoke);
+
 			&:active {
 				--bs-btn-active-bg: var(--slate-smoke);
 			}
 		}
+
 		&dark {
 			--bs-btn-disabled-color: var(--slate-smoke);
 			--bs-btn-color: var(--polar-mist);
+
 			&:active {
 				--bs-btn-active-bg: var(--polar-mist);
 			}
