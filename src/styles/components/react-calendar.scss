@@ -1,0 +1,26 @@
+.react-calendar {
+	background-color: var(--bs-element-bg-color) !important;
+	border-color: var(--bs-border-color) !important;
+
+	.react-calendar__tile--now {
+		border: 1px solid var(--bs-warning) !important;
+		background: inherit;
+	}
+
+	.react-calendar__tile--active {
+		background: #006edc;
+	}
+
+	.react-calendar__navigation {
+		button:focus {
+			background-color: inherit !important;
+		}
+	}
+
+	button {
+		&:hover {
+			background-color: var(--bs-body-bg) !important;
+			color: var(--bs-body-color) !important;
+		}
+	}
+}

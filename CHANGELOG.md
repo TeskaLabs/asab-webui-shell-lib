@@ -1,5 +1,8 @@
 # CHANGELOG for ASAB WebUI Shell
 
+## 28.0.4
+
+- Add global react-calendar styles (#103)
 ## 28.0.3
 
 - Change title order in the browser's tab (#99)
