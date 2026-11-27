@@ -66,21 +66,23 @@ export default function InvitationScreen(props) {
 		if (responseData.result !== 'OK') {
 			const responseError = responseData.error;
 			return (
-				<ResultCard status='danger'>
-					<h5>{t('InvitationScreen|Invitation request failed')}</h5>
-					{responseError
-						&& <p>{t(responseError)}</p>
-					}
-					<div className='mt-2'>
-						<Button
-							onClick={() => setResponseData(undefined)}
-							color='primary'
-							size='lg'
-						>
-							{t('General|Back')}
-						</Button>
-					</div>
-				</ResultCard>
+				<InvitationResultPage colMd='6'>
+					<ResultCard status='danger'>
+						<h5>{t('InvitationScreen|Invitation request failed')}</h5>
+						{responseError
+							&& <p>{t(responseError)}</p>
+						}
+						<div className='mt-2'>
+							<Button
+								onClick={() => setResponseData(undefined)}
+								color='primary'
+								size='lg'
+								>
+								{t('General|Back')}
+							</Button>
+						</div>
+					</ResultCard>
+				</InvitationResultPage>
 			);
 		}
 
@@ -90,48 +92,51 @@ export default function InvitationScreen(props) {
 		const credentialsId = responseData.credentials_id;
 		
 		return (
-			<ResultCard status={emailSent ? 'success' : 'warning'}>
-				<h5 className='mb-3'>{t('InvitationScreen|Invitation was created successfully')}</h5>
-				{emailSent
-					? <p>{t('InvitationScreen|The user will receive an email with registration link.')}</p>
-					: <p>{t(
-						'InvitationScreen|However, it was not possible to send the invitation to the user via email ({{reason}}).',
-						{ reason: t(emailError) },
-					)}</p>
-				}
-				{registrationUrl
-					&& <>
-						{emailSent
-							? <p>{t('InvitationScreen|You can also share the link manually:')}</p>
-							: <p>{t('InvitationScreen|You can share the link manually:')}</p>
-						}
-						<div>
-							<CopyableInput
-								className='mt-2 mb-3'
-								value={registrationUrl}
-							/>
+			<InvitationResultPage colMd='10'>
+				<ResultCard status={emailSent ? 'success' : 'warning'}>
+					<h5 className='mb-3'>{t('InvitationScreen|Invitation was created successfully')}</h5>
+					{emailSent
+						? <p>{t('InvitationScreen|The user will receive an email with registration link.')}</p>
+						: <p>{t(
+							'InvitationScreen|However, it was not possible to send the invitation to the user via email ({{reason}}).',
+							{ reason: t(emailError) },
+						)}</p>
+					}
+					{registrationUrl
+						&& <>
+							{emailSent
+								? <p>{t('InvitationScreen|You can also share the link manually:')}</p>
+								: <p>{t('InvitationScreen|You can share the link manually:')}</p>
+							}
+							<div>
+								<CopyableInput
+									className='mt-2 mb-3'
+									value={registrationUrl}
+									type='text'
+								/>
+							</div>
+						</>
+					}
+					{(canAccessCredentialsDetail && credentialsId)
+						&& <div className='mt-2 mb-3'>
+							<Link
+								to={`/auth/credentials/${credentialsId}`}
+							>
+								{t('InvitationScreen|Go to credentials detail')}
+							</Link>
 						</div>
-					</>
-				}
-				{(canAccessCredentialsDetail && credentialsId)
-					&& <div className='mt-2 mb-3'>
-						<Link
-							to={`/auth/credentials/${credentialsId}`}
+					}
+					<div className='mt-2'>
+						<Button
+							onClick={() => navigate(-1)}
+							color='primary'
+							size='lg'
 						>
-							{t('InvitationScreen|Go to credentials detail')}
-						</Link>
+							{t('General|Continue')}
+						</Button>
 					</div>
-				}
-				<div className='mt-2'>
-					<Button
-						onClick={() => navigate(-1)}
-						color='primary'
-						size='lg'
-					>
-						{t('General|Continue')}
-					</Button>
-				</div>
-			</ResultCard>
+				</ResultCard>
+			</InvitationResultPage>
 		);
 	}
 
@@ -192,6 +197,17 @@ export default function InvitationScreen(props) {
 						</Card>
 					</Form>
 				</Col>
+			</Row>
+		</Container>
+	);
+}
+
+// Result layout wrapper
+function InvitationResultPage({ children, colMd }) {
+	return (
+		<Container>
+			<Row className='justify-content-center mt-5'>
+				<Col md={colMd}>{children}</Col>
 			</Row>
 		</Container>
 	);
