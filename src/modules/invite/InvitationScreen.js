@@ -202,6 +202,7 @@ export default function InvitationScreen(props) {
 	);
 }
 
+// Result layout wrapper
 function InvitationResultPage({ children, colMd }) {
 	return (
 		<Container>
