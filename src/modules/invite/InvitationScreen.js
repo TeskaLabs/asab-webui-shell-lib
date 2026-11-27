@@ -24,31 +24,6 @@ export default function InvitationScreen(props) {
 	const canAccessCredentialsDetail = isAuthorized(['seacat:credentials:access'], props.app);
 	const location = useLocation();
 
-	// useEffect(() => {
-	// 	if (process.env.NODE_ENV !== 'development') {
-	// 		return;
-	// 	}
-	// 	setResponseData({
-	// 		result: 'OK',
-	// 		email_sent: {
-	// 			result: 'OK',
-	// 		},
-	// 		registration_url: 'https://fu.teskalabs.int/auth/#/register?rt=E3EyuDt_yWc94bo6X4H0nlSOhamtDkj7Utfui-bWA0Q',
-	// 		credentials_id: '1234567890',
-	// 	});
-	// }, []);
-
-	useEffect(() => {
-		if (process.env.NODE_ENV !== 'development') {
-			return;
-		}
-		setResponseData({
-			result: 'ERROR',
-			tech_err: 'Email service is temporarily unavailable.',
-			error: 'SeaCatAuthError|Email service is currently unavailable',
-		});
-	}, []);
-
 	useEffect(() => {
 		if (location?.state?.clearInvitation !== true) {
 			return;
